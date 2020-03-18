@@ -1,4 +1,6 @@
 # TourMateApp: rotas turísticas urbanas adaptáveis
+Gráfico UML aqui: https://drive.google.com/open?id=1ihLMK_uBxhjP6TgMdNwc7WoXynCyTxIS
+
 Seja em passeio ou em trabalho, turistas terão diferentes interesses e disponibilidades para visitar as atrações turísticas de uma cidade. Em viagens curtas de trabalho, pessoas podem ter o interesse de realizar visitas de muito curta duração, tendo de identificar circuitos mais curtos que lhes levem aos pontos de interesse mais importantes, segundo as suas preferências. Turistas em viagem de lazer já terão potencialmente flexibilidade de horários e maior disponibilidade para itinerários mais longos, incluindo muito mais pontos de atração.
 
 ![Map](https://lh6.googleusercontent.com/UeohVp4z2GoahivuGTglVe8Yki2LuXQtipszeGzLEKz45a-LWVBmc211D4dSd4mmzzHCOlGOenttn-VVBR6zZFnhxQ7yFmNEGmPwqDeNUeEnY26Z9xgvowlFWHAfyJhOET-JfyMk "Map")
