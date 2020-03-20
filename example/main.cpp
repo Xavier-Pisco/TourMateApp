@@ -45,18 +45,6 @@ int main() {
     rapidxml::xml_document<> doc;
     doc.parse<0>((char*)fileContent.c_str());
 
-    cout << "Name of my first node is: " << doc.first_node()->name() << "\n";
-
-
-    cout << "Test value = " << doc.last_node()->first_node()->next_sibling()->name() << "\n";
-
-    for (rapidxml::xml_attribute<> *attr = doc.first_node()->first_attribute();
-         attr; attr = attr->next_attribute())
-    {
-        cout << "Node has attribute " << attr->name() << " ";
-        cout << "with value " << attr->value() << "\n";
-    }
-
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node() /* This is the first node of the last node of th document = first node of osm = node */; node; node = node->next_sibling()) {
         if (strcmp(node->name(), "way") != 0) continue;
         cout << "-- Found a way!\n" << "Attributes: " << endl;
