@@ -39,7 +39,11 @@ private:
     unsigned count = 0;
 public:
     explicit StreetIntersection(rapidxml::xml_node<> *node) : XMLNode(node) {}
-    bool operator==(StreetIntersection &si) {
+    bool operator==(const StreetIntersection &si) {
+        return this->getID() == si.getID();
+    }
+
+    bool operator==( StreetIntersection &si) {
         return this->getID() == si.getID();
     }
 
@@ -78,6 +82,10 @@ public:
 
     const map<string, string> &getXMLTags() const {
         return xmlTags;
+    }
+
+    bool operator==(const Road &r) {
+        return this->getID() == r.getID();
     }
 
     bool operator==(Road &r) {
@@ -168,7 +176,62 @@ Graph<StreetIntersection, Road> parseXMLDocToGraph(rapidxml::xml_document<> &doc
     cout << "Roads: " << roads.size() << endl;
     cout << "Nodes: " << nodes.size() << endl;
 
-    /* NEED TO DO STEP 2 AND 3 */
+    int lastDone = -1;
+
+    cout << endl << "Starting to add vertices..." << endl;
+    int i = 1;
+    for (auto & node : nodes) {
+        if ((i*100)/nodes.size() % 10 == 0 && lastDone != (i*100)/nodes.size()) {
+            cout << (i*100)/nodes.size() << "%" << " done\n";
+            lastDone = (int) (i*100)/nodes.size();
+        }
+        i++;
+        res.addVertex(*node.second);
+    }
+    cout << "Finished adding vertices!" << endl;
+    cout << endl << "Starting to add edges..." << endl;
+    lastDone = -1;
+    i = 1;
+    for (Road * edge : roads) {
+        if ((i*100)/roads.size() % 10 == 0 && lastDone != (i*100)/roads.size()) {
+            cout << (i*100)/roads.size() << "%" << " done\n";
+            lastDone = (int) (i*100)/roads.size();
+        }
+        i++;
+
+        const vector<string>& nodeIDs = edge->getNodeIDs();
+
+        // Testing if oneway or not
+        bool oneway = false;
+        string highwayValue = edge->getXMLTags().at("highway");
+        if (edge->getXMLTags().find("oneway") != edge->getXMLTags().end()) {
+            if (edge->getXMLTags().at("oneway") == "yes" || edge->getXMLTags().at("oneway") == "1" || edge->getXMLTags().at("oneway") == "true") {
+                oneway = true;
+            }
+        } else if (highwayValue == "motorway" || highwayValue == "motorway_link" || highwayValue == "trunk_link" || highwayValue == "primary_link") {
+            oneway = true;
+        } else if (edge->getXMLTags().find("junction") != edge->getXMLTags().end()) {
+            if (edge->getXMLTags().at("junction") == "roundabout") {
+                oneway = true;
+            }
+        }
+
+        // simplest case
+        if (nodeIDs.size() == 2) {
+            res.addEdge(*nodes.at(nodeIDs.at(0)), *nodes.at(nodeIDs.at(1)), *edge);
+            if (!oneway) {
+                res.addEdge(*nodes.at(nodeIDs.at(1)), *nodes.at(nodeIDs.at(0)), *edge);
+            }
+        } else {
+            for (unsigned i = 0; i < nodeIDs.size()-1; i++) {
+                res.addEdge(*nodes.at(nodeIDs.at(i)), *nodes.at(nodeIDs.at(i + 1)), *edge);
+                if (!oneway) {
+                    res.addEdge(*nodes.at(nodeIDs.at(i + 1)), *nodes.at(nodeIDs.at(i)), *edge);
+                }
+            }
+        }
+    }
+    cout << "Finished!" << endl << endl;
 
     return res;
 }
@@ -198,9 +261,8 @@ rapidxml::xml_document<> * createXMLDoc(char * data) {
 
 
 int main() {
-
     string fileContent;
-    if (readFileData("../input/map.osm", fileContent) != 0) {
+    if (readFileData("../input/centro_aliados.osm", fileContent) != 0) {
         cout << "Error reading input file!" << endl;
         return -1;
     }
@@ -209,5 +271,12 @@ int main() {
 
     Graph<StreetIntersection, Road> myGraph = parseXMLDocToGraph(*doc);
 
+    int count = 1;
+    for (const StreetIntersection& si : myGraph.dfs()) {
+        if (si.getXMLNodeAttributes().find("id") != si.getXMLNodeAttributes().end()) {
+            cout << si.getXMLNodeAttributes().at("id") << ";  ";
+        }
+        count++;
+    }
     return 0;
 }
