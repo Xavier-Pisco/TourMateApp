@@ -1,14 +1,12 @@
-#include <string>
 #include <fstream>
 #include <iostream>
 #include "Converter.h"
-#include "input.h"
 
 Graph<StreetIntersection, Road> * Converter::getGraphFromOSMFile(string fileName) {
     string fileContent;
     if (readFileData(fileName, fileContent) != 0) {
         cout << "Error reading input file!" << endl;
-        throw "Error reading input file"; // this is temporary
+        abort(); // this is temporary (or not)
     }
     rapidxml::xml_document<> * doc;
     doc = createXMLDoc((char*) fileContent.c_str());

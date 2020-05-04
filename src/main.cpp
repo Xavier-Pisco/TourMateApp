@@ -5,6 +5,6 @@ using namespace std;
 
 int main() {
     Application app;
-    app.init();
+    app.start();
     return 0;
 }

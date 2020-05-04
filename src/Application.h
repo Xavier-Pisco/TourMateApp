@@ -6,7 +6,10 @@ class Application {
 private:
     Graph<StreetIntersection, Road> * graph;
 public:
-    void init();
+    /**
+     * @brief starts the application
+     */
+    void start();
 };
 
 

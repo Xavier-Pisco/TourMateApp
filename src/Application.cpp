@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Application.h"
 
-void Application::init() {
+void Application::start() {
     graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
 
     int count = 1;
