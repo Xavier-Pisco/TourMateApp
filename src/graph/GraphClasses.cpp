@@ -57,23 +57,23 @@ const map<string, string> &XMLNode::getXMLTags() const {
     return xmlTags;
 }
 
-/* StreetIntersection */
+/* RoadIntersection */
 
-StreetIntersection::StreetIntersection(rapidxml::xml_node<> *node) : XMLNode(node) {}
+RoadIntersection::RoadIntersection(rapidxml::xml_node<> *node) : XMLNode(node) {}
 
-bool StreetIntersection::operator==(const StreetIntersection &si) {
+bool RoadIntersection::operator==(const RoadIntersection &si) {
     return this->getID() == si.getID();
 }
 
-bool StreetIntersection::operator==(StreetIntersection &si) {
+bool RoadIntersection::operator==(RoadIntersection &si) {
     return this->getID() == si.getID();
 }
 
-void StreetIntersection::incrementCount() {
+void RoadIntersection::incrementCount() {
     count++;
 }
 
-unsigned int StreetIntersection::getCount() const {
+unsigned int RoadIntersection::getCount() const {
     return count;
 }
 

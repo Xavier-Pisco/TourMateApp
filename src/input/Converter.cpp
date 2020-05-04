@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Converter.h"
 
-Graph<StreetIntersection, Road> * Converter::getGraphFromOSMFile(const string& fileName) {
+Graph<RoadIntersection, Road> * Converter::getGraphFromOSMFile(const string& fileName) {
     string fileContent;
     if (readFileData(fileName, fileContent) != 0) {
         cout << "Error reading input file!" << endl;
@@ -11,13 +11,13 @@ Graph<StreetIntersection, Road> * Converter::getGraphFromOSMFile(const string& f
     rapidxml::xml_document<> * doc;
     doc = createXMLDoc((char*) fileContent.c_str());
 
-    Graph<StreetIntersection, Road> * myGraph = parseXMLDocToGraph(*doc);
+    Graph<RoadIntersection, Road> * myGraph = parseXMLDocToGraph(*doc);
 
     return myGraph;
 }
 
 
-Graph<StreetIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc) {
+Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc) {
     /*
      * ALGORITHM
      *
@@ -49,19 +49,19 @@ Graph<StreetIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_do
      *
      * */
 
-    auto * res = new Graph<StreetIntersection, Road>;
+    auto * res = new Graph<RoadIntersection, Road>;
 
-    map<string, StreetIntersection*> nodes;
+    map<string, RoadIntersection*> nodes;
     vector<Road*> roads;
 
     // looping through child nodes of osm node and adding them to nodes
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node(); node; node = node->next_sibling()) {
         if (strcmp(node->name(), "node") == 0) {
-            nodes[node->first_attribute()->value()] = new StreetIntersection(node);
+            nodes[node->first_attribute()->value()] = new RoadIntersection(node);
         }
     }
 
-    // looping though ways, incrementing StreetIntersection count and adding roads
+    // looping though ways, incrementing RoadIntersection count and adding roads
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node(); node; node = node->next_sibling()) {
         if (strcmp(node->name(), "way") == 0) {
             Road * candidate = new Road(node);

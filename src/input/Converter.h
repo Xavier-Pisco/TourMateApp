@@ -22,7 +22,7 @@ private:
      * @param doc - the XMLDoc
      * @return pointer to the graph
      */
-    static Graph<StreetIntersection, Road> * parseXMLDocToGraph(rapidxml::xml_document<> &doc);
+    static Graph<RoadIntersection, Road> * parseXMLDocToGraph(rapidxml::xml_document<> &doc);
 
     /**
      * Creates a RapidXML doc from data in c string format
@@ -36,7 +36,7 @@ public:
      * @param fileName - name of the file to get graph from
      * @return pointer to the graph
      */
-    static Graph<StreetIntersection, Road> * getGraphFromOSMFile(const string& fileName);
+    static Graph<RoadIntersection, Road> * getGraphFromOSMFile(const string& fileName);
 };
 
 

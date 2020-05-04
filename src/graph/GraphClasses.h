@@ -94,7 +94,7 @@ public:
 /**
  * @brief Stores information about a street intersection - correspondent to the node of the graph
  */
-class StreetIntersection : public XMLNode {
+class RoadIntersection : public XMLNode {
 private:
     unsigned count = 0; //!< count of roads that pass through this node
     POI * poi = nullptr; //!< pointer to the POI object
@@ -103,21 +103,21 @@ public:
      * @brief constructor for the object
      * @param node - pointer to the xml node
      */
-    explicit StreetIntersection(rapidxml::xml_node<> *node);
+    explicit RoadIntersection(rapidxml::xml_node<> *node);
 
     /**
      * @brief == operator overload against a const object of this class
      * @param si - the object that this will be compared to
      * @return if its equal or not
      */
-    bool operator==(const StreetIntersection &si);
+    bool operator==(const RoadIntersection &si);
 
     /**
      * @brief == operator overload against an object of this class
      * @param si - the object that this will be compared to
      * @return if its equal or not
      */
-    bool operator==(StreetIntersection &si);
+    bool operator==(RoadIntersection &si);
 
     /**
      * @brief increments the count of edges that pass through this node

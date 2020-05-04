@@ -8,8 +8,9 @@ public:
     enum MODE {DEBUG, RELEASE}; //!< mode in which to run the application
 private:
     MODE mode;
-    Graph<StreetIntersection, Road> * graph;
+    Graph<RoadIntersection, Road> * graph;
     GraphViewer * graphViewer;
+    pair<double, double> minCoords, maxCoords;
 
 public:
     /**
@@ -27,6 +28,11 @@ public:
      * @brief uses GraphViewer to display graph
      */
     void viewGraph();
+
+    void setMaxMinCoords();
+
+    int latToY(const string &lat, int width) const;
+    int lonToX(const string &lon, int height) const;
 };
 
 
