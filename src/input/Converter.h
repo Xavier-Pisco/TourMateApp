@@ -36,7 +36,7 @@ public:
      * @param fileName - name of the file to get graph from
      * @return pointer to the graph
      */
-    static Graph<StreetIntersection, Road> * getGraphFromOSMFile(string fileName);
+    static Graph<StreetIntersection, Road> * getGraphFromOSMFile(const string& fileName);
 };
 
 

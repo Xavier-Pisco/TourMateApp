@@ -19,12 +19,14 @@ class Vertex {
 	bool visited;          // auxiliary field used by dfs and bfs
 	int indegree;          // auxiliary field used by topsort
 	bool processing;       // auxiliary field used by isDAG
+	int graphViewerID; // auxiliary for GraphViewer
 
 	void addEdge(Vertex<T, P> *dest, P w);
 	bool removeEdgeTo(Vertex<T, P> *d);
 public:
 	Vertex(T in);
 	friend class Graph<T, P>;
+	friend class Application;
 };
 
 template <class T, class P>
@@ -35,6 +37,7 @@ public:
 	Edge(Vertex<T, P> *d, P w);
 	friend class Graph<T, P>;
 	friend class Vertex<T, P>;
+	friend class Application;
 };
 
 template <class T, class P>
@@ -55,6 +58,7 @@ public:
 	vector<T> topsort() const;
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
+	friend class Application;
 };
 
 /****************** Provided constructors and functions ********************/

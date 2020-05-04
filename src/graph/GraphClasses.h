@@ -1,7 +1,7 @@
 #ifndef SRC_GRAPHCLASSES_H
 #define SRC_GRAPHCLASSES_H
 
-#include "../input/rapidxml/rapidxml.hpp"
+#include "../lib/RapidXML/rapidxml.hpp"
 #include "Graph.h"
 #include <cstring>
 #include <map>

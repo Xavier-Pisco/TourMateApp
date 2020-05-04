@@ -1,8 +1,15 @@
 #include <iostream>
 #include "Application.h"
+#include "lib/GraphViewer/graphviewer.h"
+
+Application::Application(MODE mode) {
+    this->mode = mode;
+}
 
 void Application::start() {
-    graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
+    graph = Converter::getGraphFromOSMFile("../maps/zona_feup_hsj.osm");
+
+    if (mode == DEBUG) viewGraph();
 
     int count = 1;
     for (const StreetIntersection& si : graph->dfs()) {
@@ -15,4 +22,26 @@ void Application::start() {
         }
         count++;
     }
+}
+
+void Application::viewGraph() {
+    graphViewer = new GraphViewer(600, 600, true);
+    graphViewer->createWindow(600, 600);
+
+    int i = 1;
+    for (Vertex<StreetIntersection, Road> * v : graph->vertexSet) {
+        v->graphViewerID = i;
+        i++;
+    }
+
+    i = 1;
+    for (Vertex<StreetIntersection, Road> * v : graph->vertexSet) {
+        graphViewer->addNode(v->graphViewerID);
+        for (Edge<StreetIntersection, Road> e : v->adj) {
+            graphViewer->addEdge(i, v->graphViewerID, e.dest->graphViewerID, EdgeType::DIRECTED);
+            i++;
+        }
+    }
+
+    graphViewer->rearrange();
 }
