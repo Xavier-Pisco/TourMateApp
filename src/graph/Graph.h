@@ -23,15 +23,13 @@ class Vertex {
 	int indegree;          // auxiliary field used by topsort
 	bool processing;       // auxiliary field used by isDAG
 	int graphViewerID; // auxiliary for GraphViewer
-	Position position = Position(0,0);
-	string POIType = "";
 
 	void addEdge(Vertex<T, P> *dest, P w);
 	bool removeEdgeTo(Vertex<T, P> *d);
 public:
 	Vertex(T in);
-	void coutPosition(){ cout.precision(9); std::cout << fixed << position.getX() << "," << fixed << position.getY();	};
-	void coutType() { cout << POIType; };
+	T getInfo();
+	void setPoi(string poi);
 	friend class Graph<T, P>;
 	friend class Application;
 };
@@ -67,7 +65,6 @@ public:
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
 	friend class Application;
-	void setPOIType(const T&in, const string& poiType);
 };
 
 /****************** Provided constructors and functions ********************/
@@ -176,6 +173,16 @@ bool Vertex<T, P>::removeEdgeTo(Vertex<T, P> *d) {
         }
     }
 	return false;
+}
+
+template<class T, class P>
+void Vertex<T, P>::setPoi(string poi) {
+    this->info.setPoi(poi);
+}
+
+template<class T, class P>
+T Vertex<T, P>::getInfo() {
+    return info;
 }
 
 
@@ -403,10 +410,5 @@ bool Graph<T, P>::dfsIsDAG(Vertex<T, P> *v) const {
 	return true;
 }
 
-template<class T, class P>
-void Graph<T, P>::setPOIType(const T &in, const string &poiType) {
-    Vertex<T, P> *v = findVertex(in);
-    v->POIType = poiType;
-}
 
 #endif /* GRAPH_H_ */

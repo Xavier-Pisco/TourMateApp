@@ -193,8 +193,8 @@ rapidxml::xml_document<> * Converter::createXMLDoc(char * data) {
     return doc;
 }
 
-Graph<int, int> *Converter::getGraphFromTXTFile(const string & nodesFileName, const string& edgesFileName, const string& poiFileName) {
-    auto graph = new Graph<int, int>;
+Graph<RoadInterceptionFromTxt, int> *Converter::getGraphFromTXTFile(const string & nodesFileName, const string& edgesFileName, const string& poiFileName) {
+    auto graph = new Graph<RoadInterceptionFromTxt, int>;
 
     string line;
     ifstream nodesFile(nodesFileName);
@@ -206,7 +206,7 @@ Graph<int, int> *Converter::getGraphFromTXTFile(const string & nodesFileName, co
             vector<double> v = parseNodeLineToInts(line);
             unsigned id = v[0];
             Position p = Position(v[1], v[2]);
-            graph->addVertex(id, p);
+            graph->addVertex(RoadInterceptionFromTxt(id, p));
         }
     } else {
         abort();
@@ -241,7 +241,8 @@ Graph<int, int> *Converter::getGraphFromTXTFile(const string & nodesFileName, co
             unsigned  numberOfPOI = stoi(line);
             for (int j = 0; j < numberOfPOI; j++){
                 getline(poiFile, line);
-                graph->setPOIType(stoi(line), tag);
+                graph->findVertex(stoi(line))->setPoi(tag);
+
             }
         }
     } else {

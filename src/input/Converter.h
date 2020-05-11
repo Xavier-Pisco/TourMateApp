@@ -2,6 +2,7 @@
 #define SRC_CONVERTER_H
 
 #include "../graph/GraphClasses.h"
+#include "../graph/RoadInterceptionFromTxt.h"
 
 /**
  * The objective of this class is to convert a map
@@ -42,7 +43,7 @@ public:
      */
     static Graph<RoadIntersection, Road> * getGraphFromOSMFile(const string& fileName);
 
-    static Graph<int, int> * getGraphFromTXTFile(const string& nodesFileName, const string& edgesFileName, const string& poiFileName);
+    static Graph<RoadInterceptionFromTxt, int> * getGraphFromTXTFile(const string& nodesFileName, const string& edgesFileName, const string& poiFileName);
 };
 
 
