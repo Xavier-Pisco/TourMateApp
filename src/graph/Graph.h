@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <queue>
+#include "Position.h"
+#include <iostream>
+
 using namespace std;
 
 template <class T, class P> class Edge;
@@ -25,6 +28,8 @@ class Vertex {
 	bool removeEdgeTo(Vertex<T, P> *d);
 public:
 	Vertex(T in);
+	T getInfo();
+	void setPoi(string poi);
 	friend class Graph<T, P>;
 	friend class Application;
 };
@@ -45,11 +50,12 @@ class Graph {
 	vector<Vertex<T, P> *> vertexSet;    // vertex set
 
 	void dfsVisit(Vertex<T, P> *v,  vector<T> & res) const;
-	Vertex<T, P> *findVertex(const T &in) const;
 	bool dfsIsDAG(Vertex<T, P> *v) const;
 public:
+    Vertex<T, P> *findVertex(const T &in) const;
 	int getNumVertex() const;
 	bool addVertex(const T &in);
+	bool addVertex(const T &in, const Position &p);
 	bool removeVertex(const T &in);
 	bool addEdge(const T &sourc, const T &dest, P w);
 	bool removeEdge(const T &sourc, const T &dest);
@@ -99,6 +105,16 @@ bool Graph<T, P>::addVertex(const T &in) {
     if (findVertex(in) != NULL) return false;
 	auto vertex = new Vertex<T, P>(in);
 	vertexSet.push_back(vertex);
+    return true;
+}
+
+
+template <class T, class P>
+bool Graph<T, P>::addVertex(const T &in, const Position &p) {
+    if (findVertex(in) != NULL) return false;
+    auto vertex = new Vertex<T, P>(in);
+    vertex->position = p;
+    vertexSet.push_back(vertex);
     return true;
 }
 
@@ -157,6 +173,16 @@ bool Vertex<T, P>::removeEdgeTo(Vertex<T, P> *d) {
         }
     }
 	return false;
+}
+
+template<class T, class P>
+void Vertex<T, P>::setPoi(string poi) {
+    this->info.setPoi(poi);
+}
+
+template<class T, class P>
+T Vertex<T, P>::getInfo() {
+    return info;
 }
 
 
@@ -383,5 +409,6 @@ bool Graph<T, P>::dfsIsDAG(Vertex<T, P> *v) const {
     }
 	return true;
 }
+
 
 #endif /* GRAPH_H_ */

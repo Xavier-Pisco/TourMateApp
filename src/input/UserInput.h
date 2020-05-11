@@ -40,7 +40,7 @@ public:
      * @param s - the sting to convert
      * @return the converted string
      */
-    static string UserInput::strToLower(string s);
+    static string strToLower(string s);
 };
 
 

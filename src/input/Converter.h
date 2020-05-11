@@ -2,6 +2,7 @@
 #define SRC_CONVERTER_H
 
 #include "../graph/GraphClasses.h"
+#include "../graph/RoadInterceptionFromTxt.h"
 
 /**
  * The objective of this class is to convert a map
@@ -30,6 +31,10 @@ private:
      * @return pointer to the XML document
      */
     static rapidxml::xml_document<> * createXMLDoc(char * data);
+
+    static vector<double> parseNodeLineToInts(string & line);
+
+    static vector<double> parseEdgeLineToInts(string & line);
 public:
     /**
      * Converts an OpenStreetMap file to graph format
@@ -37,6 +42,8 @@ public:
      * @return pointer to the graph
      */
     static Graph<RoadIntersection, Road> * getGraphFromOSMFile(const string& fileName);
+
+    static Graph<RoadInterceptionFromTxt, int> * getGraphFromTXTFile(const string& nodesFileName, const string& edgesFileName, const string& poiFileName);
 };
 
 

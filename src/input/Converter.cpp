@@ -203,3 +203,85 @@ rapidxml::xml_document<> * Converter::createXMLDoc(char * data) {
     return doc;
 }
 
+Graph<RoadInterceptionFromTxt, int> *Converter::getGraphFromTXTFile(const string & nodesFileName, const string& edgesFileName, const string& poiFileName) {
+    auto graph = new Graph<RoadInterceptionFromTxt, int>;
+
+    string line;
+    ifstream nodesFile(nodesFileName);
+
+    if (nodesFile.is_open()){
+        getline(nodesFile, line);
+        unsigned nodes_number = stoi(line);
+        while (getline(nodesFile, line)) {
+            vector<double> v = parseNodeLineToInts(line);
+            unsigned id = v[0];
+            Position p = Position(v[1], v[2]);
+            graph->addVertex(RoadInterceptionFromTxt(id, p));
+        }
+    } else {
+        abort();
+    }
+
+    nodesFile.close();
+
+    ifstream edgesFile(edgesFileName);
+
+    if (edgesFile.is_open()){
+        getline(edgesFile, line);
+        unsigned edges_number = stoi(line);
+        while(getline(edgesFile, line)){
+            vector<double> v = parseEdgeLineToInts(line);
+            graph->addEdge(v[0], v[1], 1);
+        }
+    } else {
+        abort();
+    }
+
+    edgesFile.close();
+
+    ifstream poiFile(poiFileName);
+
+    if (poiFile.is_open()){
+        getline(poiFile, line);
+        unsigned tagsTypes = stoi(line);
+        for (unsigned i = 0; i < tagsTypes; i++){
+            getline(poiFile, line);
+            string tag = line.substr(line.find('=') + 1, line.npos);
+            getline(poiFile, line);
+            unsigned  numberOfPOI = stoi(line);
+            for (int j = 0; j < numberOfPOI; j++){
+                getline(poiFile, line);
+                graph->findVertex(stoi(line))->setPoi(tag);
+
+            }
+        }
+    } else {
+        abort();
+    }
+
+    poiFile.close();
+
+    return graph;
+}
+
+vector<double> Converter::parseNodeLineToInts(string &line) {
+    vector<double> v;
+    line.erase(0, 1);
+    v.push_back(stoi(line.substr(0, line.find(','))));
+    line.erase(0, line.find(',') + 1);
+    v.push_back(stod(line.substr(0, line.find(','))));
+    line.erase(0, line.find(',') + 1);
+    v.push_back(stod(line.substr(0, line.find(')'))));
+    return v;
+}
+
+vector<double> Converter::parseEdgeLineToInts(string &line) {
+    vector<double> v;
+    line.erase(0, 1);
+    v.push_back(stoi(line.substr(0, line.find(','))));
+    line.erase(0, line.find(',') + 1);
+    v.push_back(stoi(line.substr(0, line.find(','))));
+    return v;
+}
+
+
