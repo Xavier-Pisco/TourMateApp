@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <queue>
+#include "Position.h"
+#include <iostream>
+
 using namespace std;
 
 template <class T, class P> class Edge;
@@ -20,11 +23,15 @@ class Vertex {
 	int indegree;          // auxiliary field used by topsort
 	bool processing;       // auxiliary field used by isDAG
 	int graphViewerID; // auxiliary for GraphViewer
+	Position position = Position(0,0);
+	string POIType = "";
 
 	void addEdge(Vertex<T, P> *dest, P w);
 	bool removeEdgeTo(Vertex<T, P> *d);
 public:
 	Vertex(T in);
+	void coutPosition(){ cout.precision(9); std::cout << fixed << position.getX() << "," << fixed << position.getY();	};
+	void coutType() { cout << POIType; };
 	friend class Graph<T, P>;
 	friend class Application;
 };
@@ -45,11 +52,12 @@ class Graph {
 	vector<Vertex<T, P> *> vertexSet;    // vertex set
 
 	void dfsVisit(Vertex<T, P> *v,  vector<T> & res) const;
-	Vertex<T, P> *findVertex(const T &in) const;
 	bool dfsIsDAG(Vertex<T, P> *v) const;
 public:
+    Vertex<T, P> *findVertex(const T &in) const;
 	int getNumVertex() const;
 	bool addVertex(const T &in);
+	bool addVertex(const T &in, const Position &p);
 	bool removeVertex(const T &in);
 	bool addEdge(const T &sourc, const T &dest, P w);
 	bool removeEdge(const T &sourc, const T &dest);
@@ -59,6 +67,7 @@ public:
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
 	friend class Application;
+	void setPOIType(const T&in, const string& poiType);
 };
 
 /****************** Provided constructors and functions ********************/
@@ -99,6 +108,16 @@ bool Graph<T, P>::addVertex(const T &in) {
     if (findVertex(in) != NULL) return false;
 	auto vertex = new Vertex<T, P>(in);
 	vertexSet.push_back(vertex);
+    return true;
+}
+
+
+template <class T, class P>
+bool Graph<T, P>::addVertex(const T &in, const Position &p) {
+    if (findVertex(in) != NULL) return false;
+    auto vertex = new Vertex<T, P>(in);
+    vertex->position = p;
+    vertexSet.push_back(vertex);
     return true;
 }
 
@@ -382,6 +401,12 @@ bool Graph<T, P>::dfsIsDAG(Vertex<T, P> *v) const {
         }
     }
 	return true;
+}
+
+template<class T, class P>
+void Graph<T, P>::setPOIType(const T &in, const string &poiType) {
+    Vertex<T, P> *v = findVertex(in);
+    v->POIType = poiType;
 }
 
 #endif /* GRAPH_H_ */
