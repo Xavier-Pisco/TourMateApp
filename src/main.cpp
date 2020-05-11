@@ -4,6 +4,7 @@
 using namespace std;
 
 int main() {
+    Application app(Application::DEBUG);
     /*
     Application app(Application::RELEASE);
     app.start();
