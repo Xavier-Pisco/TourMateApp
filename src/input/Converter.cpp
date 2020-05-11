@@ -57,7 +57,16 @@ Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_docu
     // looping through child nodes of osm node and adding them to nodes
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node(); node; node = node->next_sibling()) {
         if (strcmp(node->name(), "node") == 0) {
-            nodes[node->first_attribute()->value()] = new RoadIntersection(node);
+            auto candidate = new RoadIntersection(node);
+            bool done = false;
+            for (auto const &key : candidate->getXMLTags()) {
+                if (strcmp((char *) key.first.c_str(), "highway") == 0) { // we are only interested in having ways that are roads
+                    nodes[node->first_attribute()->value()] = candidate;
+                    done = true;
+                    break;
+                }
+            }
+            if (!done) delete candidate;
         }
     }
 
@@ -74,7 +83,8 @@ Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_docu
                 if (strcmp((char *) key.first.c_str(), "highway") == 0) { // we are only interested in having ways that are roads
                     roads.push_back(candidate);
                     for (const string& nodeID : roads.at(roads.size()-1)->getNodeIDs()) {
-                        nodes[nodeID]->incrementCount();
+                        if (nodes.find(nodeID) != nodes.end())
+                            nodes[nodeID]->incrementCount();
                     }
                     done = true;
                     break;

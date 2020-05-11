@@ -2,17 +2,40 @@
 #include <cmath>
 #include "Application.h"
 #include "lib/GraphViewer/graphviewer.h"
+#include "input/UserInput.h"
 
 Application::Application(MODE mode) {
     this->mode = mode;
+    this->graphViewer = nullptr;
 }
 
 void Application::start() {
+
+    cout << UserInput::getInt("Insert your coordinate:") << endl;
+
     graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
     if (mode == DEBUG) viewGraph();
+
+    while(true) {
+        cout << "Insert 'exit' to leave.\n";
+        string opt;
+        cin >> opt;
+        if (opt == "exit") break;
+    }
+
+    if (mode == DEBUG) {
+        if (graphViewer != nullptr) {
+            graphViewer->closeWindow();
+            delete graphViewer;
+        }
+    }
 }
 
 void Application::viewGraph() {
+    if (graphViewer != nullptr) {
+        graphViewer->closeWindow();
+        delete graphViewer;
+    }
     graphViewer = new GraphViewer(600, 600, false);
     graphViewer->createWindow(600, 600);
 
