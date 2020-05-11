@@ -10,9 +10,6 @@ Application::Application(MODE mode) {
 }
 
 void Application::start() {
-
-    cout << UserInput::getInt("Insert your coordinate:") << endl;
-
     graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
     if (mode == DEBUG) viewGraph();
 
