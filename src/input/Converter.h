@@ -3,6 +3,10 @@
 
 #include "../graph/GraphClasses.h"
 #include "../graph/RoadInterceptionFromTxt.h"
+#include <dirent.h>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
 
 /**
  * The objective of this class is to convert a map
@@ -32,9 +36,42 @@ private:
      */
     static rapidxml::xml_document<> * createXMLDoc(char * data);
 
+    /**
+     * Parses a line of nodes to a vector
+     * @param line node info
+     * @return
+     */
     static vector<double> parseNodeLineToInts(string & line);
 
+    /**
+     * Parses a line of edges to a vector
+     * @param line edge info
+     * @return
+     */
     static vector<double> parseEdgeLineToInts(string & line);
+
+    /**
+     * Reads nodes from a file
+     * @param fileName
+     * @param graph
+     */
+    static void readNodeFileTxt(const string& fileName, Graph<RoadInterceptionFromTxt, int> * graph);
+
+    /**
+     * Reads edges from a file
+     * @param fileName
+     * @param graph
+     */
+    static void readEdgesFileTxt(const string& fileName, Graph<RoadInterceptionFromTxt, int> * graph);
+
+    /**
+     * Reads all tags from a folder
+     * @param folderName
+     * @param graph
+     */
+    static void readTagsFromFolder(const string& folderName, Graph<RoadInterceptionFromTxt, int> * graph);
+
+    static void readTagsFromFile(const string& fileName, Graph<RoadInterceptionFromTxt, int> * graph);
 public:
     /**
      * Converts an OpenStreetMap file to graph format
@@ -43,7 +80,14 @@ public:
      */
     static Graph<RoadIntersection, Road> * getGraphFromOSMFile(const string& fileName);
 
-    static Graph<RoadInterceptionFromTxt, int> * getGraphFromTXTFile(const string& nodesFileName, const string& edgesFileName, const string& poiFileName);
+    /**
+     * Converts info from a city to a graph
+     * @param nodesFileName
+     * @param edgesFileName
+     * @param poiFileName
+     * @return
+     */
+    static Graph<RoadInterceptionFromTxt, int> * getGraphFromTXTFile(const string& city);
 };
 
 
