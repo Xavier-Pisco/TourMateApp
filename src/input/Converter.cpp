@@ -1,5 +1,3 @@
-#include <fstream>
-#include <iostream>
 #include "Converter.h"
 
 Graph<RoadIntersection, Road> * Converter::getGraphFromOSMFile(const string& fileName) {
@@ -194,63 +192,21 @@ rapidxml::xml_document<> * Converter::createXMLDoc(char * data) {
     return doc;
 }
 
-Graph<RoadInterceptionFromTxt, int> *Converter::getGraphFromTXTFile(const string & nodesFileName, const string& edgesFileName, const string& poiFileName) {
+Graph<RoadInterceptionFromTxt, int> *Converter::getGraphFromTXTFile(const string & city) {
     auto graph = new Graph<RoadInterceptionFromTxt, int>;
 
-    string line;
-    ifstream nodesFile(nodesFileName);
+    string lowerCaseCity = city;
+    transform(lowerCaseCity.begin(), lowerCaseCity.end(), lowerCaseCity.begin(), ::tolower);
 
-    if (nodesFile.is_open()){
-        getline(nodesFile, line);
-        unsigned nodes_number = stoi(line);
-        while (getline(nodesFile, line)) {
-            vector<double> v = parseNodeLineToInts(line);
-            unsigned id = v[0];
-            Position p = Position(v[1], v[2]);
-            graph->addVertex(RoadInterceptionFromTxt(id, p));
-        }
-    } else {
-        abort();
-    }
+    string nodesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/nodes_x_y_" + lowerCaseCity + ".txt";
+    string edgesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/edges_" + lowerCaseCity + ".txt";
+    string poiFolderName = "../../cal-mapas-fornecidos/TagExamples/" + city + "/";
 
-    nodesFile.close();
+    readNodeFileTxt(nodesFileName, graph);
 
-    ifstream edgesFile(edgesFileName);
+    readEdgesFileTxt(edgesFileName, graph);
 
-    if (edgesFile.is_open()){
-        getline(edgesFile, line);
-        unsigned edges_number = stoi(line);
-        while(getline(edgesFile, line)){
-            vector<double> v = parseEdgeLineToInts(line);
-            graph->addEdge(v[0], v[1], 1);
-        }
-    } else {
-        abort();
-    }
-
-    edgesFile.close();
-
-    ifstream poiFile(poiFileName);
-
-    if (poiFile.is_open()){
-        getline(poiFile, line);
-        unsigned tagsTypes = stoi(line);
-        for (unsigned i = 0; i < tagsTypes; i++){
-            getline(poiFile, line);
-            string tag = line.substr(line.find('=') + 1, line.npos);
-            getline(poiFile, line);
-            unsigned  numberOfPOI = stoi(line);
-            for (int j = 0; j < numberOfPOI; j++){
-                getline(poiFile, line);
-                graph->findVertex(stoi(line))->setPoi(tag);
-
-            }
-        }
-    } else {
-        abort();
-    }
-
-    poiFile.close();
+    readTagsFromFolder(poiFolderName, graph);
 
     return graph;
 }
@@ -273,6 +229,89 @@ vector<double> Converter::parseEdgeLineToInts(string &line) {
     line.erase(0, line.find(',') + 1);
     v.push_back(stoi(line.substr(0, line.find(','))));
     return v;
+}
+
+void Converter::readNodeFileTxt(const string &fileName, Graph<RoadInterceptionFromTxt, int> *graph) {
+    string line;
+    ifstream nodesFile(fileName);
+
+    if (nodesFile.is_open()){
+        getline(nodesFile, line);
+        unsigned nodes_number = stoi(line);
+        while (getline(nodesFile, line)) {
+            vector<double> v = parseNodeLineToInts(line);
+            unsigned id = v[0];
+            Position p = Position(v[1], v[2]);
+            graph->addVertex(RoadInterceptionFromTxt(id, p));
+        }
+    } else {
+        abort();
+    }
+
+    nodesFile.close();
+}
+
+void Converter::readEdgesFileTxt(const string &fileName, Graph<RoadInterceptionFromTxt, int> *graph) {
+    string line;
+    ifstream edgesFile(fileName);
+
+    if (edgesFile.is_open()){
+        getline(edgesFile, line);
+        unsigned edges_number = stoi(line);
+        while(getline(edgesFile, line)){
+            vector<double> v = parseEdgeLineToInts(line);
+            graph->addEdge(v[0], v[1], 1);
+        }
+    } else {
+        abort();
+    }
+
+    edgesFile.close();
+}
+
+void Converter::readTagsFromFolder(const string &folderName, Graph<RoadInterceptionFromTxt, int> *graph) {
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir(folderName.c_str());
+
+    if(dir != NULL){
+        while((entry = readdir(dir))){
+            if (entry->d_name[0] != '.') {
+                string fileName = folderName + entry->d_name;
+                readTagsFromFile(fileName, graph);
+            }
+        }
+        closedir(dir);
+    } else {
+        abort();
+    }
+}
+
+void Converter::readTagsFromFile(const string &fileName, Graph<RoadInterceptionFromTxt, int> *graph) {
+    string line;
+
+    ifstream poiFile(fileName);
+
+    if (poiFile.is_open()){
+        getline(poiFile, line);
+        unsigned tagsTypes = stoi(line);
+        for (unsigned i = 0; i < tagsTypes; i++){
+            getline(poiFile, line);
+            string tag = line.substr(line.find('=') + 1, line.npos);
+            getline(poiFile, line);
+            unsigned  numberOfPOI = stoi(line);
+            for (int j = 0; j < numberOfPOI; j++){
+                getline(poiFile, line);
+                graph->findVertex(stoi(line))->setPoi(tag);
+
+            }
+        }
+    } else {
+        abort();
+    }
+
+    poiFile.close();
 }
 
 
