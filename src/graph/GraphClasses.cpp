@@ -100,3 +100,7 @@ bool Road::operator==(const Road &r) {
 bool Road::operator==(Road &r) {
     return this->getID() == r.getID();
 }
+
+double Road::getWeight() const {
+    return this->weight;
+}

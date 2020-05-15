@@ -5,6 +5,7 @@
 #include <queue>
 #include "Position.h"
 #include <iostream>
+#include "MutablePriorityQueue.h"
 
 using namespace std;
 
@@ -12,8 +13,6 @@ template <class T, class P> class Edge;
 template <class T, class P> class Graph;
 template <class T, class P> class Vertex;
 
-
-/****************** Provided structures  ********************/
 
 template <class T, class P>
 class Vertex {
@@ -23,6 +22,9 @@ class Vertex {
 	int indegree;          // auxiliary field used by topsort
 	bool processing;       // auxiliary field used by isDAG
 	int graphViewerID; // auxiliary for GraphViewer
+	double dist;
+	Vertex<T, P> * path;
+    int queueIndex;
 
 	void addEdge(Vertex<T, P> *dest, P w);
 	bool removeEdgeTo(Vertex<T, P> *d);
@@ -30,8 +32,11 @@ public:
 	Vertex(T in);
 	T getInfo();
 	void setPoi(string poi);
-	friend class Graph<T, P>;
+	double getDist() {return dist;}
+    bool operator<(Vertex<T, P> & vertex) const; // // required by MutablePriorityQueue
+    friend class Graph<T, P>;
 	friend class Application;
+	friend class MutablePriorityQueue<Vertex<T, P>>;
 };
 
 template <class T, class P>
@@ -64,10 +69,9 @@ public:
 	vector<T> topsort() const;
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
+	void dijkstra(Vertex<T, P> * origin);
 	friend class Application;
 };
-
-/****************** Provided constructors and functions ********************/
 
 template <class T, class P>
 Vertex<T, P>::Vertex(T in): info(in) {}
@@ -81,7 +85,12 @@ int Graph<T, P>::getNumVertex() const {
 	return vertexSet.size();
 }
 
-/*
+template <class T, class P>
+bool Vertex<T, P>::operator<(Vertex<T, P> & vertex) const {
+    return this->dist < vertex.dist;
+}
+
+/**
  * Auxiliary function to find a vertex with a given content.
  */
 template <class T, class P>
@@ -94,15 +103,13 @@ Vertex<T, P> * Graph<T, P>::findVertex(const T &in) const {
 	return NULL;
 }
 
-/****************** 1a) addVertex ********************/
-
-/*
+/**
  *  Adds a vertex with a given content/info (in) to a graph (this).
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
 template <class T, class P>
 bool Graph<T, P>::addVertex(const T &in) {
-    if (findVertex(in) != NULL) return false;
+    //if (findVertex(in) != NULL) return false;
 	auto vertex = new Vertex<T, P>(in);
 	vertexSet.push_back(vertex);
     return true;
@@ -118,9 +125,7 @@ bool Graph<T, P>::addVertex(const T &in, const Position &p) {
     return true;
 }
 
-/****************** 1b) addEdge ********************/
-
-/*
+/**
  * Adds an edge to a graph (this), given the contents of the source (sourc) and
  * destination (dest) vertices and the edge weight (w).
  * Returns true if successful, and false if the source or destination vertex does not exist.
@@ -134,7 +139,7 @@ bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P w) {
 	return true;
 }
 
-/*
+/**
  * Auxiliary function to add an outgoing edge to a vertex (this),
  * with a given destination vertex (d) and edge weight (w).
  */
@@ -143,10 +148,7 @@ void Vertex<T, P>::addEdge(Vertex<T, P> *d, P w) {
     adj.push_back(Edge<T, P>(d, w));
 }
 
-
-/****************** 1c) removeEdge ********************/
-
-/*
+/**
  * Removes an edge from a graph (this).
  * The edge is identified by the source (sourc) and destination (dest) contents.
  * Returns true if successful, and false if such edge does not exist.
@@ -159,7 +161,7 @@ bool Graph<T, P>::removeEdge(const T &sourc, const T &dest) {
     return sourcVertex->removeEdgeTo(destVertex);
 }
 
-/*
+/**
  * Auxiliary function to remove an outgoing edge (with a given destination (d))
  * from a vertex (this).
  * Returns true if successful, and false if such edge does not exist.
@@ -185,10 +187,7 @@ T Vertex<T, P>::getInfo() {
     return info;
 }
 
-
-/****************** 1d) removeVertex ********************/
-
-/*
+/**
  *  Removes a vertex with a given content (in) from a graph (this), and
  *  all outgoing and incoming edges.
  *  Returns true if successful, and false if such vertex does not exist.
@@ -210,10 +209,7 @@ bool Graph<T, P>::removeVertex(const T &in) {
 	return removed;
 }
 
-
-/****************** 2a) dfs ********************/
-
-/*
+/**
  * Performs a depth-first search (dfs) in a graph (this).
  * Returns a vector with the contents of the vertices by dfs order.
  * Follows the algorithm described in theoretical classes.
@@ -232,7 +228,7 @@ vector<T> Graph<T, P>::dfs() const {
 	return res;
 }
 
-/*
+/**
  * Auxiliary function that visits a vertex (v) and its adjacent not yet visited, recursively.
  * Updates a parameter with the list of visited node contents.
  */
@@ -247,9 +243,7 @@ void Graph<T, P>::dfsVisit(Vertex<T, P> *v, vector<T> & res) const {
     }
 }
 
-/****************** 2b) bfs ********************/
-
-/*
+/**
  * Performs a breadth-first search (bfs) in a graph (this), starting
  * from the vertex with the given source contents (source).
  * Returns a vector with the contents of the vertices by dfs order.
@@ -283,9 +277,7 @@ vector<T> Graph<T, P>::bfs(const T & source) const {
 	return res;
 }
 
-/****************** 2c) toposort ********************/
-
-/*
+/**
  * Performs a topological sorting of the vertices of a graph (this).
  * Returns a vector with the contents of the vertices by topological order.
  * If the graph has cycles, returns an empty vector.
@@ -323,9 +315,7 @@ vector<T> Graph<T, P>::topsort() const {
 	return res;
 }
 
-/****************** 3a) maxNewChildren (HOME WORK)  ********************/
-
-/*
+/**
  * Performs a breadth-first search in a graph (this), starting
  * from the vertex with the given source contents (source).
  * During the search, determines the vertex that has a maximum number
@@ -367,9 +357,7 @@ int Graph<T, P>::maxNewChildren(const T & source, T &inf) const {
 	return res;
 }
 
-/****************** 3b) isDAG   (HOME WORK)  ********************/
-
-/*
+/**
  * Performs a depth-first search in a graph (this), to determine if the graph
  * is acyclic (acyclic directed graph or DAG).
  * During the search, a cycle is found if an edge connects to a vertex

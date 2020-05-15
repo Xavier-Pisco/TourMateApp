@@ -137,6 +137,7 @@ public:
 class Road : public XMLNode {
 private:
     vector<string> nodeIDs; //!< vector with the ids of the nodes this road goes through
+    double weight = 10;
 public:
     Road(rapidxml::xml_node<> * node);
 
@@ -159,6 +160,12 @@ public:
      * @return if its equal or not
      */
     bool operator==(Road &r);
+
+    /**
+     * @brief get method for weight
+     * @return weight
+     */
+    double getWeight() const;
 };
 
 

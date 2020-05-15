@@ -4,6 +4,8 @@
 #include "lib/GraphViewer/graphviewer.h"
 #include "input/UserInput.h"
 #include "User.h"
+#include "graph/Graph.h"
+#include "graph/algorithms/dijkstra.h"
 
 Application::Application(MODE mode) {
     this->mode = mode;
@@ -12,7 +14,7 @@ Application::Application(MODE mode) {
 
 void Application::start() {
     //start user---
-    UserInput userInput;
+    /*UserInput userInput;
     User user;
     string origem, destino;
 
@@ -24,10 +26,14 @@ void Application::start() {
 
     float tempo=userInput.getFloat("Quanto tempo disponível: ");
     user.setDisponibilidade(tempo);
-    //-----------
+    //-----------*/
 
     graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
     if (mode == DEBUG) viewGraph();
+
+    cout << "Started dijkstra" << endl;
+    graph->dijkstra(graph->vertexSet.at(0));
+    cout << "Finished dijkstra" << endl;
 
     while(true) {
         cout << "Insert 'exit' to leave.\n";
