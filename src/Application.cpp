@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "lib/GraphViewer/graphviewer.h"
 #include "input/UserInput.h"
+#include "User.h"
 
 Application::Application(MODE mode) {
     this->mode = mode;
@@ -10,6 +11,21 @@ Application::Application(MODE mode) {
 }
 
 void Application::start() {
+    //start user---
+    UserInput userInput;
+    User user;
+    string origem, destino;
+
+    origem=userInput.getLine("Ponto de Origem: ");
+    user.findOrigem(origem);
+
+    destino=userInput.getLine("Ponto de Chegada: ");
+    user.findDestino(destino);
+
+    float tempo=userInput.getFloat("Quanto tempo disponível: ");
+    user.setDisponibilidade(tempo);
+    //-----------
+
     graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
     if (mode == DEBUG) viewGraph();
 
@@ -26,6 +42,9 @@ void Application::start() {
             delete graphViewer;
         }
     }
+
+
+
 }
 
 void Application::viewGraph() {
