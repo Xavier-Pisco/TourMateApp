@@ -20,8 +20,11 @@ XMLNode::XMLNode(rapidxml::xml_node<> * node) {
     }
 }
 
-const string &XMLNode::getID() const {
-    return XMLNodeAttributes.at("id");
+long XMLNode::getID() const {
+    if (XMLNodeAttributes.find("id") == XMLNodeAttributes.end()) {
+        cout << "Couldn't find id" << endl;
+    }
+    return stol(XMLNodeAttributes.at("id"));
 }
 
 const map<string, string> &XMLNode::getXMLNodeAttributes() const {
@@ -60,8 +63,8 @@ double VertexInfoXML::getLon() const {
     return stod(XMLNodeAttributes.at("lon"));
 }
 
-long VertexInfoXML::getId() const {
-    return stol(XMLNodeAttributes.at("id"));
+long VertexInfoXML::getID() const {
+    return XMLNode::getID();
 }
 
 /* Road */

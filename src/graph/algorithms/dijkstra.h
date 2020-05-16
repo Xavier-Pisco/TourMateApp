@@ -38,5 +38,31 @@ void Graph<T, P>::dijkstra(Vertex<T, P> * s) {
     }
 }
 
+template<class T, class P>
+pair<vector<P>, int> Graph<T, P>::getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d) {
+    // Note, this requires dijkstra algorithm to have been executed starting on vertex *s
+    vector<Road> path;
+    Vertex<T, P> * prevVertex, * currVertex = d;
+
+    if (currVertex->dist == DBL_MAX) return pair<vector<P>, int>(vector<P>(), 0); // Impossible to reach
+
+    while ((prevVertex = currVertex->path) != nullptr) {
+        bool found = false;
+        for (Edge<T, P> &edge : prevVertex->adj) {
+            if (edge.dest == currVertex) {
+                P road = edge.info;
+                if (path.begin() == path.end() || !(*path.begin() == road)) {
+                    path.insert(path.begin(), road);
+                }
+                found = true;
+            }
+        }
+        if (!found) throw exception();
+        currVertex = prevVertex;
+    }
+
+    return pair<vector<P>, int>(path, d->dist);
+}
+
 
 #endif //SRC_DIJKSTRA_H

@@ -29,6 +29,11 @@ public:
      */
     void viewGraph();
 
+    /**
+     * @brief exits the application
+     */
+    void exit();
+
     void setMaxMinCoords();
 
     int latToY(const string &lat, int width) const;

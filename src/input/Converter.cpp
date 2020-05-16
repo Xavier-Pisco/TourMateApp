@@ -99,27 +99,12 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
 
     int lastDone = -1;
 
-    cout << endl << "Starting to add vertices..." << endl;
-    int i = 1;
     for (auto & node : nodes) {
-        if ((i*100)/nodes.size() % 10 == 0 && lastDone != (i*100)/nodes.size()) {
-            cout << (i*100)/nodes.size() << "%" << " done\n";
-            lastDone = (i*100)/nodes.size();
-        }
-        i++;
         res->addVertex(node.second);
     }
     cout << "Finished adding vertices!" << endl;
-    cout << endl << "Starting to add edges..." << endl;
     lastDone = -1;
-    i = 1;
     for (Road * edge : roads) {
-        if ((i*100)/roads.size() % 10 == 0 && lastDone != (i*100)/roads.size()) {
-            cout << (i*100)/roads.size() << "%" << " done\n";
-            lastDone = (i*100)/roads.size();
-        }
-        i++;
-
         const vector<string>& nodeIDs = edge->getNodeIDs();
 
         // Testing if oneway or not
@@ -167,7 +152,7 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
             }
         }
     }
-    cout << "Finished!" << endl << endl;
+    cout << "Finished adding edges!" << endl << endl;
 
     return res;
 }

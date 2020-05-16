@@ -74,6 +74,7 @@ public:
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
 	void dijkstra(Vertex<T, P> * origin);
+	pair<vector<P>, int> getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d);
 	friend class Application;
 };
 
@@ -172,7 +173,7 @@ bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P info) {
 template <class T, class P>
 void Vertex<T, P>::addEdge(Vertex<T, P> *d, P inf, double w) {
     for (Edge<T, P> &edge : adj) {
-        if (edge.dest->info.getId() == d->info.getId()) {
+        if (edge.dest->info.getID() == d->info.getID()) {
             return;
         }
     }

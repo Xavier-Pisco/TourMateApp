@@ -31,16 +31,8 @@ void Application::start() {
     graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
     if (mode == DEBUG) viewGraph();
 
-    cout << "Started dijkstra" << endl;
-    graph->dijkstra(graph->vertexSet.at(0));
-    cout << "Finished dijkstra" << endl;
 
-    while(true) {
-        cout << "Insert 'exit' to leave.\n";
-        string opt;
-        cin >> opt;
-        if (opt == "exit") break;
-    }
+    exit();
 
     if (mode == DEBUG) {
         if (graphViewer != nullptr) {
@@ -112,4 +104,13 @@ void Application::setMaxMinCoords() {
     /*cout << "Min coords: " << minCoords.first << ", " << minCoords.second << endl;
     cout << "Max coords: " << maxCoords.first << ", " << maxCoords.second << endl;*/
 
+}
+
+void Application::exit() {
+    while(true) {
+        cout << "Insert 'exit' to leave.\n";
+        string opt;
+        cin >> opt;
+        if (opt == "exit") break;
+    }
 }

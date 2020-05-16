@@ -8,10 +8,10 @@ class VertexInfo {
 public:
     virtual double getLat() const = 0;
     virtual double getLon() const = 0;
-    virtual long getId() const = 0;
+    virtual long getID() const = 0;
 
     friend bool operator==(const VertexInfo& r1, const VertexInfo& r2){
-        return r1.getId() == r2.getId();
+        return r1.getID() == r2.getID();
     }
 };
 
@@ -38,7 +38,7 @@ public:
      * @brief GET method for ID
      * @return the id
      */
-    const string &getID() const;
+    long getID() const;
 
     /**
      * @brief GET method for the XML attributes that were present in the xml node
@@ -92,11 +92,11 @@ public:
      */
     unsigned int getCount() const;
 
-    double getLat() const;
+    double getLat() const override;
 
-    double getLon() const;
+    double getLon() const override;
 
-    long getId() const;
+    long getID() const override;
 };
 
 /**
@@ -131,7 +131,7 @@ public:
         return p.getY();
     }
 
-    long getId() const override {
+    long getID() const override {
         return id;
     }
 };
