@@ -15,19 +15,20 @@ float UserInput::getFloat(string getterPhrase) {
             float n = stof(s);
             return n;
         } catch (...) {
-            cout << "Please insert a valid number." << endl;
+            cout << "Please insert a valid value." << endl;
         }
     }
 }
 
-int UserInput::getInt(string getterPhrase) {
+int UserInput::getInt(string &getterPhrase, int lowerLimit, int upperLimit) {
     while(true) {
         try {
             string s = getLine(getterPhrase);
             int n = stoi(s);
+            if (n < lowerLimit || n > upperLimit) throw exception();
             return n;
         } catch (...) {
-            cout << "Please insert a valid number." << endl;
+            cout << "Please insert a valid value." << endl;
         }
     }
 }

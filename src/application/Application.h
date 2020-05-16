@@ -25,6 +25,12 @@ public:
     void start();
 
     /**
+     * @brief the main menu
+     * @return -1 to close app
+     */
+    int mainMenu();
+
+    /**
      * @brief uses GraphViewer to display graph
      */
     void viewGraph();

@@ -6,6 +6,9 @@
 #include "User.h"
 #include "../graph/Graph.h"
 #include "../graph/algorithms/dijkstra.h"
+#include "Menu.h"
+#include "RouteMaker.h"
+#include "Drawer.h"
 
 Application::Application(MODE mode) {
     this->mode = mode;
@@ -28,8 +31,11 @@ void Application::start() {
     user.setDisponibilidade(tempo);
     //-----------*/
 
-    graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
-    if (mode == DEBUG) viewGraph();
+
+    while( mainMenu() != -1 );
+
+    /*graph = Converter::getGraphFromOSMFile("../maps/centro_aliados.osm");
+    if (mode == DEBUG) viewGraph();*/
 
 
     exit();
@@ -40,9 +46,33 @@ void Application::start() {
             delete graphViewer;
         }
     }
+}
+
+int Application::mainMenu() {
+    Menu menu;
+
+    menu.addOption("exit application");
+    menu.addOption("start a route");
+    menu.addOption("view available maps");
 
 
+    Drawer::drawTitle("TourMateApp");
+    cout << endl;
+    menu.draw();
+    unsigned opt = menu.getResponse("\n\nChoose an option from the menu:");
 
+    switch(opt) {
+        case 0:
+            return -1;
+        case 1:
+            RouteMaker routeMaker;
+            routeMaker.start();
+            break;
+        case 2:
+        default:
+            break;
+    }
+    return 0;
 }
 
 void Application::viewGraph() {
@@ -107,10 +137,5 @@ void Application::setMaxMinCoords() {
 }
 
 void Application::exit() {
-    while(true) {
-        cout << "Insert 'exit' to leave.\n";
-        string opt;
-        cin >> opt;
-        if (opt == "exit") break;
-    }
+    // do stuff
 }

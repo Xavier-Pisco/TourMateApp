@@ -24,9 +24,11 @@ public:
     /**
      * @brief gets an int number
      * @param getterPhrase - the phrase that is displayed to the user before him inserting the information
+     * @param lowerLimit - the lower limit of the value
+     * @param upperLimit - the upper limit of the value
      * @return number
      */
-    static int getInt(string getterPhrase);
+    static int getInt(string &getterPhrase, int lowerLimit = INT32_MIN, int upperLimit = INT32_MAX);
 
     /**
      * @brief gets confirmation from the user
