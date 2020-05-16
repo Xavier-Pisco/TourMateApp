@@ -1,24 +1,12 @@
 #ifndef SRC_APPLICATION_H
 #define SRC_APPLICATION_H
 
-#include "../input/Converter.h"
-#include "../lib/GraphViewer/graphviewer.h"
+#include <string>
+
+using namespace std;
 
 class Application {
 public:
-    enum MODE {DEBUG, RELEASE}; //!< mode in which to run the application
-private:
-    MODE mode;
-    Graph<VertexInfoXML, Road> * graph;
-    GraphViewer * graphViewer;
-    pair<double, double> minCoords, maxCoords;
-
-public:
-    /**
-     * @brief Constructor
-     * @param mode - the mode in which to run
-     */
-    explicit Application(MODE mode);
 
     /**
      * @brief starts the application
@@ -32,19 +20,12 @@ public:
     int mainMenu();
 
     /**
-     * @brief uses GraphViewer to display graph
-     */
-    void viewGraph();
-
-    /**
      * @brief exits the application
      */
     void exit();
 
-    void setMaxMinCoords();
-
-    int latToY(const string &lat, int width) const;
-    int lonToX(const string &lon, int height) const;
+    static int latToY(const string &lon, int height, pair<double, double> &minCoords, pair<double, double> &maxCoords);
+    static int lonToX(const string &lon, int height, pair<double, double> &minCoords, pair<double, double> &maxCoords);
 };
 
 

@@ -41,7 +41,7 @@ void Graph<T, P>::dijkstra(Vertex<T, P> * s) {
 template<class T, class P>
 pair<vector<P>, int> Graph<T, P>::getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d) {
     // Note, this requires dijkstra algorithm to have been executed starting on vertex *s
-    vector<Road> path;
+    vector<P> path;
     Vertex<T, P> * prevVertex, * currVertex = d;
 
     if (currVertex->dist == DBL_MAX) return pair<vector<P>, int>(vector<P>(), 0); // Impossible to reach

@@ -1,10 +1,8 @@
 #include "RouteMaker.h"
-#include "Menu.h"
-#include "Drawer.h"
-#include <dirent.h>
+#include "../graph/viewGraph.h"
+#include "../input/UserInput.h"
 
 void RouteMaker::start() {
-
     Menu menu;
     menu.addOption("return");
 
@@ -56,8 +54,14 @@ vector<string> RouteMaker::getAvailableMaps(string & path) const {
 
 void RouteMaker::openMap(string &map) {
     graph = Converter::getGraphFromOSMFile(map);
+    graph->viewGraph();
+    UserInput::getLine("Press ENTER to close graph. Note: If you close on the 'x' of the window it will shutdown the program");
 }
 
 void RouteMaker::getRouteInfo() {
     Drawer::drawTitle("Route info");
+}
+
+RouteMaker::~RouteMaker() {
+    delete graph;
 }

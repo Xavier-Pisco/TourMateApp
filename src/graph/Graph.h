@@ -6,6 +6,7 @@
 #include "Position.h"
 #include <iostream>
 #include "MutablePriorityQueue.h"
+#include "../lib/GraphViewer/graphviewer.h"
 
 using namespace std;
 
@@ -54,11 +55,17 @@ public:
 template <class T, class P>
 class Graph {
 	vector<Vertex<T, P> *> vertexSet;    // vertex set
+    GraphViewer * graphViewer = nullptr;
+    pair<double, double> minCoords, maxCoords;
 
 	void dfsVisit(Vertex<T, P> *v,  vector<T> & res) const;
 	bool dfsIsDAG(Vertex<T, P> *v) const;
+
 public:
+    ~Graph();
     Vertex<T, P> *findVertex(const T &in) const;
+    void viewGraph();
+    void setMaxMinCoords();
 	int getNumVertex() const;
 	bool addVertex(const T &in);
     bool addVertex(Vertex<T, P> * in);
@@ -88,6 +95,14 @@ Edge<T, P>::Edge(Vertex<T, P> *d, P info, double w): dest(d), info(info), weight
 template <class T, class P>
 int Graph<T, P>::getNumVertex() const {
 	return vertexSet.size();
+}
+template <class T, class P>
+Graph<T, P>::~Graph() {
+    if (graphViewer != nullptr) {
+        graphViewer->closeWindow();
+        delete graphViewer;
+    }
+    for (Vertex<T, P> * v : vertexSet) delete v;
 }
 
 template <class T, class P>

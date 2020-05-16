@@ -3,7 +3,7 @@
 using namespace std;
 
 int main() {
-    Application app(Application::RELEASE);
+    Application app;
     app.start();
 
     /*auto graph = Converter::getGraphFromTXTFile("../../cal-mapas-fornecidos/PortugalMaps/Porto/nodes_x_y_porto.txt", "../../cal-mapas-fornecidos/PortugalMaps/Porto/edges_porto.txt", "../../cal-mapas-fornecidos/TagExamples/Porto/t03_tags_porto.txt");
