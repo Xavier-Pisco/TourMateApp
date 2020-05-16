@@ -83,7 +83,6 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
         }
     }
 
-    cout << "Found " << nodes.size() << " nodes" << endl << "Found " << roads.size() << " roads" << endl;
 
     // Erasing nodes with count == 0
     vector<string> k;
@@ -97,13 +96,10 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
         nodes.erase(key);
     }
 
-    int lastDone = -1;
-
     for (auto & node : nodes) {
         res->addVertex(node.second);
     }
-    cout << "Finished adding vertices!" << endl;
-    lastDone = -1;
+
     for (Road * edge : roads) {
         const vector<string>& nodeIDs = edge->getNodeIDs();
 
@@ -152,7 +148,6 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
             }
         }
     }
-    cout << "Finished adding edges!" << endl << endl;
 
     return res;
 }

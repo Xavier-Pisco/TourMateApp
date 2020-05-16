@@ -3,17 +3,19 @@
 
 #include <string>
 #include <vector>
+#include "../graph/GraphClasses.h"
+#include "../input/Converter.h"
 
 using namespace std;
 
 class RouteMaker {
 private:
-
+    Graph<VertexInfoXML, Road> * graph;
 public:
     void start();
     void openMap(string &map);
     void getRouteInfo();
-    vector<string> getAvailableMaps() const;
+    vector<string> getAvailableMaps(string & path) const;
 };
 
 

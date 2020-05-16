@@ -1,5 +1,6 @@
 #ifndef SRC_APPLICATION_H
 #define SRC_APPLICATION_H
+
 #include "../input/Converter.h"
 #include "../lib/GraphViewer/graphviewer.h"
 

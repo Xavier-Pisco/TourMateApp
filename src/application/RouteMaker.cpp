@@ -12,16 +12,20 @@ void RouteMaker::start() {
     Drawer::drawTitle("Choose a map");
     cout << endl;
 
-    vector<string> maps = getAvailableMaps();
+    string path = "../maps/";
+
+    vector<string> maps = getAvailableMaps(path);
     menu.addExtraInput(maps);
 
     if (maps.empty()) cout << "No maps were found" << endl;
 
     menu.draw();
     string res;
-    int opt = menu.getResponse("\n\nInsert an option:", res);
+    cout << endl << endl;
+    int opt = menu.getResponse("Insert an option:", res);
     if (opt == -1) {
-        openMap(res);
+        path = path + res;
+        openMap(path);
         getRouteInfo();
         return;
     }
@@ -32,9 +36,8 @@ void RouteMaker::start() {
     }
 }
 
-vector<string> RouteMaker::getAvailableMaps() const {
+vector<string> RouteMaker::getAvailableMaps(string & path) const {
     vector<string> res;
-    string path = "../maps";
 
     DIR *dir;
     struct dirent *ent;
@@ -52,7 +55,7 @@ vector<string> RouteMaker::getAvailableMaps() const {
 }
 
 void RouteMaker::openMap(string &map) {
-
+    graph = Converter::getGraphFromOSMFile(map);
 }
 
 void RouteMaker::getRouteInfo() {

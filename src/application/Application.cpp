@@ -59,7 +59,8 @@ int Application::mainMenu() {
     Drawer::drawTitle("TourMateApp");
     cout << endl;
     menu.draw();
-    unsigned opt = menu.getResponse("\n\nChoose an option from the menu:");
+    cout << endl << endl;
+    unsigned opt = menu.getResponse("Choose an option from the menu:");
 
     switch(opt) {
         case 0:
