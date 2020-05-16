@@ -3,31 +3,6 @@
 
 using namespace std;
 
-/* POI */
-
-POI::POI(double lat, double lon, string n, string d, int avg) {
-    coords.first = lat;
-    coords.second = lon;
-    name = n;
-    description = d;
-    averageSpentTime = avg;
-}
-
-const pair<double, double> &POI::getCoords() const {
-    return coords;
-}
-
-const string &POI::getName() const {
-    return name;
-}
-
-const string &POI::getDescription() const {
-    return description;
-}
-
-int POI::getAverageSpentTime() const {
-    return averageSpentTime;
-}
 
 /* XMLNode */
 
@@ -57,24 +32,36 @@ const map<string, string> &XMLNode::getXMLTags() const {
     return xmlTags;
 }
 
-/* RoadIntersection */
+/* VertexInfoXML */
 
-RoadIntersection::RoadIntersection(rapidxml::xml_node<> *node) : XMLNode(node) {}
+VertexInfoXML::VertexInfoXML(rapidxml::xml_node<> *node) : XMLNode(node) {}
 
-bool RoadIntersection::operator==(const RoadIntersection &si) {
+bool VertexInfoXML::operator==(const VertexInfoXML &si) {
     return this->getID() == si.getID();
 }
 
-bool RoadIntersection::operator==(RoadIntersection &si) {
+bool VertexInfoXML::operator==(VertexInfoXML &si) {
     return this->getID() == si.getID();
 }
 
-void RoadIntersection::incrementCount() {
+void VertexInfoXML::incrementCount() {
     count++;
 }
 
-unsigned int RoadIntersection::getCount() const {
+unsigned int VertexInfoXML::getCount() const {
     return count;
+}
+
+double VertexInfoXML::getLat() const {
+    return stod(XMLNodeAttributes.at("lat"));
+}
+
+double VertexInfoXML::getLon() const {
+    return stod(XMLNodeAttributes.at("lon"));
+}
+
+long VertexInfoXML::getId() const {
+    return stol(XMLNodeAttributes.at("id"));
 }
 
 /* Road */
@@ -99,8 +86,4 @@ bool Road::operator==(const Road &r) {
 
 bool Road::operator==(Road &r) {
     return this->getID() == r.getID();
-}
-
-double Road::getWeight() const {
-    return this->weight;
 }

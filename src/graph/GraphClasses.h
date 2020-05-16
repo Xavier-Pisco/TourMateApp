@@ -2,57 +2,19 @@
 #define SRC_GRAPHCLASSES_H
 
 #include "../lib/RapidXML/rapidxml.hpp"
-#include "Graph.h"
-#include <cstring>
-#include <map>
+#include "POI.h"
 
-
-/**
- * @brief Stores information about the Point of Interest
- */
-class POI {
-private:
-    pair<double, double> coords; //!< pair with the coords (lat, long)
-    string name; //!< name of the POI
-    string description; //!< description of the POI
-    int averageSpentTime; //!< average time spent visiting the POI
-
+class VertexInfo {
 public:
-    /**
-     * @brief Constructor for the Point of Interest object
-     * @param lat - latitude
-     * @param lon - longitude
-     * @param n - name
-     * @param d - description
-     * @param avg - avg visit duration
-     */
-    POI(double lat, double lon, string n, string d, int avg);
+    virtual double getLat() const = 0;
+    virtual double getLon() const = 0;
+    virtual long getId() const = 0;
 
-    /**
-     * @brief GET method for the coords
-     * @return pair with the coords
-     */
-    const pair<double, double> &getCoords() const;
-
-    /**
-     * @brief GET method for name
-     * @return string name
-     */
-    const string &getName() const;
-
-    /**
-     * @brief GET method for description
-     * @return string description
-     */
-    const string &getDescription() const;
-
-    /**
-     * @brief GET method for avg visit time
-     * @return avg visit time
-     */
-    int getAverageSpentTime() const;
-
+    friend bool operator==(const VertexInfo& r1, const VertexInfo& r2){
+        return r1.getId() == r2.getId();
+    }
 };
+
 
 /**
  * @brief Stores information about XMLNodes (which aren't the same as the nodes in a graph)
@@ -61,7 +23,7 @@ public:
  */
 
 class XMLNode {
-private:
+protected:
     map<string, string> XMLNodeAttributes; //!< map of (attributeName, attributeValue)
     map<string, string> xmlTags; //!< map of (tagName, tagValue)
 
@@ -70,7 +32,7 @@ public:
      * @brief Constructs the object
      * @param node - pointer to the xml_node
      */
-    XMLNode(rapidxml::xml_node<> * node);
+    explicit XMLNode(rapidxml::xml_node<> * node);
 
     /**
      * @brief GET method for ID
@@ -92,9 +54,9 @@ public:
 };
 
 /**
- * @brief Stores information about a street intersection - correspondent to the node of the graph
+ * @brief Stores information about a street intersection coming from XML - correspondent to the node of the graph
  */
-class RoadIntersection : public XMLNode {
+class VertexInfoXML : public XMLNode, public VertexInfo {
 private:
     unsigned count = 0; //!< count of roads that pass through this node
     POI * poi = nullptr; //!< pointer to the POI object
@@ -103,21 +65,21 @@ public:
      * @brief constructor for the object
      * @param node - pointer to the xml node
      */
-    explicit RoadIntersection(rapidxml::xml_node<> *node);
+    explicit VertexInfoXML(rapidxml::xml_node<> *node);
 
     /**
      * @brief == operator overload against a const object of this class
      * @param si - the object that this will be compared to
      * @return if its equal or not
      */
-    bool operator==(const RoadIntersection &si);
+    bool operator==(const VertexInfoXML &si);
 
     /**
      * @brief == operator overload against an object of this class
      * @param si - the object that this will be compared to
      * @return if its equal or not
      */
-    bool operator==(RoadIntersection &si);
+    bool operator==(VertexInfoXML &si);
 
     /**
      * @brief increments the count of edges that pass through this node
@@ -129,7 +91,52 @@ public:
      * @return the vaalue of count
      */
     unsigned int getCount() const;
+
+    double getLat() const;
+
+    double getLon() const;
+
+    long getId() const;
 };
+
+/**
+ * @brief Stores information about a street intersection coming from TXT - correspondent to the node of the graph
+ */
+class VertexInfoTXT : public VertexInfo {
+private:
+    Position p;
+    const long id;
+    const POI * poi = nullptr;
+public:
+    VertexInfoTXT(const long id, Position p) : id(id), p(p) {}
+
+    friend ostream& operator <<(ostream &os, const VertexInfoTXT &r){
+        os << r.id << " - (" << r.p.getX() << ", " << r.p.getY() << ") - " << r.poi->getType() << endl;
+        return os;
+    }
+
+    void setPoi(const POI * poi){
+        this->poi = poi;
+    }
+
+    const POI * getPoi() {
+        return poi;
+    }
+
+    double getLat() const override {
+        return p.getX();
+    }
+
+    double getLon() const override {
+        return p.getY();
+    }
+
+    long getId() const override {
+        return id;
+    }
+};
+
+
 
 /**
  * @brief Stores information about a road - correspondent to the edge of the graph
@@ -137,7 +144,6 @@ public:
 class Road : public XMLNode {
 private:
     vector<string> nodeIDs; //!< vector with the ids of the nodes this road goes through
-    double weight = 10;
 public:
     Road(rapidxml::xml_node<> * node);
 
@@ -160,12 +166,6 @@ public:
      * @return if its equal or not
      */
     bool operator==(Road &r);
-
-    /**
-     * @brief get method for weight
-     * @return weight
-     */
-    double getWeight() const;
 };
 
 

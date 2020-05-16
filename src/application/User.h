@@ -4,8 +4,8 @@
 #include <string>
 #include <iostream>
 #include <list>
-#include "graph/GraphClasses.h"
-#include "graph/Graph.h"
+#include "../graph/GraphClasses.h"
+#include "../graph/Graph.h"
 
 using namespace std;
 
@@ -14,8 +14,8 @@ class User {
 private:
     //dados de entrada
     float disp;
-    Vertex<RoadIntersection,Road> * origin;
-    Vertex<RoadIntersection,Road> *destiny;
+    Vertex<VertexInfoXML,Road> * origin;
+    Vertex<VertexInfoXML,Road> *destiny;
     list<string> *preferenceList;
     list<POI> *poiList;
 public:

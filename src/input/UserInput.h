@@ -41,6 +41,7 @@ public:
      * @return the converted string
      */
     static string strToLower(string s);
+
 };
 
 

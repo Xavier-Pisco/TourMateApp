@@ -2,7 +2,6 @@
 #define SRC_CONVERTER_H
 
 #include "../graph/GraphClasses.h"
-#include "../graph/RoadInterceptionFromTxt.h"
 #include <dirent.h>
 #include <fstream>
 #include <iostream>
@@ -27,7 +26,7 @@ private:
      * @param doc - the XMLDoc
      * @return pointer to the graph
      */
-    static Graph<RoadIntersection, Road> * parseXMLDocToGraph(rapidxml::xml_document<> &doc);
+    static Graph<VertexInfoXML, Road> * parseXMLDocToGraph(rapidxml::xml_document<> &doc);
 
     /**
      * Creates a RapidXML doc from data in c string format
@@ -35,6 +34,7 @@ private:
      * @return pointer to the XML document
      */
     static rapidxml::xml_document<> * createXMLDoc(char * data);
+
 
     /**
      * Parses a line of nodes to a vector
@@ -55,30 +55,30 @@ private:
      * @param fileName
      * @param graph
      */
-    static void readNodeFileTxt(const string& fileName, Graph<RoadInterceptionFromTxt, int> * graph);
+    static void readNodeFileTxt(const string& fileName, Graph<VertexInfoTXT, int> * graph);
 
     /**
      * Reads edges from a file
      * @param fileName
      * @param graph
      */
-    static void readEdgesFileTxt(const string& fileName, Graph<RoadInterceptionFromTxt, int> * graph);
+    static void readEdgesFileTxt(const string& fileName, Graph<VertexInfoTXT, int> * graph);
 
     /**
      * Reads all tags from a folder
      * @param folderName
      * @param graph
      */
-    static void readTagsFromFolder(const string& folderName, Graph<RoadInterceptionFromTxt, int> * graph);
+    static void readTagsFromFolder(const string& folderName, Graph<VertexInfoTXT, int> * graph);
 
-    static void readTagsFromFile(const string& fileName, Graph<RoadInterceptionFromTxt, int> * graph);
+    static void readTagsFromFile(const string& fileName, Graph<VertexInfoTXT, int> * graph);
 public:
     /**
      * Converts an OpenStreetMap file to graph format
      * @param fileName - name of the file to get graph from
      * @return pointer to the graph
      */
-    static Graph<RoadIntersection, Road> * getGraphFromOSMFile(const string& fileName);
+    static Graph<VertexInfoXML, Road> * getGraphFromOSMFile(const string& fileName);
 
     /**
      * Converts info from a city to a graph
@@ -87,7 +87,7 @@ public:
      * @param poiFileName
      * @return
      */
-    static Graph<RoadInterceptionFromTxt, int> * getGraphFromTXTFile(const string& city);
+    static Graph<VertexInfoTXT, int> * getGraphFromTXTFile(const string& city);
 };
 
 

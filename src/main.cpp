@@ -1,10 +1,10 @@
 #include <iostream>
-#include "Application.h"
+#include "application/Application.h"
 
 using namespace std;
 
 int main() {
-    Application app(Application::DEBUG);
+    Application app(Application::RELEASE);
     //Application app(Application::RELEASE);
     app.start();
 

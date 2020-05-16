@@ -1,14 +1,14 @@
 #ifndef SRC_APPLICATION_H
 #define SRC_APPLICATION_H
-#include "input/Converter.h"
-#include "lib/GraphViewer/graphviewer.h"
+#include "../input/Converter.h"
+#include "../lib/GraphViewer/graphviewer.h"
 
 class Application {
 public:
     enum MODE {DEBUG, RELEASE}; //!< mode in which to run the application
 private:
     MODE mode;
-    Graph<RoadIntersection, Road> * graph;
+    Graph<VertexInfoXML, Road> * graph;
     GraphViewer * graphViewer;
     pair<double, double> minCoords, maxCoords;
 

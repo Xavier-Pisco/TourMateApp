@@ -1,6 +1,6 @@
 #include "Converter.h"
 
-Graph<RoadIntersection, Road> * Converter::getGraphFromOSMFile(const string& fileName) {
+Graph<VertexInfoXML, Road> * Converter::getGraphFromOSMFile(const string& fileName) {
     string fileContent;
     if (readFileData(fileName, fileContent) != 0) {
         cout << "Error reading input file!" << endl;
@@ -9,13 +9,13 @@ Graph<RoadIntersection, Road> * Converter::getGraphFromOSMFile(const string& fil
     rapidxml::xml_document<> * doc;
     doc = createXMLDoc((char*) fileContent.c_str());
 
-    Graph<RoadIntersection, Road> * myGraph = parseXMLDocToGraph(*doc);
+    Graph<VertexInfoXML, Road> * myGraph = parseXMLDocToGraph(*doc);
 
     return myGraph;
 }
 
 
-Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc) {
+Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc) {
     /*
      * ALGORITHM
      *
@@ -47,19 +47,19 @@ Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_docu
      *
      * */
 
-    auto * res = new Graph<RoadIntersection, Road>;
+    auto * res = new Graph<VertexInfoXML, Road>;
 
-    map<string, RoadIntersection*> nodes;
+    map<string, Vertex<VertexInfoXML, Road> *> nodes;
     vector<Road*> roads;
 
     // looping through child nodes of osm node and adding them to nodes
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node(); node; node = node->next_sibling()) {
         if (strcmp(node->name(), "node") == 0) {
-            nodes[node->first_attribute()->value()] = new RoadIntersection(node);
+            nodes[node->first_attribute()->value()] = new Vertex<VertexInfoXML, Road>(VertexInfoXML(node));
         }
     }
 
-    // looping though ways, incrementing RoadIntersection count and adding roads
+    // looping though ways, incrementing VertexInfoXML count and adding roads
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node(); node; node = node->next_sibling()) {
         if (strcmp(node->name(), "way") == 0) {
             Road * candidate = new Road(node);
@@ -73,7 +73,7 @@ Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_docu
                     roads.push_back(candidate);
                     for (const string& nodeID : roads.at(roads.size()-1)->getNodeIDs()) {
                         if (nodes.find(nodeID) != nodes.end())
-                            nodes[nodeID]->incrementCount();
+                            nodes[nodeID]->getInfo().incrementCount();
                     }
                     done = true;
                     break;
@@ -83,10 +83,12 @@ Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_docu
         }
     }
 
+    cout << "Found " << nodes.size() << " nodes" << endl << "Found " << roads.size() << " roads" << endl;
+
     // Erasing nodes with count == 0
     vector<string> k;
     for (auto & node : nodes) {
-        if (node.second->getCount() == 0) {
+        if (node.second->getInfo().getCount() == 0) {
             delete node.second;
             k.push_back(node.first);
         }
@@ -94,9 +96,6 @@ Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_docu
     for (const string& key : k) {
         nodes.erase(key);
     }
-
-    cout << "Roads: " << roads.size() << endl;
-    cout << "Nodes: " << nodes.size() << endl;
 
     int lastDone = -1;
 
@@ -108,7 +107,7 @@ Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_docu
             lastDone = (i*100)/nodes.size();
         }
         i++;
-        res->addVertex(*node.second);
+        res->addVertex(node.second);
     }
     cout << "Finished adding vertices!" << endl;
     cout << endl << "Starting to add edges..." << endl;
@@ -148,17 +147,21 @@ Graph<RoadIntersection, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_docu
         // simplest case
         if (nodeIDs.size() == 2) {
             if (nodes.find(nodeIDs.at(0)) != nodes.end() && nodes.find(nodeIDs.at(1)) != nodes.end()) {
-                res->addEdge(*nodes.at(nodeIDs.at(0)), *nodes.at(nodeIDs.at(1)), *edge);
+                // Calculate length -> http://www.movable-type.co.uk/scripts/latlong.html
+                double length = 10;
+                res->addEdge(nodes.at(nodeIDs.at(0)), nodes.at(nodeIDs.at(1)), *edge, length);
                 if (!oneway) {
-                    res->addEdge(*nodes.at(nodeIDs.at(1)), *nodes.at(nodeIDs.at(0)), *edge);
+                    res->addEdge(nodes.at(nodeIDs.at(1)), nodes.at(nodeIDs.at(0)), *edge, length);
                 }
             }
         } else {
             for (unsigned j = 0; j < nodeIDs.size()-1; j++) {
                 if (nodes.find(nodeIDs.at(j)) != nodes.end() && nodes.find(nodeIDs.at(j+1)) != nodes.end()) {
-                    res->addEdge(*nodes.at(nodeIDs.at(j)), *nodes.at(nodeIDs.at(j + 1)), *edge);
+                    // Calculate length -> http://www.movable-type.co.uk/scripts/latlong.html
+                    double length = 10;
+                    res->addEdge(nodes.at(nodeIDs.at(j)), nodes.at(nodeIDs.at(j + 1)), *edge, length);
                     if (!oneway) {
-                        res->addEdge(*nodes.at(nodeIDs.at(j + 1)), *nodes.at(nodeIDs.at(j)), *edge);
+                        res->addEdge(nodes.at(nodeIDs.at(j + 1)), nodes.at(nodeIDs.at(j)), *edge, length);
                     }
                 }
             }
@@ -192,8 +195,10 @@ rapidxml::xml_document<> * Converter::createXMLDoc(char * data) {
     return doc;
 }
 
-Graph<RoadInterceptionFromTxt, int> *Converter::getGraphFromTXTFile(const string & city) {
-    auto graph = new Graph<RoadInterceptionFromTxt, int>;
+
+// TODO This needs to be done with an unweighted GRAPH
+/*Graph<VertexInfoTXT, int> *Converter::getGraphFromTXTFile(const string & city) {
+    auto graph = new Graph<VertexInfoTXT, int>;
 
     string lowerCaseCity = city;
     transform(lowerCaseCity.begin(), lowerCaseCity.end(), lowerCaseCity.begin(), ::tolower);
@@ -231,7 +236,7 @@ vector<double> Converter::parseEdgeLineToInts(string &line) {
     return v;
 }
 
-void Converter::readNodeFileTxt(const string &fileName, Graph<RoadInterceptionFromTxt, int> *graph) {
+void Converter::readNodeFileTxt(const string &fileName, Graph<VertexInfoTXT, int> *graph) {
     string line;
     ifstream nodesFile(fileName);
 
@@ -242,7 +247,7 @@ void Converter::readNodeFileTxt(const string &fileName, Graph<RoadInterceptionFr
             vector<double> v = parseNodeLineToInts(line);
             unsigned id = v[0];
             Position p = Position(v[1], v[2]);
-            graph->addVertex(RoadInterceptionFromTxt(id, p));
+            graph->addVertex(VertexInfoTXT(id, p));
         }
     } else {
         abort();
@@ -251,7 +256,7 @@ void Converter::readNodeFileTxt(const string &fileName, Graph<RoadInterceptionFr
     nodesFile.close();
 }
 
-void Converter::readEdgesFileTxt(const string &fileName, Graph<RoadInterceptionFromTxt, int> *graph) {
+void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT, int> *graph) {
     string line;
     ifstream edgesFile(fileName);
 
@@ -260,7 +265,7 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<RoadInterceptionF
         unsigned edges_number = stoi(line);
         while(getline(edgesFile, line)){
             vector<double> v = parseEdgeLineToInts(line);
-            graph->addEdge(v[0], v[1], 1);
+            //graph->addEdge(v[0], v[1], 1);
         }
     } else {
         abort();
@@ -269,7 +274,7 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<RoadInterceptionF
     edgesFile.close();
 }
 
-void Converter::readTagsFromFolder(const string &folderName, Graph<RoadInterceptionFromTxt, int> *graph) {
+void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT, int> *graph) {
     DIR *dir;
     struct dirent *entry;
 
@@ -288,7 +293,7 @@ void Converter::readTagsFromFolder(const string &folderName, Graph<RoadIntercept
     }
 }
 
-void Converter::readTagsFromFile(const string &fileName, Graph<RoadInterceptionFromTxt, int> *graph) {
+void Converter::readTagsFromFile(const string &fileName, Graph<VertexInfoTXT, int> *graph) {
     string line;
 
     ifstream poiFile(fileName);
@@ -312,6 +317,6 @@ void Converter::readTagsFromFile(const string &fileName, Graph<RoadInterceptionF
     }
 
     poiFile.close();
-}
+}*/
 
 

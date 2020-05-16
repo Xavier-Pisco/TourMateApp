@@ -1,11 +1,11 @@
 #include <iostream>
 #include <cmath>
 #include "Application.h"
-#include "lib/GraphViewer/graphviewer.h"
-#include "input/UserInput.h"
+#include "../lib/GraphViewer/graphviewer.h"
+#include "../input/UserInput.h"
 #include "User.h"
-#include "graph/Graph.h"
-#include "graph/algorithms/dijkstra.h"
+#include "../graph/Graph.h"
+#include "../graph/algorithms/dijkstra.h"
 
 Application::Application(MODE mode) {
     this->mode = mode;
@@ -64,15 +64,15 @@ void Application::viewGraph() {
     setMaxMinCoords();
 
     int i = 1;
-    for (Vertex<RoadIntersection, Road> * v : graph->vertexSet) {
+    for (Vertex<VertexInfoXML, Road> * v : graph->vertexSet) {
         v->graphViewerID = i;
         graphViewer->addNode(v->graphViewerID, lonToX(v->info.getXMLNodeAttributes().at("lon"), 600), latToY(v->info.getXMLNodeAttributes().at("lat"), 600));
         i++;
     }
 
     i = 1;
-    for (Vertex<RoadIntersection, Road> * v : graph->vertexSet) {
-        for (Edge<RoadIntersection, Road> e : v->adj) {
+    for (Vertex<VertexInfoXML, Road> * v : graph->vertexSet) {
+        for (Edge<VertexInfoXML, Road> e : v->adj) {
             graphViewer->addEdge(i, v->graphViewerID, e.dest->graphViewerID, EdgeType::DIRECTED);
             i++;
         }
@@ -100,7 +100,7 @@ void Application::setMaxMinCoords() {
     this->minCoords.first = strtod((graph->vertexSet.at(0)->info.getXMLNodeAttributes().at("lat")).c_str(), nullptr);
     this->minCoords.second = strtod((graph->vertexSet.at(0)->info.getXMLNodeAttributes().at("lon")).c_str(), nullptr);
 
-    for (Vertex<RoadIntersection, Road> * v : graph->vertexSet) {
+    for (Vertex<VertexInfoXML, Road> * v : graph->vertexSet) {
         double lat = strtod((v->info.getXMLNodeAttributes().at("lat")).c_str(), nullptr);
         double lon = strtod((v->info.getXMLNodeAttributes().at("lon")).c_str(), nullptr);
 

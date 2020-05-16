@@ -15,7 +15,7 @@ public:
         return x;
     }
 
-    double  getY() const {
+    double getY() const {
         return y;
     }
 };

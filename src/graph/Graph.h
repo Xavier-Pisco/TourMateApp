@@ -26,11 +26,11 @@ class Vertex {
 	Vertex<T, P> * path;
     int queueIndex;
 
-	void addEdge(Vertex<T, P> *dest, P w);
+	void addEdge(Vertex<T, P> *dest, P inf, double w);
 	bool removeEdgeTo(Vertex<T, P> *d);
 public:
 	Vertex(T in);
-	T getInfo();
+	T &getInfo();
 	void setPoi(string poi);
 	double getDist() {return dist;}
     bool operator<(Vertex<T, P> & vertex) const; // // required by MutablePriorityQueue
@@ -42,9 +42,10 @@ public:
 template <class T, class P>
 class Edge {
 	Vertex<T, P> * dest;      // destination vertex
-	P weight;         // edge weight
+	P info;
+	double weight;
 public:
-	Edge(Vertex<T, P> *d, P w);
+	Edge(Vertex<T, P> *d, P info, double w);
 	friend class Graph<T, P>;
 	friend class Vertex<T, P>;
 	friend class Application;
@@ -60,9 +61,12 @@ public:
     Vertex<T, P> *findVertex(const T &in) const;
 	int getNumVertex() const;
 	bool addVertex(const T &in);
+    bool addVertex(Vertex<T, P> * in);
 	bool addVertex(const T &in, const Position &p);
 	bool removeVertex(const T &in);
-	bool addEdge(const T &sourc, const T &dest, P w);
+	bool addEdge(const T &sourc, const T &dest, P info, double w);
+    bool addEdge(Vertex<T, P> *sourcVertex, Vertex<T, P> *destVertex, P info, double w);
+    bool addEdge(const T &sourc, const T &dest, P info); // this is a temporary solution
 	bool removeEdge(const T &sourc, const T &dest);
 	vector<T> dfs() const;
 	vector<T> bfs(const T &source) const;
@@ -77,7 +81,7 @@ template <class T, class P>
 Vertex<T, P>::Vertex(T in): info(in) {}
 
 template <class T, class P>
-Edge<T, P>::Edge(Vertex<T, P> *d, P w): dest(d), weight(w) {}
+Edge<T, P>::Edge(Vertex<T, P> *d, P info, double w): dest(d), info(info), weight(w) {}
 
 
 template <class T, class P>
@@ -109,9 +113,15 @@ Vertex<T, P> * Graph<T, P>::findVertex(const T &in) const {
  */
 template <class T, class P>
 bool Graph<T, P>::addVertex(const T &in) {
-    //if (findVertex(in) != NULL) return false;
-	auto vertex = new Vertex<T, P>(in);
-	vertexSet.push_back(vertex);
+    if (findVertex(in) != NULL) return false;
+    auto vertex = new Vertex<T, P>(in);
+    vertexSet.push_back(vertex);
+    return true;
+}
+
+template <class T, class P>
+bool Graph<T, P>::addVertex(Vertex<T, P> * vertex) {
+    vertexSet.push_back(vertex);
     return true;
 }
 
@@ -131,12 +141,28 @@ bool Graph<T, P>::addVertex(const T &in, const Position &p) {
  * Returns true if successful, and false if the source or destination vertex does not exist.
  */
 template <class T, class P>
-bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P w) {
+bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P info, double w) {
 	Vertex<T, P> * sourcVertex = findVertex(sourc);
 	Vertex<T, P> * destVertex = findVertex(dest);
 	if (sourcVertex == NULL || destVertex == NULL) return false;
-	sourcVertex->addEdge(destVertex, w);
+	sourcVertex->addEdge(destVertex, info, w);
 	return true;
+}
+
+template <class T, class P>
+bool Graph<T, P>::addEdge(Vertex<T, P> *sourcVertex, Vertex<T, P> *destVertex, P info, double w) {
+    if (sourcVertex == NULL || destVertex == NULL) return false;
+    sourcVertex->addEdge(destVertex, info, w);
+    return true;
+}
+
+template <class T, class P>
+bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P info) {
+    Vertex<T, P> * sourcVertex = findVertex(sourc);
+    Vertex<T, P> * destVertex = findVertex(dest);
+    if (sourcVertex == NULL || destVertex == NULL) return false;
+    sourcVertex->addEdge(destVertex, info, (double) info);
+    return true;
 }
 
 /**
@@ -144,8 +170,13 @@ bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P w) {
  * with a given destination vertex (d) and edge weight (w).
  */
 template <class T, class P>
-void Vertex<T, P>::addEdge(Vertex<T, P> *d, P w) {
-    adj.push_back(Edge<T, P>(d, w));
+void Vertex<T, P>::addEdge(Vertex<T, P> *d, P inf, double w) {
+    for (Edge<T, P> &edge : adj) {
+        if (edge.dest->info.getId() == d->info.getId()) {
+            return;
+        }
+    }
+    adj.push_back(Edge<T, P>(d, inf, w));
 }
 
 /**
@@ -183,7 +214,7 @@ void Vertex<T, P>::setPoi(string poi) {
 }
 
 template<class T, class P>
-T Vertex<T, P>::getInfo() {
+T &Vertex<T, P>::getInfo() {
     return info;
 }
 

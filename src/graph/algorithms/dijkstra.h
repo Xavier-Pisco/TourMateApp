@@ -24,9 +24,9 @@ void Graph<T, P>::dijkstra(Vertex<T, P> * s) {
         s = vertexQueue.extractMin();
 
         for (Edge<T, P> a : s->adj) {
-            if (a.dest->getDist() > s->getDist() + a.weight.getWeight()) {
+            if (a.dest->getDist() > s->getDist() + a.weight) {
                 double oldDist = a.dest->getDist();
-                a.dest->dist = s->getDist() + a.weight.getWeight();
+                a.dest->dist = s->getDist() + a.weight;
                 a.dest->path = s;
                 if (oldDist == DBL_MAX) {
                     vertexQueue.insert((Vertex<T, P> *) a.dest);
