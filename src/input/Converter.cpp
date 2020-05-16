@@ -176,7 +176,11 @@ rapidxml::xml_document<> * Converter::createXMLDoc(char * data) {
 }
 
 
-// TODO This needs to be done with an unweighted GRAPH
+// TODO This needs to be done with a
+//  graph that only has the T template argument. Otherwise, it won't work well, because the P template
+//  argument is for the road information (name, etc) and that information isn't available here.
+//  The edge weight is saved not in the P template argument, because multiple edges may share the P template argument,
+//  but in a separate field of the Edge class, named 'weight'.
 /*Graph<VertexInfoTXT, int> *Converter::getGraphFromTXTFile(const string & city) {
     auto graph = new Graph<VertexInfoTXT, int>;
 
