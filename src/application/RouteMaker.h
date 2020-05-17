@@ -20,6 +20,7 @@ public:
     void openMap(string &map);
     void getRouteInfo();
     vector<string> getAvailableMaps(string & path) const;
+    Vertex<VertexInfoXML,Road> * findVertex(string str);
 };
 
 

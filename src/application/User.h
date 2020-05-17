@@ -12,17 +12,16 @@ using namespace std;
 
 class User {
 private:
-    //dados de entrada
-    float disp;
+    float time;
     Vertex<VertexInfoXML,Road> * origin;
-    Vertex<VertexInfoXML,Road> *destiny;
+    Vertex<VertexInfoXML,Road> *destination;
     list<string> *preferenceList;
     list<POI> *poiList;
 public:
     User();
-    void findOrigem(string str);
-    void findDestino(string str);
-    void setDisponibilidade(float time);
+    void setOrigin(Vertex<VertexInfoXML,Road> * origin);
+    void setDestination(Vertex<VertexInfoXML,Road> * destination);
+    void setAvailability(float time);
 };
 
 

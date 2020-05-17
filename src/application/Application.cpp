@@ -7,21 +7,6 @@
 
 
 void Application::start() {
-    //start user---
-    /*UserInput userInput;
-    User user;
-    string origem, destino;
-
-    origem=userInput.getLine("Ponto de Origem: ");
-    user.findOrigem(origem);
-
-    destino=userInput.getLine("Ponto de Chegada: ");
-    user.findDestino(destino);
-
-    float tempo=userInput.getFloat("Quanto tempo disponível: ");
-    user.setDisponibilidade(tempo);
-    //-----------*/
-
 
     while( mainMenu() != -1 );
 
