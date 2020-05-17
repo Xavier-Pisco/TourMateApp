@@ -8,6 +8,7 @@ using namespace std;
 class StringMatcher {
 public:
     static int getEditDistance(const string a, const string b);
+    static int getSubstringEditDistance(const string a, const string b);
 };
 
 

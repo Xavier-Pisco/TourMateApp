@@ -157,7 +157,7 @@ void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Ve
 
     if ((it = tags.find("name")) != tags.end()) {
         string a = it->second;
-        int editDistance = StringMatcher::getEditDistance(a, name);
+        int editDistance = StringMatcher::getSubstringEditDistance(name, a);
         if (editDistance < vertexWithEditDist.second.second) {
             vertexWithEditDist.first = v;
             vertexWithEditDist.second.first = it->second;
