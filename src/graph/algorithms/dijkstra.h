@@ -39,7 +39,7 @@ void Graph<T, P>::dijkstra(Vertex<T, P> * s) {
 }
 
 template<class T, class P>
-pair<vector<P>, int> Graph<T, P>::getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d) {
+pair<vector<P>, double> Graph<T, P>::getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d) {
     // Note, this requires dijkstra algorithm to have been executed starting on vertex *s
     vector<P> path;
     Vertex<T, P> * prevVertex, * currVertex = d;
@@ -61,7 +61,7 @@ pair<vector<P>, int> Graph<T, P>::getPathToFromDijkstra(Vertex<T, P> * s, Vertex
         currVertex = prevVertex;
     }
 
-    return pair<vector<P>, int>(path, d->dist);
+    return pair<vector<P>, double>(path, d->dist);
 }
 
 

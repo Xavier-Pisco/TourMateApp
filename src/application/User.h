@@ -22,6 +22,16 @@ public:
     void setOrigin(Vertex<VertexInfoXML,Road> * origin);
     void setDestination(Vertex<VertexInfoXML,Road> * destination);
     void setAvailability(float time);
+
+    float getTime() const;
+
+    Vertex<VertexInfoXML, Road> *getOrigin() const;
+
+    Vertex<VertexInfoXML, Road> *getDestination() const;
+
+    list<string> *getPreferenceList() const;
+
+    list<POI> *getPoiList() const;
 };
 
 

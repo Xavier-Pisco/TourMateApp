@@ -83,7 +83,7 @@ public:
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
 	void dijkstra(Vertex<T, P> * origin);
-	pair<vector<P>, int> getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d);
+	pair<vector<P>, double> getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d);
 	friend class Application;
 };
 

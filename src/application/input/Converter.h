@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 /**
  * The objective of this class is to convert a map
@@ -29,11 +30,28 @@ private:
     static Graph<VertexInfoXML, Road> * parseXMLDocToGraph(rapidxml::xml_document<> &doc);
 
     /**
-     * Creates a RapidXML doc from data in c string format
+     * @brief Creates a RapidXML doc from data in c string format
      * @param data - the data to be converted
      * @return pointer to the XML document
      */
     static rapidxml::xml_document<> * createXMLDoc(char * data);
+
+    /**
+     * @brief Converts a value in degrees to radians
+     * @param degrees - the value to convert
+     * @return the value in radians
+     */
+    static double degreesToRadians(double degrees);
+
+    /**
+     * @brief Gets the distance in km from two lat lon points
+     * @param lat1
+     * @param lat2
+     * @param lon1
+     * @param lon2
+     * @return distance value in km
+     */
+    static double getKmDistfromLatLong(double lat1, double lon1, double lat2, double lon2);
 
 
     /**

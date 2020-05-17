@@ -69,23 +69,43 @@ void RouteMaker::getRouteInfo() {
     cout << endl;
 
     Drawer::drawTitle("Origin location", 0, 40, true, "left"); cout << endl;
-    vx = UserInput::getVertex(graph);
-    if (vx != nullptr) cout << "Vertex id = " << vx->getInfo().getID() << endl;
-    else throw VertexNotFound();
+
+    try {
+        vx = UserInput::getVertex(graph);
+    } catch(CancelInput &c) {
+        cout << "You cancelled the operation." << endl;
+        return;
+    }
+
+    cout << "Vertex id = " << vx->getInfo().getID() << endl;
 
     user.setOrigin(vx);
 
     cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
-    vx = UserInput::getVertex(graph);
+
+    try {
+        vx = UserInput::getVertex(graph, false);
+    } catch(CancelInput &c) {
+        cout << "You cancelled the operation." << endl;
+        return;
+    }
+
     if (vx != nullptr) cout << "Vertex id = " << vx->getInfo().getID() << endl;
-    else throw VertexNotFound();
 
     user.setDestination(vx);
 
-    float time=UserInput::getFloat("\nAvailable Time: ");
+    cout << endl;
+    float time = UserInput::getFloat("Available time in minutes: ");
     user.setAvailability(time);
 
     //TODO: acrescentar preferencias
+
+    makeRoute();
+}
+
+void RouteMaker::makeRoute() {
+    graph->dijkstra(user.getOrigin());
+    cout << "the distance in km is " << graph->getPathToFromDijkstra(user.getOrigin(), user.getDestination()).second << endl;
 }
 
 RouteMaker::~RouteMaker() {

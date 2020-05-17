@@ -126,23 +126,23 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
         }
 
         // simplest case
+        double length;
+        map<string, Vertex<VertexInfoXML, Road>*>::iterator n1, n2;
         if (nodeIDs.size() == 2) {
-            if (nodes.find(nodeIDs.at(0)) != nodes.end() && nodes.find(nodeIDs.at(1)) != nodes.end()) {
-                // Calculate length -> http://www.movable-type.co.uk/scripts/latlong.html
-                double length = 10;
-                res->addEdge(nodes.at(nodeIDs.at(0)), nodes.at(nodeIDs.at(1)), *edge, length);
+            if ((n1 = nodes.find(nodeIDs.at(0))) != nodes.end() && (n2 = nodes.find(nodeIDs.at(1))) != nodes.end()) {
+                length = getKmDistfromLatLong(n1->second->getInfo().getLat(), n1->second->getInfo().getLon(), n2->second->getInfo().getLat(), n2->second->getInfo().getLon());
+                res->addEdge(n1->second, n2->second, *edge, length);
                 if (!oneway) {
-                    res->addEdge(nodes.at(nodeIDs.at(1)), nodes.at(nodeIDs.at(0)), *edge, length);
+                    res->addEdge(n2->second, n1->second, *edge, length);
                 }
             }
         } else {
             for (unsigned j = 0; j < nodeIDs.size()-1; j++) {
-                if (nodes.find(nodeIDs.at(j)) != nodes.end() && nodes.find(nodeIDs.at(j+1)) != nodes.end()) {
-                    // Calculate length -> http://www.movable-type.co.uk/scripts/latlong.html
-                    double length = 10;
-                    res->addEdge(nodes.at(nodeIDs.at(j)), nodes.at(nodeIDs.at(j + 1)), *edge, length);
+                if ((n1 = nodes.find(nodeIDs.at(j))) != nodes.end() && (n2 = nodes.find(nodeIDs.at(j+1))) != nodes.end()) {
+                    length = getKmDistfromLatLong(n1->second->getInfo().getLat(), n1->second->getInfo().getLon(), n2->second->getInfo().getLat(), n2->second->getInfo().getLon());
+                    res->addEdge(n1->second, n2->second, *edge, length);
                     if (!oneway) {
-                        res->addEdge(nodes.at(nodeIDs.at(j + 1)), nodes.at(nodeIDs.at(j)), *edge, length);
+                        res->addEdge(n2->second, n1->second, *edge, length);
                     }
                 }
             }
@@ -173,6 +173,28 @@ rapidxml::xml_document<> * Converter::createXMLDoc(char * data) {
     auto * doc = new rapidxml::xml_document<>;
     (*doc).parse<0>(data);
     return doc;
+}
+
+double Converter::degreesToRadians(double degrees) {
+    return degrees * M_PI / 180.;
+}
+
+double Converter::getKmDistfromLatLong(double lat1, double lon1, double lat2, double lon2) {
+    // haversine formula http://www.movable-type.co.uk/scripts/latlong.html
+
+    int earthRadius = 6371; // in km
+
+    double dLat = degreesToRadians(lat2 - lat1);
+    double dLon = degreesToRadians(lon2 - lon1);
+
+    lat1 = degreesToRadians(lat1);
+    lat2 = degreesToRadians(lat2);
+
+    double a = sin(dLat/2) * sin(dLat/2) + sin(dLon/2) * sin(dLon/2) * cos(lat1) * cos(lat2);
+
+    double c = 2 * atan2(sqrt(a), sqrt(1-a));
+
+    return c * earthRadius;
 }
 
 
