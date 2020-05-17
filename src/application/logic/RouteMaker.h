@@ -10,12 +10,15 @@
 #include "../ui/Drawer.h"
 #include <dirent.h>
 #include "../containers/User.h"
+#include "../ui/GraphViewerCustom.h"
+#include "../input/UserInput.h"
 
 using namespace std;
 
 class RouteMaker {
 private:
     Graph<VertexInfoXML, Road> * graph = nullptr;
+    GraphViewerCustom * graphViewer = nullptr;
     User user;
 public:
     ~RouteMaker();

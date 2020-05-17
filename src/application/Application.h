@@ -24,8 +24,25 @@ public:
      */
     void exit();
 
+    /**
+     * @brief Converts lat to Y
+     * @param lat - the lat
+     * @param height - Y var
+     * @param minCoords - min lat && lon
+     * @param maxCoords - max lat && lon
+     * @return the converted value
+     */
     static int latToY(const string &lon, int height, pair<double, double> &minCoords, pair<double, double> &maxCoords);
-    static int lonToX(const string &lon, int height, pair<double, double> &minCoords, pair<double, double> &maxCoords);
+
+    /**
+     * @brief Converts lon to X
+     * @param lon - the lon
+     * @param width - X var
+     * @param minCoords - min lat && lon
+     * @param maxCoords - max lat && lon
+     * @return the converted value
+     */
+    static int lonToX(const string &lon, int width, pair<double, double> &minCoords, pair<double, double> &maxCoords);
 };
 
 

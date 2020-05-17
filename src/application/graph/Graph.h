@@ -6,7 +6,6 @@
 #include "../containers/Position.h"
 #include <iostream>
 #include "MutablePriorityQueue.h"
-#include "../../lib/GraphViewer/graphviewer.h"
 
 using namespace std;
 
@@ -36,8 +35,8 @@ public:
 	double getDist() {return dist;}
     bool operator<(Vertex<T, P> & vertex) const; // // required by MutablePriorityQueue
     friend class Graph<T, P>;
-	friend class Application;
 	friend class MutablePriorityQueue<Vertex<T, P>>;
+    friend class GraphViewerCustom;
 };
 
 template <class T, class P>
@@ -49,13 +48,12 @@ public:
 	Edge(Vertex<T, P> *d, P info, double w);
 	friend class Graph<T, P>;
 	friend class Vertex<T, P>;
-	friend class Application;
+    friend class GraphViewerCustom;
 };
 
 template <class T, class P>
 class Graph {
 	vector<Vertex<T, P> *> vertexSet;    // vertex set
-    GraphViewer * graphViewer = nullptr;
     pair<double, double> minCoords = {0, 0}, maxCoords = {0, 0};
 
 	void dfsVisit(Vertex<T, P> *v,  vector<T> & res) const;
@@ -65,8 +63,6 @@ public:
     ~Graph();
     Vertex<T, P> *findVertex(const T &in) const;
     const vector<Vertex<T, P>*> &getVertexSet() const;
-    void viewGraph();
-    void closeView();
     void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
     void setMaxMinCoords();
 	int getNumVertex() const;
@@ -85,7 +81,7 @@ public:
 	bool isDAG() const;
 	void dijkstra(Vertex<T, P> * origin);
 	pair<vector<P>, double> getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d);
-	friend class Application;
+	friend class GraphViewerCustom;
 };
 
 template <class T, class P>
@@ -107,10 +103,6 @@ const vector<Vertex<T, P>*> &Graph<T, P>::getVertexSet() const {
 
 template <class T, class P>
 Graph<T, P>::~Graph() {
-    if (graphViewer != nullptr) {
-        graphViewer->closeWindow();
-        delete graphViewer;
-    }
     for (Vertex<T, P> * v : vertexSet) delete v;
 }
 

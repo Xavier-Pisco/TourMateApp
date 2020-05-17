@@ -118,19 +118,19 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
 
         // Testing if oneway or not
         bool oneway = false;
-        if (edge->getXMLTags().find("highway") != edge->getXMLTags().end()) {
-            string highwayValue = edge->getXMLTags().at("highway");
+        map<string, string>::const_iterator it;
+        if ( (it = edge->getXMLTags().find("highway")) != edge->getXMLTags().end()) {
+            string highwayValue = it->second;
 
-            if (edge->getXMLTags().find("oneway") != edge->getXMLTags().end()) {
-                if (edge->getXMLTags().at("oneway") == "yes" || edge->getXMLTags().at("oneway") == "1" ||
-                    edge->getXMLTags().at("oneway") == "true") {
+            if ( (it = edge->getXMLTags().find("oneway")) != edge->getXMLTags().end()) {
+                if (it->second == "yes" || it->second == "1" || it->second == "true") {
                     oneway = true;
                 }
             } else if (highwayValue == "motorway" || highwayValue == "motorway_link" || highwayValue == "trunk_link" ||
                        highwayValue == "primary_link") {
                 oneway = true;
-            } else if (edge->getXMLTags().find("junction") != edge->getXMLTags().end()) {
-                if (edge->getXMLTags().at("junction") == "roundabout") {
+            } else if ( (it = edge->getXMLTags().find("junction")) != edge->getXMLTags().end()) {
+                if (it->second == "roundabout") {
                     oneway = true;
                 }
             }

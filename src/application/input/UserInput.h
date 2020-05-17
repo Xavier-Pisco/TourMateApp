@@ -94,7 +94,7 @@ Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, bool mandatory) {
         case 0:
             throw CancelInput();
         case 1:
-            return UserInput::getVertexWithGPSCoords<T, P>(graph);
+            return UserInput::getVertexWithGPSCoords(graph);
         case 2:
             //getVertexWithStreetName
             throw VertexNotFound();
