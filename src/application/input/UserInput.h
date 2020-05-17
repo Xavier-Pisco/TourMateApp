@@ -81,7 +81,18 @@ public:
      * @return the vertex
      */
     template<class T, class P>
-    static Vertex<T, P> * getVertexWithStreetName(Graph<T, P> * graph);
+    static Vertex<T, P> * getVertexWithLocationName(Graph<T, P> * graph);
+
+    /**
+     * @brief Finds the tag name from tags and if it has less edit distance than the one on vertexWithEditDist then replaces it
+     * @param v - the vertex
+     * @param tags - the map with the tags
+     * @param vertexWithEditDist - the holder of the vertex with the least edit distance so far
+     * @param name - the string to compare to
+     * @return the vertex
+     */
+    template<class T, class P>
+    static void findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, int> &vertexWithEditDist, string &name);
 
 };
 
@@ -91,8 +102,7 @@ Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, bool mandatory) {
     Menu menu;
     menu.addOption("cancel");
     menu.addOption("add location with GPS coordinates");
-    menu.addOption("add location with street name");
-    menu.addOption("add location with POI name");
+    menu.addOption("add location with location name");
     if (!mandatory) menu.addOption("I do not need to specify");
 
     menu.drawMenuOptions("");
@@ -106,12 +116,8 @@ Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, bool mandatory) {
         case 1:
             return UserInput::getVertexWithGPSCoords(graph);
         case 2:
-            return UserInput::getVertexWithStreetName(graph);
+            return UserInput::getVertexWithLocationName(graph);
         case 3:
-            //getVertexWithPOIName
-            throw VertexNotFound();
-            break;
-        case 4:
         default:
             break;
     }
@@ -144,9 +150,23 @@ Vertex<T, P> * UserInput::getVertexWithGPSCoords(Graph<T, P> * graph) {
     return vertexWithDist.first;
 }
 
+template<class T, class P>
+void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, int> &vertexWithEditDist, string &name) {
+    map<string, string>::const_iterator it;
+
+    if ((it = tags.find("name")) != tags.end()) {
+        string a = it->second;
+        int editDistance = StringMatcher::getEditDistance(a, name);
+        if (editDistance < vertexWithEditDist.second) {
+            vertexWithEditDist.first = v;
+            vertexWithEditDist.second = editDistance;
+            cout << "Found vertex with name " << it->second << endl;
+        }
+    }
+}
 
 template<class T, class P>
-Vertex<T, P> * UserInput::getVertexWithStreetName(Graph<T, P> * graph) {
+Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph) {
     string name;
 
     cout << "This option finds the vertex through which passes a street \nthat has the name closest the the one you specified" << endl << endl;
@@ -158,20 +178,14 @@ Vertex<T, P> * UserInput::getVertexWithStreetName(Graph<T, P> * graph) {
     pair<Vertex<T, P> *, int> vertexWithEditDist;
     vertexWithEditDist.second = INT32_MAX;
 
-    map<string, string>::const_iterator it;
 
-    for (Vertex<T, P> * v : graph->getVertexSet()) {
-        for (Edge<T, P> &e : v->getAdj()) {
-            map<string, string> tags = e.getInfo().getXMLTags();
-            if ((it = tags.find("name")) != tags.end()) {
-                string a = it->second;
-                int editDistance = StringMatcher::getEditDistance(a, name);
-                if (editDistance < vertexWithEditDist.second) {
-                    vertexWithEditDist.first = v;
-                    vertexWithEditDist.second = editDistance;
-                    break;
-                }
-            }
+    for (Vertex<T, P> * v : graph->getVertexSet()) { // checks for the vertex name
+        map<string, string> tags = v->getInfo().getXMLTags();
+        UserInput::findTagName(v, tags, vertexWithEditDist, name);
+
+        for (Edge<T, P> &e : v->getAdj()) { // checks for the street name
+            tags = e.getInfo().getXMLTags();
+            UserInput::findTagName(v, tags, vertexWithEditDist, name);
         }
     }
 
