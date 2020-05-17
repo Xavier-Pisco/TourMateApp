@@ -1,5 +1,5 @@
 #include "Menu.h"
-#include "input/UserInput.h"
+#include "../input/UserInput.h"
 
 unsigned Menu::addOption(string opt) {
     menuOptions.push_back(opt);

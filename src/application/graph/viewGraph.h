@@ -2,9 +2,9 @@
 #define SRC_VIEWGRAPH_H
 
 #include "Graph.h"
-#include "../lib/GraphViewer/graphviewer.h"
-#include "GraphClasses.h"
-#include "../application/Application.h"
+#include "../../lib/GraphViewer/graphviewer.h"
+#include "../containers/GraphClasses.h"
+#include "../Application.h"
 
 template<class T, class P>
 void Graph<T, P>::viewGraph() {

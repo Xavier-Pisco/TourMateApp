@@ -3,10 +3,10 @@
 
 #include <vector>
 #include <queue>
-#include "Position.h"
+#include "../containers/Position.h"
 #include <iostream>
 #include "MutablePriorityQueue.h"
-#include "../lib/GraphViewer/graphviewer.h"
+#include "../../lib/GraphViewer/graphviewer.h"
 
 using namespace std;
 

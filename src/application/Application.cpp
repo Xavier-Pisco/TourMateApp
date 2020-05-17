@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cmath>
 #include "Application.h"
-#include "Menu.h"
-#include "RouteMaker.h"
-#include "Drawer.h"
+#include "ui/Menu.h"
+#include "logic/RouteMaker.h"
+#include "ui/Drawer.h"
 
 
 void Application::start() {

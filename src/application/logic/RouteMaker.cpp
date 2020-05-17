@@ -1,7 +1,6 @@
 #include "RouteMaker.h"
 #include "../graph/viewGraph.h"
-#include "input/UserInput.h"
-#include "exceptions.h"
+#include "../input/UserInput.h"
 
 void RouteMaker::start() {
     Menu menu;
@@ -98,14 +97,16 @@ void RouteMaker::getRouteInfo() {
     float time = UserInput::getFloat("Available time in minutes: ");
     user.setAvailability(time);
 
-    //TODO: acrescentar preferencias
+    // TODO acrescentar preferencias
 
     makeRoute();
 }
 
 void RouteMaker::makeRoute() {
     graph->dijkstra(user.getOrigin());
-    cout << "the distance in km is " << graph->getPathToFromDijkstra(user.getOrigin(), user.getDestination()).second << endl;
+    if (user.getDestination() != nullptr) cout << "the distance in km is " << graph->getPathToFromDijkstra(user.getOrigin(), user.getDestination()).second << endl;
+
+    // this divides into two cases: route with a predefined destination and route with a non-predefined destination
 }
 
 RouteMaker::~RouteMaker() {

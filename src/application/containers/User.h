@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <list>
-#include "../graph/GraphClasses.h"
+#include "GraphClasses.h"
 #include "../graph/Graph.h"
 
 using namespace std;

@@ -2,8 +2,8 @@
 #define SRC_USERINPUT_H
 #include <string>
 #include <iostream>
-#include "../../graph/Graph.h"
-#include "../Menu.h"
+#include "../graph/Graph.h"
+#include "../ui/Menu.h"
 #include <cmath>
 #include <cfloat>
 #include "../exceptions.h"

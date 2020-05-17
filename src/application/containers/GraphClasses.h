@@ -1,7 +1,7 @@
 #ifndef SRC_GRAPHCLASSES_H
 #define SRC_GRAPHCLASSES_H
 
-#include "../lib/RapidXML/rapidxml.hpp"
+#include "../../lib/RapidXML/rapidxml.hpp"
 #include "POI.h"
 
 class VertexInfo {

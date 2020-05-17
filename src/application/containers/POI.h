@@ -1,7 +1,7 @@
 #ifndef SRC_POI_H
 #define SRC_POI_H
 
-#include "Graph.h"
+#include "../graph/Graph.h"
 #include <cstring>
 #include <map>
 

@@ -3,13 +3,13 @@
 
 #include <string>
 #include <vector>
-#include "../graph/GraphClasses.h"
+#include "../containers/GraphClasses.h"
 #include "../graph/algorithms/dijkstra.h"
-#include "input/Converter.h"
-#include "Menu.h"
-#include "Drawer.h"
+#include "../input/Converter.h"
+#include "../ui/Menu.h"
+#include "../ui/Drawer.h"
 #include <dirent.h>
-#include "User.h"
+#include "../containers/User.h"
 
 using namespace std;
 
