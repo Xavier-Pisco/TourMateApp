@@ -95,6 +95,7 @@ public:
     template<class T, class P>
     static void findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, pair<string, int>> &vertexWithEditDist, string &name);
 
+    static string getPreference();
 };
 
 
@@ -197,5 +198,6 @@ Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph) {
 
     return vertexWithEditDist.first;
 }
+
 
 #endif //SRC_USERINPUT_H

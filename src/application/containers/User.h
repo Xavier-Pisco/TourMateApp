@@ -32,6 +32,8 @@ public:
     list<string> *getPreferenceList() const;
 
     list<POI> *getPoiList() const;
+
+    void addPreference(string str);
 };
 
 

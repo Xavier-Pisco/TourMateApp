@@ -69,3 +69,37 @@ string UserInput::strToLower(string s) {
     for (char c : s) res += tolower(c);
     return res;
 }
+
+string UserInput::getPreference() {
+    Menu menu;
+    menu.addOption("Done");
+    menu.addOption("Museums");
+    menu.addOption("Statues");
+    menu.addOption("Restaurants");
+    menu.addOption("Bakery");
+    menu.addOption("Cafe");
+    menu.addOption("Gardens");
+
+    menu.drawMenuOptions("");
+    cout << endl;
+    int opt = menu.getResponse("Choose an option from the menu:");
+
+
+    switch(opt) {
+        case 0:
+            return "done";
+        case 1:
+            return "museum";
+        case 2:
+            return "statue";
+        case 3:
+            return "restaurant";
+        case 4:
+            return "bakery";
+        case 5:
+            return "cafe";
+        case 6:
+            return "garden";
+    }
+
+}
