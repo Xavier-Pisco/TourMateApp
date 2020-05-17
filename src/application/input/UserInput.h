@@ -9,6 +9,7 @@
 #include "../exceptions.h"
 #include <map>
 #include "../logic/StringMatcher.h"
+#include <sstream>
 
 using namespace std;
 
@@ -92,7 +93,7 @@ public:
      * @return the vertex
      */
     template<class T, class P>
-    static void findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, int> &vertexWithEditDist, string &name);
+    static void findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, pair<string, int>> &vertexWithEditDist, string &name);
 
 };
 
@@ -151,15 +152,16 @@ Vertex<T, P> * UserInput::getVertexWithGPSCoords(Graph<T, P> * graph) {
 }
 
 template<class T, class P>
-void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, int> &vertexWithEditDist, string &name) {
+void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, pair<string, int>> &vertexWithEditDist, string &name) {
     map<string, string>::const_iterator it;
 
     if ((it = tags.find("name")) != tags.end()) {
         string a = it->second;
         int editDistance = StringMatcher::getEditDistance(a, name);
-        if (editDistance < vertexWithEditDist.second) {
+        if (editDistance < vertexWithEditDist.second.second) {
             vertexWithEditDist.first = v;
-            vertexWithEditDist.second = editDistance;
+            vertexWithEditDist.second.first = it->second;
+            vertexWithEditDist.second.second = editDistance;
             cout << "Found vertex with name " << it->second << endl;
         }
     }
@@ -168,25 +170,29 @@ void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Ve
 template<class T, class P>
 Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph) {
     string name;
+    pair<Vertex<T, P> *, pair<string, int>> vertexWithEditDist;
+    vertexWithEditDist.second.second = INT32_MAX;
 
-    cout << "This option finds the vertex through which passes a street \nthat has the name closest the the one you specified" << endl << endl;
-
-    name = UserInput::getLine("Street name:");
-
-    //cout << "lat: " << coords.first << " lon: " << coords.second << endl;
-
-    pair<Vertex<T, P> *, int> vertexWithEditDist;
-    vertexWithEditDist.second = INT32_MAX;
+    while (true) {
+        cout << "This option finds the vertex through which passes a street" << endl << "that has the name closest the the one you specified."
+                << endl << endl << "Insert 'stop' at any time to cancel operation." << endl << endl;
 
 
-    for (Vertex<T, P> * v : graph->getVertexSet()) { // checks for the vertex name
-        map<string, string> tags = v->getInfo().getXMLTags();
-        UserInput::findTagName(v, tags, vertexWithEditDist, name);
+        name = UserInput::getLine("Location name:");
 
-        for (Edge<T, P> &e : v->getAdj()) { // checks for the street name
-            tags = e.getInfo().getXMLTags();
+        for (Vertex<T, P> *v : graph->getVertexSet()) { // checks for the vertex name
+            map<string, string> tags = v->getInfo().getXMLTags();
             UserInput::findTagName(v, tags, vertexWithEditDist, name);
+
+            for (Edge<T, P> &e : v->getAdj()) { // checks for the street name
+                tags = e.getInfo().getXMLTags();
+                UserInput::findTagName(v, tags, vertexWithEditDist, name);
+            }
         }
+
+        stringstream s; s << "Is '" << vertexWithEditDist.second.first << "' the place you're looking for?";
+        if (UserInput::getConfirmation(s.str())) break;
+        vertexWithEditDist.second.second = INT32_MAX;
     }
 
     return vertexWithEditDist.first;

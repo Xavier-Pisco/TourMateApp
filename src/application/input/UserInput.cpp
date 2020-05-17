@@ -50,12 +50,13 @@ int UserInput::getInt(string &getterPhrase, int lowerLimit, int upperLimit, bool
 }
 
 bool UserInput::getConfirmation(string getterPhrase) {
+    stringstream s; s << getterPhrase << " (y/n)";
     while (true) {
-        string line = getLine(getterPhrase);
+        string line = getLine(s.str());
         string lowerLine = strToLower(line);
         if (lowerLine == "y" || lowerLine == "yes") {
             return true;
-        } else if (lowerLine == "n" || lowerLine == "no" || lowerLine == "stop") {
+        } else if (lowerLine == "n" || lowerLine == "no") {
             return false;
         } else {
             cout << "Please insert a valid confirmation." << endl;
