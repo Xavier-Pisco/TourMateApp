@@ -32,7 +32,8 @@ public:
 	Vertex(T in);
 	T &getInfo();
 	void setPoi(string poi);
-	double getDist() {return dist;}
+	double getDist() { return dist; }
+    vector<Edge<T, P>> getAdj() { return adj; }
     bool operator<(Vertex<T, P> & vertex) const; // // required by MutablePriorityQueue
     friend class Graph<T, P>;
 	friend class MutablePriorityQueue<Vertex<T, P>>;
@@ -46,6 +47,7 @@ class Edge {
 	double weight;
 public:
 	Edge(Vertex<T, P> *d, P info, double w);
+	P getInfo() { return info; }
 	friend class Graph<T, P>;
 	friend class Vertex<T, P>;
     friend class GraphViewerCustom;

@@ -7,6 +7,8 @@
 #include <cmath>
 #include <cfloat>
 #include "../exceptions.h"
+#include <map>
+#include "../logic/StringMatcher.h"
 
 using namespace std;
 
@@ -73,6 +75,14 @@ public:
     template<class T, class P>
     static Vertex<T, P> * getVertexWithGPSCoords(Graph<T, P> * graph);
 
+    /**
+     * @brief GET's a vertex from a street name
+     * @param graph - the graph
+     * @return the vertex
+     */
+    template<class T, class P>
+    static Vertex<T, P> * getVertexWithStreetName(Graph<T, P> * graph);
+
 };
 
 
@@ -96,9 +106,7 @@ Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, bool mandatory) {
         case 1:
             return UserInput::getVertexWithGPSCoords(graph);
         case 2:
-            //getVertexWithStreetName
-            throw VertexNotFound();
-            break;
+            return UserInput::getVertexWithStreetName(graph);
         case 3:
             //getVertexWithPOIName
             throw VertexNotFound();
@@ -134,6 +142,40 @@ Vertex<T, P> * UserInput::getVertexWithGPSCoords(Graph<T, P> * graph) {
     }
 
     return vertexWithDist.first;
+}
+
+
+template<class T, class P>
+Vertex<T, P> * UserInput::getVertexWithStreetName(Graph<T, P> * graph) {
+    string name;
+
+    cout << "This option finds the vertex through which passes a street \nthat has the name closest the the one you specified" << endl << endl;
+
+    name = UserInput::getLine("Street name:");
+
+    //cout << "lat: " << coords.first << " lon: " << coords.second << endl;
+
+    pair<Vertex<T, P> *, int> vertexWithEditDist;
+    vertexWithEditDist.second = INT32_MAX;
+
+    map<string, string>::const_iterator it;
+
+    for (Vertex<T, P> * v : graph->getVertexSet()) {
+        for (Edge<T, P> &e : v->getAdj()) {
+            map<string, string> tags = e.getInfo().getXMLTags();
+            if ((it = tags.find("name")) != tags.end()) {
+                string a = it->second;
+                int editDistance = StringMatcher::getEditDistance(a, name);
+                if (editDistance < vertexWithEditDist.second) {
+                    vertexWithEditDist.first = v;
+                    vertexWithEditDist.second = editDistance;
+                    break;
+                }
+            }
+        }
+    }
+
+    return vertexWithEditDist.first;
 }
 
 #endif //SRC_USERINPUT_H

@@ -7,7 +7,7 @@ using namespace std;
 
 class StringMatcher {
 public:
-    static int getEditDistance(string &a, string &b);
+    static int getEditDistance(const string a, const string b);
 };
 
 

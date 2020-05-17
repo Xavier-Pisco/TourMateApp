@@ -4,7 +4,6 @@
 #include "ui/Menu.h"
 #include "logic/RouteMaker.h"
 #include "ui/Drawer.h"
-#include "logic/StringMatcher.h"
 
 
 void Application::start() {

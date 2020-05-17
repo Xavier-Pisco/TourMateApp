@@ -1,8 +1,7 @@
 #include "StringMatcher.h"
 
 
-int StringMatcher::getEditDistance(string &a, string &b) {
-
+int StringMatcher::getEditDistance(const string a, const string b) {
     int d[a.size()+1][b.size()+1];
     for (int i = 0; i <= a.size(); i++) d[i][0] = i;
     for (int j = 0; j <= b.size(); j++) d[0][j] = j;
