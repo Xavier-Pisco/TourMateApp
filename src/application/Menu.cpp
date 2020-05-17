@@ -1,5 +1,5 @@
 #include "Menu.h"
-#include "../input/UserInput.h"
+#include "input/UserInput.h"
 
 unsigned Menu::addOption(string opt) {
     menuOptions.push_back(opt);
@@ -21,7 +21,7 @@ void Menu::drawMenuOptions(string separator) const {
 
 int Menu::getResponse(string getterPhrase, string &res) const {
     while(true) {
-        string response = UserInput::getLine(getterPhrase);
+        string response = UserInput::getLine(getterPhrase, false);
         try {
             int i = stoi(response);
             if (i >= 0 && i <= menuOptions.size() -1) return i;
@@ -37,7 +37,7 @@ int Menu::getResponse(string getterPhrase, string &res) const {
 }
 
 unsigned Menu::getResponse(string getterPhrase) const {
-    return UserInput::getInt(getterPhrase, 0, (int) menuOptions.size() - 1);
+    return UserInput::getInt(getterPhrase, 0, (int) menuOptions.size() - 1, false);
 }
 
 

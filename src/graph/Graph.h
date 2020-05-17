@@ -64,7 +64,9 @@ class Graph {
 public:
     ~Graph();
     Vertex<T, P> *findVertex(const T &in) const;
+    const vector<Vertex<T, P>*> &getVertexSet() const;
     void viewGraph();
+    void closeView();
     void setMaxMinCoords();
 	int getNumVertex() const;
 	bool addVertex(const T &in);
@@ -96,6 +98,12 @@ template <class T, class P>
 int Graph<T, P>::getNumVertex() const {
 	return vertexSet.size();
 }
+
+template <class T, class P>
+const vector<Vertex<T, P>*> &Graph<T, P>::getVertexSet() const {
+    return vertexSet;
+}
+
 template <class T, class P>
 Graph<T, P>::~Graph() {
     if (graphViewer != nullptr) {

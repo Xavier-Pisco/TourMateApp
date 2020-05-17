@@ -1,17 +1,18 @@
 #include "UserInput.h"
 
 
-string UserInput::getLine(string getterPhrase) {
+string UserInput::getLine(string getterPhrase, bool cancelInput) {
     string line;
     cout << getterPhrase << endl;
     getline(cin, line);
+    if (cancelInput && line == "stop") throw CancelInput();
     return line;
 }
 
 float UserInput::getFloat(string getterPhrase) {
     while(true) {
+        string s = getLine(getterPhrase);
         try {
-            string s = getLine(getterPhrase);
             float n = stof(s);
             return n;
         } catch (...) {
@@ -20,12 +21,25 @@ float UserInput::getFloat(string getterPhrase) {
     }
 }
 
-int UserInput::getInt(string &getterPhrase, int lowerLimit, int upperLimit) {
+double UserInput::getDouble(string getterPhrase) {
     while(true) {
+        string s = getLine(getterPhrase);
         try {
-            string s = getLine(getterPhrase);
+            double n = stod(s);
+            return n;
+        } catch (...) {
+            cout << "Please insert a valid value." << endl;
+        }
+    }
+}
+
+int UserInput::getInt(string &getterPhrase, int lowerLimit, int upperLimit, bool cancelInput) {
+    string s;
+    while(true) {
+        s = getLine(getterPhrase, cancelInput);
+        try {
             int n = stoi(s);
-            if (n < lowerLimit || n > upperLimit) throw exception();
+            if (n < lowerLimit || n > upperLimit) throw InvalidInput();
             return n;
         } catch (...) {
             cout << "Please insert a valid value." << endl;

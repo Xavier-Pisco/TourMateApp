@@ -56,5 +56,14 @@ void Graph<T, P>::setMaxMinCoords() {
 
 }
 
+template<class T, class P>
+void Graph<T, P>::closeView() {
+    if (graphViewer != nullptr) {
+        graphViewer->closeWindow();
+        delete graphViewer;
+        graphViewer = nullptr;
+    }
+}
+
 
 #endif //SRC_VIEWGRAPH_H

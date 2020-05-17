@@ -1,7 +1,7 @@
 #ifndef SRC_CONVERTER_H
 #define SRC_CONVERTER_H
 
-#include "../graph/GraphClasses.h"
+#include "../../graph/GraphClasses.h"
 #include <dirent.h>
 #include <fstream>
 #include <iostream>
