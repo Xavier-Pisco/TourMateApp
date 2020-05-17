@@ -56,7 +56,7 @@ template <class T, class P>
 class Graph {
 	vector<Vertex<T, P> *> vertexSet;    // vertex set
     GraphViewer * graphViewer = nullptr;
-    pair<double, double> minCoords, maxCoords;
+    pair<double, double> minCoords = {0, 0}, maxCoords = {0, 0};
 
 	void dfsVisit(Vertex<T, P> *v,  vector<T> & res) const;
 	bool dfsIsDAG(Vertex<T, P> *v) const;
@@ -67,6 +67,7 @@ public:
     const vector<Vertex<T, P>*> &getVertexSet() const;
     void viewGraph();
     void closeView();
+    void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
     void setMaxMinCoords();
 	int getNumVertex() const;
 	bool addVertex(const T &in);
@@ -111,6 +112,33 @@ Graph<T, P>::~Graph() {
         delete graphViewer;
     }
     for (Vertex<T, P> * v : vertexSet) delete v;
+}
+
+template<class T, class P>
+void Graph<T, P>::setMaxMinCoords(pair<double, double> mn, pair<double, double> mx) {
+    this->minCoords = mn;
+    this->maxCoords = mx;
+}
+
+template<class T, class P>
+void Graph<T, P>::setMaxMinCoords() {
+    this->maxCoords.first = strtod((vertexSet.at(0)->info.getXMLNodeAttributes().at("lat")).c_str(), nullptr);
+    this->maxCoords.second = strtod((vertexSet.at(0)->info.getXMLNodeAttributes().at("lon")).c_str(), nullptr);
+    this->minCoords.first = strtod((vertexSet.at(0)->info.getXMLNodeAttributes().at("lat")).c_str(), nullptr);
+    this->minCoords.second = strtod((vertexSet.at(0)->info.getXMLNodeAttributes().at("lon")).c_str(), nullptr);
+
+    for (Vertex<T, P> * v : vertexSet) {
+        double lat = v->info.getLat();
+        double lon = v->info.getLon();
+
+        if (lat > maxCoords.first) maxCoords.first = lat;
+        if (lon > maxCoords.second) maxCoords.second = lon;
+        if (lat < minCoords.first) minCoords.first = lat;
+        if (lon < minCoords.second) minCoords.second = lon;
+    }
+    /*cout << "Min coords: " << minCoords.first << ", " << minCoords.second << endl;
+    cout << "Max coords: " << maxCoords.first << ", " << maxCoords.second << endl;*/
+
 }
 
 template <class T, class P>

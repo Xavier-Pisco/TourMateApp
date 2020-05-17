@@ -52,8 +52,21 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
     map<string, Vertex<VertexInfoXML, Road> *> nodes;
     vector<Road*> roads;
 
+    pair<double, double> minCoords, maxCoords;
+
+    bool maxMinDone = false;
     // looping through child nodes of osm node and adding them to nodes
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node(); node; node = node->next_sibling()) {
+        if (!maxMinDone && strcmp(node->name(), "bounds") == 0) {
+            XMLNode n(node);
+            minCoords.first = stod(n.getXMLNodeAttributes().at("minlat"));
+            minCoords.second = stod(n.getXMLNodeAttributes().at("minlon"));
+            maxCoords.first = stod(n.getXMLNodeAttributes().at("maxlat"));
+            maxCoords.second = stod(n.getXMLNodeAttributes().at("maxlon"));
+            res->setMaxMinCoords(minCoords, maxCoords);
+            maxMinDone = true;
+            //cout << minCoords.first << " " << minCoords.second << " " << maxCoords.first << " " << maxCoords.second << endl;
+        }
         if (strcmp(node->name(), "node") == 0) {
             nodes[node->first_attribute()->value()] = new Vertex<VertexInfoXML, Road>(VertexInfoXML(node));
         }
