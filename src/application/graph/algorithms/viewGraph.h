@@ -1,10 +1,10 @@
 #ifndef SRC_VIEWGRAPH_H
 #define SRC_VIEWGRAPH_H
 
-#include "Graph.h"
-#include "../../lib/GraphViewer/graphviewer.h"
-#include "../containers/GraphClasses.h"
-#include "../Application.h"
+#include "../Graph.h"
+#include "../../../lib/GraphViewer/graphviewer.h"
+#include "../../containers/GraphClasses.h"
+#include "../../Application.h"
 
 template<class T, class P>
 void Graph<T, P>::viewGraph() {

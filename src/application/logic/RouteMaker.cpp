@@ -1,5 +1,5 @@
 #include "RouteMaker.h"
-#include "../graph/viewGraph.h"
+#include "../graph/algorithms/viewGraph.h"
 #include "../input/UserInput.h"
 
 void RouteMaker::start() {
