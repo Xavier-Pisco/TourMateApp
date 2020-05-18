@@ -93,7 +93,7 @@ public:
      * @return the vertex
      */
     template<class T, class P>
-    static void findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, pair<string, int>> &vertexWithEditDist, string &name);
+    static void findTagName(Vertex<T, P> * v, map<string, string> &tags, priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> &vertexWithEditDist, string &name);
 
 };
 
@@ -152,26 +152,27 @@ Vertex<T, P> * UserInput::getVertexWithGPSCoords(Graph<T, P> * graph) {
 }
 
 template<class T, class P>
-void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, pair<Vertex<T, P>*, pair<string, int>> &vertexWithEditDist, string &name) {
+void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> &vertexWithEditDist, string &name) {
     map<string, string>::const_iterator it;
 
     if ((it = tags.find("name")) != tags.end()) {
         string a = it->second;
         int editDistance = StringMatcher::getSubstringEditDistance(name, a);
-        if (editDistance < vertexWithEditDist.second.second) {
-            vertexWithEditDist.first = v;
-            vertexWithEditDist.second.first = it->second;
-            vertexWithEditDist.second.second = editDistance;
-            cout << "Found vertex with name " << it->second << endl;
-        }
+        pair<int, pair<Vertex<T, P> *, string>> p;
+
+        p.second.first = v;
+        p.second.second = it->second;
+        p.first = editDistance;
+
+        vertexWithEditDist.push(p);
     }
 }
 
 template<class T, class P>
 Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph) {
     string name;
-    pair<Vertex<T, P> *, pair<string, int>> vertexWithEditDist;
-    vertexWithEditDist.second.second = INT32_MAX;
+    priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> vertexWithEditDist;
+    vector<pair<int, pair<Vertex<T, P> *, string>>> v;
 
     while (true) {
         cout << "This option finds the vertex through which passes a street" << endl << "that has the name closest the the one you specified."
@@ -190,12 +191,24 @@ Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph) {
             }
         }
 
-        stringstream s; s << "Is '" << vertexWithEditDist.second.first << "' the place you're looking for?";
+
+        for (int i = 0; i < min(5, (int) vertexWithEditDist.size()); i++) {
+            while(i != 0 && vertexWithEditDist.top().second.second == v.at(i-1).second.second) {
+                vertexWithEditDist.pop();
+            }
+
+            v.push_back(vertexWithEditDist.top());
+            cout << "Found place with name " << vertexWithEditDist.top().second.second << endl;
+            vertexWithEditDist.pop();
+        }
+        cout << endl;
+        stringstream s; s << "Is '" << v.at(0).second.second << "' the place you're looking for?";
         if (UserInput::getConfirmation(s.str())) break;
-        vertexWithEditDist.second.second = INT32_MAX;
+        while (!vertexWithEditDist.empty()) vertexWithEditDist.pop();
+        v.erase(v.begin(), v.end());
     }
 
-    return vertexWithEditDist.first;
+    return v.at(0).second.first;
 }
 
 #endif //SRC_USERINPUT_H

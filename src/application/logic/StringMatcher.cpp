@@ -1,4 +1,5 @@
 #include "StringMatcher.h"
+#include <queue>
 
 
 int StringMatcher::getEditDistance(const string a, const string b) {
@@ -16,14 +17,11 @@ int StringMatcher::getEditDistance(const string a, const string b) {
 }
 
 int StringMatcher::getSubstringEditDistance(const string a, const string b) {
-    unsigned res; unsigned substringSize;
+    unsigned res = INT32_MAX; unsigned substringSize;
 
-    int aSize = (int) a.size();
-    int bSize = (int) b.size();
+    int dif = (int) b.size() - (int) a.size();
 
-    int dif = bSize - aSize;
-
-    if (dif > aSize/5) substringSize = a.size() + a.size()/5;
+    if (dif > (int) a.size()/5) substringSize = a.size() + a.size()/5;
     else substringSize = b.size();
 
     for (int k = 0; k < b.size() - substringSize; k++) {
