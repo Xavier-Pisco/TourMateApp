@@ -38,3 +38,7 @@ list<string> *User::getPreferenceList() const {
 list<POI> *User::getPoiList() const {
     return poiList;
 }
+
+void User::addPreference(string str) {
+    this->preferenceList->push_back(str);
+}

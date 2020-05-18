@@ -95,6 +95,7 @@ public:
     template<class T, class P>
     static void findTagName(Vertex<T, P> * v, map<string, string> &tags, priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> &vertexWithEditDist, string &name);
 
+    static string getPreference();
 };
 
 
@@ -210,5 +211,6 @@ Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph) {
 
     return v.at(0).second.first;
 }
+
 
 #endif //SRC_USERINPUT_H
