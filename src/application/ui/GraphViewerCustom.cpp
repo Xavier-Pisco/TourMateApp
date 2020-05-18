@@ -1,6 +1,6 @@
 #include "GraphViewerCustom.h"
 
-GraphViewerCustom::GraphViewerCustom(Graph<VertexInfoXML, Road> * graph) {
+GraphViewerCustom::GraphViewerCustom(Graph<VertexInfoXML, WayInfoXML> * graph) {
     this->graph = graph;
 }
 
@@ -15,15 +15,16 @@ void GraphViewerCustom::viewGraph() {
     if (graph->minCoords.first == 0 && graph->minCoords.second == 0 && graph->maxCoords.first == 0 && graph->maxCoords.second == 0) graph->setMaxMinCoords();
 
     int i = 1;
-    for (Vertex<VertexInfoXML, Road> * v : graph->vertexSet) {
+    for (Vertex<VertexInfoXML, WayInfoXML> * v : graph->vertexSet) {
         v->graphViewerID = i;
-        graphViewer->addNode(v->graphViewerID, Application::lonToX(v->info.getXMLNodeAttributes().at("lon"), 600, graph->minCoords, graph->maxCoords), Application::latToY(v->info.getXMLNodeAttributes().at("lat"), 600, graph->minCoords, graph->maxCoords));
+        graphViewer->addNode(v->graphViewerID, Application::lonToX(v->info.getXMLAttributes().at("lon"), 600, graph->minCoords, graph->maxCoords), Application::latToY(
+                v->info.getXMLAttributes().at("lat"), 600, graph->minCoords, graph->maxCoords));
         i++;
     }
 
     i = 1;
-    for (Vertex<VertexInfoXML, Road> * v : graph->vertexSet) {
-        for (Edge<VertexInfoXML, Road> &e : v->adj) {
+    for (Vertex<VertexInfoXML, WayInfoXML> * v : graph->vertexSet) {
+        for (Edge<VertexInfoXML, WayInfoXML> &e : v->adj) {
             graphViewer->addEdge(i, v->graphViewerID, e.dest->graphViewerID, EdgeType::DIRECTED);
             i++;
         }

@@ -44,13 +44,25 @@ public:
      * @brief GET method for the XML attributes that were present in the xml node
      * @return map with the attribute name and the value
      */
-    const map<string, string> &getXMLNodeAttributes() const;
+    const map<string, string> &getXMLAttributes() const;
 
     /**
      * @brief GET method for the XML tags inside the node (subnodes). In this case they normally only have a name and a value
      * @return map with the name and the value of the tag
      */
     const map<string, string> &getXMLTags() const;
+
+    /**
+     * @brief GET method for one XML attribute that may be present in the xml node
+     * @return the value, empty string if not found
+     */
+    string getXMLAttributeValue(string attr) const;
+
+    /**
+     * @brief GET method for one XML tag that may be present in the tags of the xml node
+     * @return the value, empty string if not found
+     */
+    string getXMLTagValue(string attr) const;
 };
 
 /**
@@ -141,11 +153,13 @@ public:
 /**
  * @brief Stores information about a road - correspondent to the edge of the graph
  */
-class Road : public XMLNode {
+class WayInfoXML : public XMLNode {
 private:
     vector<string> nodeIDs; //!< vector with the ids of the nodes this road goes through
+    vector<Vertex<VertexInfoXML, WayInfoXML> *> vertexes;
+    pair<double, double> apprCoords;
 public:
-    Road(rapidxml::xml_node<> * node);
+    WayInfoXML(rapidxml::xml_node<> * node, map<string, Vertex<VertexInfoXML, WayInfoXML> *> &nodes);
 
     /**
      * @brief GET method for nodeIDs
@@ -154,18 +168,30 @@ public:
     const vector<string> &getNodeIDs() const;
 
     /**
+     * @brief GET method for vertexes
+     * @return the vertexes
+     */
+    const vector<Vertex<VertexInfoXML, WayInfoXML>*> &getVertexes() const;
+
+    /**
+     * @brief GET method for the approximate coords
+     * @return the approximate coords
+     */
+    const pair<double, double> &getApprCoords() const;
+
+    /**
      * @brief == operator overload against a const object of this class
      * @param si - the object that this will be compared to
      * @return if its equal or not
      */
-    bool operator==(const Road &r);
+    bool operator==(const WayInfoXML &r);
 
     /**
      * @brief == operator overload against an object of this class
      * @param si - the object that this will be compared to
      * @return if its equal or not
      */
-    bool operator==(Road &r);
+    bool operator==(WayInfoXML &r);
 };
 
 

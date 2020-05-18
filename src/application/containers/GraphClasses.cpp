@@ -27,12 +27,22 @@ long XMLNode::getID() const {
     return stol(XMLNodeAttributes.at("id"));
 }
 
-const map<string, string> &XMLNode::getXMLNodeAttributes() const {
+const map<string, string> &XMLNode::getXMLAttributes() const {
     return XMLNodeAttributes;
 }
 
 const map<string, string> &XMLNode::getXMLTags() const {
     return xmlTags;
+}
+
+string XMLNode::getXMLAttributeValue(string attr) const {
+    map<string, string>::const_iterator it;
+    return (it = XMLNodeAttributes.find(attr)) != XMLNodeAttributes.end() ? it->second : "";
+}
+
+string XMLNode::getXMLTagValue(string attr) const {
+    map<string, string>::const_iterator it;
+    return (it = xmlTags.find(attr)) != xmlTags.end() ? it->second : "";
 }
 
 /* VertexInfoXML */
@@ -67,26 +77,45 @@ long VertexInfoXML::getID() const {
     return XMLNode::getID();
 }
 
-/* Road */
+/* WayInfoXML */
 
-Road::Road(rapidxml::xml_node<> * node) : XMLNode(node) {
+WayInfoXML::WayInfoXML(rapidxml::xml_node<> * node, map<string, Vertex<VertexInfoXML, WayInfoXML> *> &nodes) : XMLNode(node) {
     // looping through child nodes of way
     for (rapidxml::xml_node<> * n = node->first_node(); n; n = n->next_sibling()) {
         // if it refers to a node id
         if (strcmp(n->name(), "nd") == 0 && strcmp(n->first_attribute()->name(), "ref") == 0) {
             nodeIDs.emplace_back(n->first_attribute()->value());
+            vertexes.emplace_back(nodes.find(n->first_attribute()->value())->second);
         }
     }
+
+    apprCoords = {0, 0};
+
+    for (Vertex<VertexInfoXML, WayInfoXML> * v : vertexes) {
+        apprCoords.first += v->getInfo().getLat();
+        apprCoords.second += v->getInfo().getLon();
+    }
+
+    apprCoords.first = apprCoords.first / (double) vertexes.size();
+    apprCoords.second = apprCoords.second / (double) vertexes.size();
 }
 
-const vector<string> &Road::getNodeIDs() const {
+const vector<string> &WayInfoXML::getNodeIDs() const {
     return nodeIDs;
 }
 
-bool Road::operator==(const Road &r) {
+const vector<Vertex<VertexInfoXML, WayInfoXML>*> &WayInfoXML::getVertexes() const {
+    return vertexes;
+}
+
+const pair<double, double> &WayInfoXML::getApprCoords() const {
+    return apprCoords;
+}
+
+bool WayInfoXML::operator==(const WayInfoXML &r) {
     return this->getID() == r.getID();
 }
 
-bool Road::operator==(Road &r) {
+bool WayInfoXML::operator==(WayInfoXML &r) {
     return this->getID() == r.getID();
 }

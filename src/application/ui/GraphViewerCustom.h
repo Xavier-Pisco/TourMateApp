@@ -7,11 +7,11 @@
 
 class GraphViewerCustom {
 private:
-    Graph<VertexInfoXML, Road> * graph;
+    Graph<VertexInfoXML, WayInfoXML> * graph;
     GraphViewer * graphViewer = nullptr;
 
 public:
-    explicit GraphViewerCustom(Graph<VertexInfoXML, Road> * graph);
+    explicit GraphViewerCustom(Graph<VertexInfoXML, WayInfoXML> * graph);
     void viewGraph();
     void closeView();
     ~GraphViewerCustom();

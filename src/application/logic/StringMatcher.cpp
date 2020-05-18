@@ -1,5 +1,4 @@
 #include "StringMatcher.h"
-#include <queue>
 
 
 int StringMatcher::getEditDistance(const string a, const string b) {

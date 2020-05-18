@@ -82,7 +82,7 @@ string UserInput::getPreference() {
 
     menu.drawMenuOptions("");
     cout << endl;
-    int opt = menu.getResponse("Choose an option from the menu:");
+    unsigned opt = menu.getResponse("Choose an option from the menu:");
 
 
     switch(opt) {
@@ -100,6 +100,8 @@ string UserInput::getPreference() {
             return "cafe";
         case 6:
             return "garden";
+        default:
+            return "";
     }
 
 }

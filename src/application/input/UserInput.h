@@ -66,7 +66,16 @@ public:
      * @return the vertex
      */
     template<class T, class P>
-    static Vertex<T, P> * getVertex(Graph<T, P> * graph, bool mandatory = true);
+    static Vertex<T, P> * getVertex(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places, bool mandatory = true);
+
+    /**
+     * @brief Gets vertex from graph with coords
+     * @param graph - the graph
+     * @param coords - the coords
+     * @return the vertex
+     */
+    template<class T, class P>
+    static Vertex<T, P> * getVertexFromGraphWithCoords(Graph<T, P> * graph, const pair<double, double> &coords);
 
     /**
      * @brief GET's a vertex from lat lon input
@@ -82,10 +91,10 @@ public:
      * @return the vertex
      */
     template<class T, class P>
-    static Vertex<T, P> * getVertexWithLocationName(Graph<T, P> * graph);
+    static Vertex<T, P> * getVertexWithLocationName(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places);
 
     /**
-     * @brief Finds the tag name from tags and if it has less edit distance than the one on vertexWithEditDist then replaces it
+     * @brief Auxiliary function for getVertexWithLocationName - Finds the tag name from tags and if it has less edit distance than the one on vertexWithEditDist then replaces it
      * @param v - the vertex
      * @param tags - the map with the tags
      * @param vertexWithEditDist - the holder of the vertex with the least edit distance so far
@@ -95,12 +104,15 @@ public:
     template<class T, class P>
     static void findTagName(Vertex<T, P> * v, map<string, string> &tags, priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> &vertexWithEditDist, string &name);
 
+    template<class T, class P>
+    static void findTagName(Graph<T, P> * graph, const pair<double, double> &coords, map<string, string> &tags, priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> &vertexWithEditDist, string &name);
+
     static string getPreference();
 };
 
 
 template<class T, class P>
-Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, bool mandatory) {
+Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places, bool mandatory) {
     Menu menu;
     menu.addOption("cancel");
     menu.addOption("add location with GPS coordinates");
@@ -118,12 +130,28 @@ Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, bool mandatory) {
         case 1:
             return UserInput::getVertexWithGPSCoords(graph);
         case 2:
-            return UserInput::getVertexWithLocationName(graph);
+            return UserInput::getVertexWithLocationName(graph, roads, places);
         case 3:
         default:
             break;
     }
     return nullptr;
+}
+
+template<class T, class P>
+Vertex<T, P> * UserInput::getVertexFromGraphWithCoords(Graph<T, P> * graph, const pair<double, double> &coords) {
+    pair<Vertex<T, P> *, double> vertexWithDist;
+    vertexWithDist.second = DBL_MAX;
+
+    for (Vertex<T, P> * v : graph->getVertexSet()) {
+        double dist = sqrt( pow(v->getInfo().getLat() - coords.first, 2) + pow(v->getInfo().getLon() - coords.second, 2) );
+        if (dist < vertexWithDist.second) {
+            //cout << dist << endl;
+            vertexWithDist.first = v;
+            vertexWithDist.second = dist;
+        }
+    }
+    return vertexWithDist.first;
 }
 
 template<class T, class P>
@@ -137,19 +165,7 @@ Vertex<T, P> * UserInput::getVertexWithGPSCoords(Graph<T, P> * graph) {
 
     //cout << "lat: " << coords.first << " lon: " << coords.second << endl;
 
-    pair<Vertex<T, P> *, double> vertexWithDist;
-    vertexWithDist.second = DBL_MAX;
-
-    for (Vertex<T, P> * v : graph->getVertexSet()) {
-        double dist = sqrt( pow(v->getInfo().getLat() - coords.first, 2) + pow(v->getInfo().getLon() - coords.second, 2) );
-        if (dist < vertexWithDist.second) {
-            //cout << dist << endl;
-            vertexWithDist.first = v;
-            vertexWithDist.second = dist;
-        }
-    }
-
-    return vertexWithDist.first;
+    return UserInput::getVertexFromGraphWithCoords(graph, coords);
 }
 
 template<class T, class P>
@@ -161,7 +177,9 @@ void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, priorit
         int editDistance = StringMatcher::getSubstringEditDistance(name, a);
         pair<int, pair<Vertex<T, P> *, string>> p;
 
-        p.second.first = v;
+        if (vertexWithEditDist.size() == 0 || editDistance <= vertexWithEditDist.top().first) {
+            p.second.first = v;
+        } else p.second.first = nullptr;
         p.second.second = it->second;
         p.first = editDistance;
 
@@ -170,13 +188,32 @@ void UserInput::findTagName(Vertex<T, P> * v, map<string, string> &tags, priorit
 }
 
 template<class T, class P>
-Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph) {
+void UserInput::findTagName(Graph<T, P> * graph, const pair<double, double> &coords, map<string, string> &tags, priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> &vertexWithEditDist, string &name) {
+    map<string, string>::const_iterator it;
+
+    if ((it = tags.find("name")) != tags.end()) {
+        string a = it->second;
+        int editDistance = StringMatcher::getSubstringEditDistance(name, a);
+        pair<int, pair<Vertex<T, P> *, string>> p;
+
+        if (vertexWithEditDist.size() == 0 || editDistance <= vertexWithEditDist.top().first) {
+            p.second.first = getVertexFromGraphWithCoords(graph, coords);
+        } else p.second.first = nullptr;
+        p.second.second = it->second;
+        p.first = editDistance;
+
+        vertexWithEditDist.push(p);
+    }
+}
+
+template<class T, class P>
+Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places) {
     string name;
     priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> vertexWithEditDist;
     vector<pair<int, pair<Vertex<T, P> *, string>>> v;
 
     while (true) {
-        cout << "This option finds the vertex through which passes a street" << endl << "that has the name closest the the one you specified."
+        cout << "This option finds the vertex that corresponds to the location" << endl << "that has the name closest the the one you specified."
                 << endl << endl << "Insert 'stop' at any time to cancel operation." << endl << endl;
 
 
@@ -185,11 +222,14 @@ Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph) {
         for (Vertex<T, P> *v : graph->getVertexSet()) { // checks for the vertex name
             map<string, string> tags = v->getInfo().getXMLTags();
             UserInput::findTagName(v, tags, vertexWithEditDist, name);
-
-            for (Edge<T, P> &e : v->getAdj()) { // checks for the street name
-                tags = e.getInfo().getXMLTags();
-                UserInput::findTagName(v, tags, vertexWithEditDist, name);
-            }
+        }
+        for (P* r : roads) { // checks for road name
+            map<string, string> tags = r->getXMLTags();
+            UserInput::findTagName(graph, r->getApprCoords(), tags, vertexWithEditDist, name);
+        }
+        for (P* p : places) { // checks for place name
+            map<string, string> tags = p->getXMLTags();
+            UserInput::findTagName(graph, p->getApprCoords(), tags, vertexWithEditDist, name);
         }
 
 

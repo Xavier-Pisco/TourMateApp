@@ -22,6 +22,7 @@ void RouteMaker::start() {
     if (opt == -1) {
         path = path + res;
         openMap(path);
+
         getRouteInfo();
         return;
     }
@@ -51,7 +52,7 @@ vector<string> RouteMaker::getAvailableMaps(string & path) const {
 }
 
 void RouteMaker::openMap(string &map) {
-    graph = Converter::getGraphFromOSMFile(map);
+    graph = Converter::getGraphFromOSMFile(map, roads, places);
     graphViewer = new GraphViewerCustom(graph);
     graphViewer->viewGraph();
 
@@ -63,14 +64,14 @@ void RouteMaker::getRouteInfo() {
     Drawer::drawTitle("Route info");
     cout << "Insert 'stop' at any time to cancel." << endl;
 
-    Vertex<VertexInfoXML, Road> *vx;
+    Vertex<VertexInfoXML, WayInfoXML> *vx;
 
     cout << endl;
 
     Drawer::drawTitle("Origin location", 0, 40, true, "left"); cout << endl;
 
     try {
-        vx = UserInput::getVertex(graph);
+        vx = UserInput::getVertex(graph, roads, places);
     } catch(CancelInput &c) {
         cout << "You cancelled the operation." << endl;
         return;
@@ -83,7 +84,7 @@ void RouteMaker::getRouteInfo() {
     cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
 
     try {
-        vx = UserInput::getVertex(graph, false);
+        vx = UserInput::getVertex(graph, roads, places, false);
     } catch(CancelInput &c) {
         cout << "You cancelled the operation." << endl;
         return;

@@ -17,8 +17,9 @@ using namespace std;
 
 class RouteMaker {
 private:
-    Graph<VertexInfoXML, Road> * graph = nullptr;
+    Graph<VertexInfoXML, WayInfoXML> * graph = nullptr;
     GraphViewerCustom * graphViewer = nullptr;
+    vector<WayInfoXML*> roads, places;
     User user;
 public:
     ~RouteMaker();

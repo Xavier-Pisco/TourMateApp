@@ -1,6 +1,6 @@
 #include "Converter.h"
 
-Graph<VertexInfoXML, Road> * Converter::getGraphFromOSMFile(const string& fileName) {
+Graph<VertexInfoXML, WayInfoXML> * Converter::getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &places) {
     string fileContent;
     if (readFileData(fileName, fileContent) != 0) {
         cout << "Error reading input file!" << endl;
@@ -9,13 +9,13 @@ Graph<VertexInfoXML, Road> * Converter::getGraphFromOSMFile(const string& fileNa
     rapidxml::xml_document<> * doc;
     doc = createXMLDoc((char*) fileContent.c_str());
 
-    Graph<VertexInfoXML, Road> * myGraph = parseXMLDocToGraph(*doc);
+    Graph<VertexInfoXML, WayInfoXML> * myGraph = parseXMLDocToGraph(*doc, roads, places);
 
     return myGraph;
 }
 
 
-Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc) {
+Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &places) {
     /*
      * ALGORITHM
      *
@@ -47,52 +47,51 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
      *
      * */
 
-    auto * res = new Graph<VertexInfoXML, Road>;
+    auto * res = new Graph<VertexInfoXML, WayInfoXML>;
 
-    map<string, Vertex<VertexInfoXML, Road> *> nodes;
-    vector<Road*> roads;
+    map<string, Vertex<VertexInfoXML, WayInfoXML> *> nodes;
 
     pair<double, double> minCoords, maxCoords;
-
     bool maxMinDone = false;
     // looping through child nodes of osm node and adding them to nodes
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node(); node; node = node->next_sibling()) {
         if (!maxMinDone && strcmp(node->name(), "bounds") == 0) {
             XMLNode n(node);
-            minCoords.first = stod(n.getXMLNodeAttributes().at("minlat"));
-            minCoords.second = stod(n.getXMLNodeAttributes().at("minlon"));
-            maxCoords.first = stod(n.getXMLNodeAttributes().at("maxlat"));
-            maxCoords.second = stod(n.getXMLNodeAttributes().at("maxlon"));
+            minCoords.first = stod(n.getXMLAttributes().at("minlat"));
+            minCoords.second = stod(n.getXMLAttributes().at("minlon"));
+            maxCoords.first = stod(n.getXMLAttributes().at("maxlat"));
+            maxCoords.second = stod(n.getXMLAttributes().at("maxlon"));
             res->setMaxMinCoords(minCoords, maxCoords);
             maxMinDone = true;
             //cout << minCoords.first << " " << minCoords.second << " " << maxCoords.first << " " << maxCoords.second << endl;
         }
         if (strcmp(node->name(), "node") == 0) {
-            nodes[node->first_attribute()->value()] = new Vertex<VertexInfoXML, Road>(VertexInfoXML(node));
+            nodes[node->first_attribute()->value()] = new Vertex<VertexInfoXML, WayInfoXML>(VertexInfoXML(node));
         }
     }
 
+    /*
+     * Now, ways may also be buildings and places
+     * Need to find a way to save those ways too.
+     * When those are referenced, we need to find the road vertex that's nearest to
+     *
+     * */
     // looping though ways, incrementing VertexInfoXML count and adding roads
     for (rapidxml::xml_node<> *node = doc.last_node()->first_node(); node; node = node->next_sibling()) {
         if (strcmp(node->name(), "way") == 0) {
-            Road * candidate = new Road(node);
-            /*cout << "## Candidate:" << endl;
-            for (auto const &key : candidate->getXMLTags()) {
-                cout<< key.first << " : " << key.second << endl;
-            }*/
-            bool done = false;
-            for (auto const &key : candidate->getXMLTags()) {
-                if (strcmp((char *) key.first.c_str(), "highway") == 0) { // we are only interested in having ways that are roads
-                    roads.push_back(candidate);
-                    for (const string& nodeID : roads.at(roads.size()-1)->getNodeIDs()) {
-                        if (nodes.find(nodeID) != nodes.end())
-                            nodes[nodeID]->getInfo().incrementCount();
-                    }
-                    done = true;
-                    break;
+            WayInfoXML * candidate = new WayInfoXML(node, nodes);
+            if (!candidate->getXMLTagValue("highway").empty()) {
+                roads.push_back(candidate);
+                for (auto v : roads.at(roads.size()-1)->getVertexes()) {
+                    v->getInfo().incrementCount();
                 }
+            } else {
+                places.push_back(candidate);
+                /*this for is in case we need to keep these vertexes. Right now I don't se a reason to keep them.
+                 * for (auto v : roads.at(roads.size()-1)->getVertexes()) {
+                    v->getInfo().incrementCount();
+                }*/
             }
-            if (!done) delete candidate;
         }
     }
 
@@ -113,7 +112,7 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
         res->addVertex(node.second);
     }
 
-    for (Road * edge : roads) {
+    for (WayInfoXML * edge : roads) {
         const vector<string>& nodeIDs = edge->getNodeIDs();
 
         // Testing if oneway or not
@@ -140,7 +139,7 @@ Graph<VertexInfoXML, Road> * Converter::parseXMLDocToGraph(rapidxml::xml_documen
 
         // simplest case
         double length;
-        map<string, Vertex<VertexInfoXML, Road>*>::iterator n1, n2;
+        map<string, Vertex<VertexInfoXML, WayInfoXML>*>::iterator n1, n2;
         if (nodeIDs.size() == 2) {
             if ((n1 = nodes.find(nodeIDs.at(0))) != nodes.end() && (n2 = nodes.find(nodeIDs.at(1))) != nodes.end()) {
                 length = getKmDistfromLatLong(n1->second->getInfo().getLat(), n1->second->getInfo().getLon(), n2->second->getInfo().getLat(), n2->second->getInfo().getLon());
@@ -194,7 +193,6 @@ double Converter::degreesToRadians(double degrees) {
 
 double Converter::getKmDistfromLatLong(double lat1, double lon1, double lat2, double lon2) {
     // haversine formula http://www.movable-type.co.uk/scripts/latlong.html
-
     int earthRadius = 6371; // in km
 
     double dLat = degreesToRadians(lat2 - lat1);
@@ -207,7 +205,7 @@ double Converter::getKmDistfromLatLong(double lat1, double lon1, double lat2, do
 
     double c = 2 * atan2(sqrt(a), sqrt(1-a));
 
-    return c * earthRadius;
+    return c * (double) earthRadius;
 }
 
 

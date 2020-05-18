@@ -116,10 +116,10 @@ void Graph<T, P>::setMaxMinCoords(pair<double, double> mn, pair<double, double> 
 
 template<class T, class P>
 void Graph<T, P>::setMaxMinCoords() {
-    this->maxCoords.first = strtod((vertexSet.at(0)->info.getXMLNodeAttributes().at("lat")).c_str(), nullptr);
-    this->maxCoords.second = strtod((vertexSet.at(0)->info.getXMLNodeAttributes().at("lon")).c_str(), nullptr);
-    this->minCoords.first = strtod((vertexSet.at(0)->info.getXMLNodeAttributes().at("lat")).c_str(), nullptr);
-    this->minCoords.second = strtod((vertexSet.at(0)->info.getXMLNodeAttributes().at("lon")).c_str(), nullptr);
+    this->maxCoords.first = vertexSet.at(0)->info.getLat();
+    this->maxCoords.second = vertexSet.at(0)->info.getLon();
+    this->minCoords.first = vertexSet.at(0)->info.getLat();
+    this->minCoords.second = vertexSet.at(0)->info.getLon();
 
     for (Vertex<T, P> * v : vertexSet) {
         double lat = v->info.getLat();
