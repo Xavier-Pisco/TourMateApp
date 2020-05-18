@@ -1,6 +1,6 @@
 #include "Converter.h"
 
-Graph<VertexInfoXML, WayInfoXML> * Converter::getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &places) {
+Graph<VertexInfoXML, WayInfoXML> * Converter::getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes) {
     string fileContent;
     if (readFileData(fileName, fileContent) != 0) {
         cout << "Error reading input file!" << endl;
@@ -9,13 +9,13 @@ Graph<VertexInfoXML, WayInfoXML> * Converter::getGraphFromOSMFile(const string& 
     rapidxml::xml_document<> * doc;
     doc = createXMLDoc((char*) fileContent.c_str());
 
-    Graph<VertexInfoXML, WayInfoXML> * myGraph = parseXMLDocToGraph(*doc, roads, places);
+    Graph<VertexInfoXML, WayInfoXML> * myGraph = parseXMLDocToGraph(*doc, roads, placesWays, placesNodes);
 
     return myGraph;
 }
 
 
-Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &places) {
+Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes) {
     /*
      * ALGORITHM
      *
@@ -86,7 +86,7 @@ Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_d
                     v->getInfo().incrementCount();
                 }
             } else {
-                places.push_back(candidate);
+                placesWays.push_back(candidate);
                 /*this for is in case we need to keep these vertexes. Right now I don't se a reason to keep them.
                  * for (auto v : roads.at(roads.size()-1)->getVertexes()) {
                     v->getInfo().incrementCount();
@@ -100,8 +100,12 @@ Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_d
     vector<string> k;
     for (auto & node : nodes) {
         if (node.second->getInfo().getCount() == 0) {
-            delete node.second;
-            k.push_back(node.first);
+            if (!node.second->getInfo().getXMLTagValue("name").empty()) {
+                placesNodes.push_back(node.second->getInfo());
+            } else {
+                delete node.second;
+                k.push_back(node.first);
+            }
         }
     }
     for (const string& key : k) {

@@ -7,9 +7,9 @@ using namespace std;
 
 class CancelInput : exception {};
 
-class InvalidInput : exception {};
+class ImpossibleToReach : exception {};
 
-class VertexNotFound : exception {};
+class InvalidInput : exception {};
 
 
 #endif //SRC_EXCEPTIONS_H

@@ -66,7 +66,7 @@ public:
      * @return the vertex
      */
     template<class T, class P>
-    static Vertex<T, P> * getVertex(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places, bool mandatory = true);
+    static Vertex<T, P> * getVertex(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &placesWays, vector<T> &placesNodes, bool mandatory = true);
 
     /**
      * @brief Gets vertex from graph with coords
@@ -91,7 +91,7 @@ public:
      * @return the vertex
      */
     template<class T, class P>
-    static Vertex<T, P> * getVertexWithLocationName(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places);
+    static Vertex<T, P> * getVertexWithLocationName(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &placesWays, vector<T> &placesNodes);
 
     /**
      * @brief Auxiliary function for getVertexWithLocationName - Finds the tag name from tags and if it has less edit distance than the one on vertexWithEditDist then replaces it
@@ -112,7 +112,7 @@ public:
 
 
 template<class T, class P>
-Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places, bool mandatory) {
+Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &placesWays, vector<T> &placesNodes, bool mandatory) {
     Menu menu;
     menu.addOption("cancel");
     menu.addOption("add location with GPS coordinates");
@@ -130,7 +130,7 @@ Vertex<T, P> * UserInput::getVertex(Graph<T, P> * graph, vector<P*> &roads, vect
         case 1:
             return UserInput::getVertexWithGPSCoords(graph);
         case 2:
-            return UserInput::getVertexWithLocationName(graph, roads, places);
+            return UserInput::getVertexWithLocationName(graph, roads, placesWays, placesNodes);
         case 3:
         default:
             break;
@@ -207,7 +207,7 @@ void UserInput::findTagName(Graph<T, P> * graph, const pair<double, double> &coo
 }
 
 template<class T, class P>
-Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places) {
+Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph, vector<P*> &roads, vector<P*> &places, vector<T> &placesNodes) {
     string name;
     priority_queue<pair<int, pair<Vertex<T, P> *, string>>, vector<pair<int, pair<Vertex<T, P> *, string>>>, greater<pair<int, pair<Vertex<T, P> *, string>>>> vertexWithEditDist;
     vector<pair<int, pair<Vertex<T, P> *, string>>> v;
@@ -219,9 +219,14 @@ Vertex<T, P> * UserInput::getVertexWithLocationName(Graph<T, P> * graph, vector<
 
         name = UserInput::getLine("Location name:");
 
-        for (Vertex<T, P> *v : graph->getVertexSet()) { // checks for the vertex name
-            map<string, string> tags = v->getInfo().getXMLTags();
-            UserInput::findTagName(v, tags, vertexWithEditDist, name);
+        for (Vertex<T, P> *vx : graph->getVertexSet()) { // checks for the vertex name
+            map<string, string> tags = vx->getInfo().getXMLTags();
+            UserInput::findTagName(vx, tags, vertexWithEditDist, name);
+        }
+        for (T n : placesNodes) {
+            map<string, string> tags = n.getXMLTags();
+            pair<double, double> coords = {n.getLat(), n.getLon()};
+            UserInput::findTagName(graph, coords, tags, vertexWithEditDist, name);
         }
         for (P* r : roads) { // checks for road name
             map<string, string> tags = r->getXMLTags();

@@ -23,7 +23,7 @@ int StringMatcher::getSubstringEditDistance(const string a, const string b) {
     if (dif > (int) a.size()/5) substringSize = a.size() + a.size()/5;
     else substringSize = b.size();
 
-    for (int k = 0; k < b.size() - substringSize; k++) {
+    for (int k = 0; k <= b.size() - substringSize; k++) {
         string b2 = b.substr(k, substringSize);
         int e = getEditDistance(a, b2);
         if (e < res) res = e;

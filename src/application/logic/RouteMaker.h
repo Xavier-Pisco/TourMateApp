@@ -5,6 +5,7 @@
 #include <vector>
 #include "../containers/GraphClasses.h"
 #include "../graph/algorithms/dijkstra.h"
+#include "../graph/algorithms/bfs.h"
 #include "../input/Converter.h"
 #include "../ui/Menu.h"
 #include "../ui/Drawer.h"
@@ -19,7 +20,8 @@ class RouteMaker {
 private:
     Graph<VertexInfoXML, WayInfoXML> * graph = nullptr;
     GraphViewerCustom * graphViewer = nullptr;
-    vector<WayInfoXML*> roads, places;
+    vector<WayInfoXML*> roads, placesWays;
+    vector<VertexInfoXML> placesNodes;
     User user;
 public:
     ~RouteMaker();

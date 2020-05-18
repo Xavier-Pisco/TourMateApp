@@ -56,9 +56,10 @@ public:
 template <class T, class P>
 class Graph {
 	vector<Vertex<T, P> *> vertexSet;    // vertex set
+	vector<Vertex<T, P> *> originalVertexSet;
     pair<double, double> minCoords = {0, 0}, maxCoords = {0, 0};
 
-	void dfsVisit(Vertex<T, P> *v,  vector<T> & res) const;
+	void dfsVisit(Vertex<T, P> *v,  vector<Vertex<T, P>*> & res) const;
 	bool dfsIsDAG(Vertex<T, P> *v) const;
 
 public:
@@ -67,6 +68,8 @@ public:
     const vector<Vertex<T, P>*> &getVertexSet() const;
     void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
     void setMaxMinCoords();
+    void setVertexSet(vector<Vertex<T, P>*> v);
+    void setOriginalVertexSet();
 	int getNumVertex() const;
 	bool addVertex(const T &in);
     bool addVertex(Vertex<T, P> * in);
@@ -76,8 +79,8 @@ public:
     bool addEdge(Vertex<T, P> *sourcVertex, Vertex<T, P> *destVertex, P info, double w);
     bool addEdge(const T &sourc, const T &dest, P info); // this is a temporary solution
 	bool removeEdge(const T &sourc, const T &dest);
-	vector<T> dfs() const;
-	vector<T> bfs(const T &source) const;
+    vector<Vertex<T, P>*> dfs() const;
+    vector<Vertex<T, P>*> bfs(Vertex<T, P> * source) const;
 	vector<T> topsort() const;
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
@@ -112,6 +115,20 @@ template<class T, class P>
 void Graph<T, P>::setMaxMinCoords(pair<double, double> mn, pair<double, double> mx) {
     this->minCoords = mn;
     this->maxCoords = mx;
+}
+
+template<class T, class P>
+void Graph<T, P>::setVertexSet(vector<Vertex<T, P>*> v) {
+    if (originalVertexSet.empty()) setOriginalVertexSet();
+    vertexSet = v;
+}
+
+template<class T, class P>
+void Graph<T, P>::setOriginalVertexSet() {
+    originalVertexSet.erase(originalVertexSet.begin(), originalVertexSet.end());
+    for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
+        originalVertexSet.push_back(*it);
+    }
 }
 
 template<class T, class P>

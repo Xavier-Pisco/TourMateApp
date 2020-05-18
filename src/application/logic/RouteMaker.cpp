@@ -22,8 +22,11 @@ void RouteMaker::start() {
     if (opt == -1) {
         path = path + res;
         openMap(path);
-
-        getRouteInfo();
+        while(true) {
+            try {
+                getRouteInfo();
+            } catch(CancelInput &c) {break;}
+        }
         return;
     }
     switch(opt) {
@@ -52,7 +55,8 @@ vector<string> RouteMaker::getAvailableMaps(string & path) const {
 }
 
 void RouteMaker::openMap(string &map) {
-    graph = Converter::getGraphFromOSMFile(map, roads, places);
+    graph = Converter::getGraphFromOSMFile(map, roads, placesWays, placesNodes);
+    graph->setOriginalVertexSet();
     graphViewer = new GraphViewerCustom(graph);
     graphViewer->viewGraph();
 
@@ -67,31 +71,17 @@ void RouteMaker::getRouteInfo() {
     Vertex<VertexInfoXML, WayInfoXML> *vx;
 
     cout << endl;
-
     Drawer::drawTitle("Origin location", 0, 40, true, "left"); cout << endl;
 
-    try {
-        vx = UserInput::getVertex(graph, roads, places);
-    } catch(CancelInput &c) {
-        cout << "You cancelled the operation." << endl;
-        return;
-    }
-
+    vx = UserInput::getVertex(graph, roads, placesWays, placesNodes);
     cout << "Vertex id = " << vx->getInfo().getID() << endl;
-
     user.setOrigin(vx);
+    graph->setVertexSet(graph->bfs(vx));
 
     cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
 
-    try {
-        vx = UserInput::getVertex(graph, roads, places, false);
-    } catch(CancelInput &c) {
-        cout << "You cancelled the operation." << endl;
-        return;
-    }
-
+    vx = UserInput::getVertex(graph, roads, placesWays, placesNodes, false);
     if (vx != nullptr) cout << "Vertex id = " << vx->getInfo().getID() << endl;
-
     user.setDestination(vx);
 
     cout << endl;

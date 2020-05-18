@@ -27,12 +27,23 @@ int Menu::getResponse(string getterPhrase, string &res) const {
             if (i >= 0 && i <= menuOptions.size() -1) return i;
         } catch(...) {}
 
+
+        pair<string, int> r;
+        r.second = INT32_MAX;
         for (const string &s : extraInput) {
-            if (s == response) {
-                res = response;
-                return -1;
+            int editDistance = StringMatcher::getEditDistance(response, s);
+            if (editDistance < r.second) {
+                r.first = s;
+                r.second = editDistance;
             }
         }
+
+        if (r.second < 6) {
+            res = r.first;
+            return -1;
+        }
+
+        cout << "Insert a valid option." << endl;
     }
 }
 

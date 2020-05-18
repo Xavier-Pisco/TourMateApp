@@ -10,15 +10,14 @@
  * Follows the algorithm described in theoretical classes.
  */
 template <class T, class P>
-vector<T> Graph<T, P>::bfs(const T & source) const {
-    vector<T> res;
-    for (typename vector<Vertex<T, P> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
+vector<Vertex<T, P>*> Graph<T, P>::bfs(Vertex<T, P>* s) const {
+    vector<Vertex<T, P>*> res;
+    for (typename vector<Vertex<T, P> *>::const_iterator it = originalVertexSet.begin(); it != originalVertexSet.end(); it++) {
         (*it)->visited = false;
     }
     queue<Vertex<T, P> *> vertexQueue;
 
-    Vertex<T, P> * s = findVertex(source);
-    if (s == NULL) return vector<T>();
+    if (s == NULL) return vector<Vertex<T, P>*>();
 
     vertexQueue.push(s);
     s->visited = true;
@@ -26,7 +25,7 @@ vector<T> Graph<T, P>::bfs(const T & source) const {
     while(!vertexQueue.empty()) {
         s = vertexQueue.front();
         vertexQueue.pop();
-        res.push_back(s->info);
+        res.push_back(s);
         for (Edge<T, P> a : s->adj) {
             if (!a.dest->visited) {
                 vertexQueue.push(a.dest);

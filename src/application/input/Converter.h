@@ -27,7 +27,7 @@ private:
      * @param doc - the XMLDoc
      * @return pointer to the graph
      */
-    static Graph<VertexInfoXML, WayInfoXML> * parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &places);
+    static Graph<VertexInfoXML, WayInfoXML> * parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes);
 
     /**
      * @brief Creates a RapidXML doc from data in c string format
@@ -96,7 +96,7 @@ public:
      * @param fileName - name of the file to get graph from
      * @return pointer to the graph
      */
-    static Graph<VertexInfoXML, WayInfoXML> * getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &places);
+    static Graph<VertexInfoXML, WayInfoXML> * getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes);
 
     /**
      * Converts info from a city to a graph

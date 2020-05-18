@@ -4,6 +4,7 @@
 #include "../Graph.h"
 #include "../MutablePriorityQueue.h"
 #include <cfloat>
+#include "../../exceptions.h"
 
 template<class T, class P>
 void Graph<T, P>::dijkstra(Vertex<T, P> * s) {
@@ -44,7 +45,7 @@ pair<vector<P>, double> Graph<T, P>::getPathToFromDijkstra(Vertex<T, P> * s, Ver
     vector<P> path;
     Vertex<T, P> * prevVertex, * currVertex = d;
 
-    if (currVertex->dist == DBL_MAX) return pair<vector<P>, int>(vector<P>(), 0); // Impossible to reach
+    if (currVertex->dist == DBL_MAX) throw ImpossibleToReach(); // Impossible to reach
 
     while ((prevVertex = currVertex->path) != nullptr) {
         bool found = false;
