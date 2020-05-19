@@ -38,6 +38,7 @@ public:
     friend class Graph<T, P>;
 	friend class MutablePriorityQueue<Vertex<T, P>>;
     friend class GraphViewerCustom;
+    friend class MapContainer;
 };
 
 template <class T, class P>
@@ -67,7 +68,6 @@ public:
     Vertex<T, P> *findVertex(const T &in) const;
     const vector<Vertex<T, P>*> &getVertexSet() const;
     void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
-    void setMaxMinCoords();
     void setVertexSet(vector<Vertex<T, P>*> v);
     void setOriginalVertexSet();
 	int getNumVertex() const;
@@ -87,6 +87,7 @@ public:
 	void dijkstra(Vertex<T, P> * origin);
 	pair<vector<P>, double> getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d);
 	friend class GraphViewerCustom;
+	friend class MapContainer;
 };
 
 template <class T, class P>
@@ -129,27 +130,6 @@ void Graph<T, P>::setOriginalVertexSet() {
     for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
         originalVertexSet.push_back(*it);
     }
-}
-
-template<class T, class P>
-void Graph<T, P>::setMaxMinCoords() {
-    this->maxCoords.first = vertexSet.at(0)->info.getLat();
-    this->maxCoords.second = vertexSet.at(0)->info.getLon();
-    this->minCoords.first = vertexSet.at(0)->info.getLat();
-    this->minCoords.second = vertexSet.at(0)->info.getLon();
-
-    for (Vertex<T, P> * v : vertexSet) {
-        double lat = v->info.getLat();
-        double lon = v->info.getLon();
-
-        if (lat > maxCoords.first) maxCoords.first = lat;
-        if (lon > maxCoords.second) maxCoords.second = lon;
-        if (lat < minCoords.first) minCoords.first = lat;
-        if (lon < minCoords.second) minCoords.second = lon;
-    }
-    /*cout << "Min coords: " << minCoords.first << ", " << minCoords.second << endl;
-    cout << "Max coords: " << maxCoords.first << ", " << maxCoords.second << endl;*/
-
 }
 
 template <class T, class P>

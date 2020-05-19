@@ -20,7 +20,6 @@ private:
     vector<VertexInfoXML> placesNodes;
 
 public:
-
     explicit MapContainer(string &map);
 
     /**
@@ -28,6 +27,8 @@ public:
      * @param vx - the vertex
      */
     void setReachableVertexSet(Vertex<VertexInfoXML, WayInfoXML> * vx);
+
+    void setGraphMaxMinCoords() const;
 
     Vertex<VertexInfoXML, WayInfoXML> *getVertexWithCoords(const Coords &c) const;
 

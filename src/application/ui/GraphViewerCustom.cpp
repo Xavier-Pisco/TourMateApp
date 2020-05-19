@@ -12,8 +12,6 @@ void GraphViewerCustom::viewGraph() {
     graphViewer = new GraphViewer(600, 600, false);
     graphViewer->createWindow(600, 600);
 
-    if (graph->minCoords.first == 0 && graph->minCoords.second == 0 && graph->maxCoords.first == 0 && graph->maxCoords.second == 0) graph->setMaxMinCoords();
-
     int i = 1;
     for (Vertex<VertexInfoXML, WayInfoXML> * v : graph->vertexSet) {
         v->graphViewerID = i;

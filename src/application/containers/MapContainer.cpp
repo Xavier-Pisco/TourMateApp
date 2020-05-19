@@ -4,6 +4,9 @@ MapContainer::MapContainer(string &map)  {
     graph = Converter::getGraphFromOSMFile(map, roads, placesWays, placesNodes);
     graph->setOriginalVertexSet();
     graphViewer = new GraphViewerCustom(graph);
+    if (graph->minCoords.first == 0 && graph->minCoords.second == 0 && graph->maxCoords.first == 0 && graph->maxCoords.second == 0)
+        setGraphMaxMinCoords();
+
 }
 
 Graph<VertexInfoXML, WayInfoXML> *MapContainer::getGraph() const {
@@ -31,6 +34,25 @@ void MapContainer::setReachableVertexSet(Vertex<VertexInfoXML, WayInfoXML> *vx) 
 }
 
 
+void MapContainer::setGraphMaxMinCoords() const {
+    graph->maxCoords.first = graph->vertexSet.at(0)->info.getLat();
+    graph->maxCoords.second = graph->vertexSet.at(0)->info.getLon();
+    graph->minCoords.first = graph->vertexSet.at(0)->info.getLat();
+    graph->minCoords.second = graph->vertexSet.at(0)->info.getLon();
+
+    for (auto v : graph->vertexSet) {
+        double lat = v->info.getLat();
+        double lon = v->info.getLon();
+
+        if (lat > graph->maxCoords.first) graph->maxCoords.first = lat;
+        if (lon > graph->maxCoords.second) graph->maxCoords.second = lon;
+        if (lat < graph->minCoords.first) graph->minCoords.first = lat;
+        if (lon < graph->minCoords.second) graph->minCoords.second = lon;
+    }
+
+}
+
+
 Vertex<VertexInfoXML, WayInfoXML> *MapContainer::getVertexWithCoords(const Coords &c) const {
     pair<Vertex<VertexInfoXML, WayInfoXML> *, double> vertexWithDist;
     vertexWithDist.second = DBL_MAX;
@@ -38,7 +60,6 @@ Vertex<VertexInfoXML, WayInfoXML> *MapContainer::getVertexWithCoords(const Coord
     for (Vertex<VertexInfoXML, WayInfoXML> * v : graph->getVertexSet()) {
         double dist = sqrt( pow(v->getInfo().getLat() - c.first, 2) + pow(v->getInfo().getLon() - c.second, 2) );
         if (dist < vertexWithDist.second) {
-            //cout << dist << endl;
             vertexWithDist.first = v;
             vertexWithDist.second = dist;
         }
