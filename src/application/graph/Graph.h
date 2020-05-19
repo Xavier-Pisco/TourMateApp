@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <queue>
-#include "../containers/Position.h"
 #include <iostream>
+#include "../containers/Position.h"
 #include "MutablePriorityQueue.h"
 
 using namespace std;

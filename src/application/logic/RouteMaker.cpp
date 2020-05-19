@@ -55,13 +55,12 @@ vector<string> RouteMaker::getAvailableMaps(string & path) const {
 }
 
 void RouteMaker::openMap(string &map) {
-    graph = Converter::getGraphFromOSMFile(map, roads, placesWays, placesNodes);
-    graph->setOriginalVertexSet();
-    graphViewer = new GraphViewerCustom(graph);
-    graphViewer->viewGraph();
+    mapContainer = new MapContainer(map);
+
+    mapContainer->getGraphViewer()->viewGraph();
 
     UserInput::getLine("Press ENTER to close graph. Note: If you close on the 'x' of the window it will shutdown the program");
-    graphViewer->closeView();
+    mapContainer->getGraphViewer()->closeView();
 }
 
 void RouteMaker::getRouteInfo() {
@@ -73,14 +72,14 @@ void RouteMaker::getRouteInfo() {
     cout << endl;
     Drawer::drawTitle("Origin location", 0, 40, true, "left"); cout << endl;
 
-    vx = UserInput::getVertex(graph, roads, placesWays, placesNodes);
+    vx = UserInput::getVertex(mapContainer);
     cout << "Vertex id = " << vx->getInfo().getID() << endl;
     user.setOrigin(vx);
-    graph->setVertexSet(graph->bfs(vx));
+    mapContainer->setReachableVertexSet(vx);
 
     cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
 
-    vx = UserInput::getVertex(graph, roads, placesWays, placesNodes, false);
+    vx = UserInput::getVertex(mapContainer, false);
     if (vx != nullptr) cout << "Vertex id = " << vx->getInfo().getID() << endl;
     user.setDestination(vx);
 
@@ -98,13 +97,12 @@ void RouteMaker::getRouteInfo() {
 }
 
 void RouteMaker::makeRoute() {
-    graph->dijkstra(user.getOrigin());
-    if (user.getDestination() != nullptr) cout << "the distance in km is " << graph->getPathToFromDijkstra(user.getOrigin(), user.getDestination()).second << endl;
+    mapContainer->getGraph()->dijkstra(user.getOrigin());
+    if (user.getDestination() != nullptr) cout << "the distance in km is " << mapContainer->getGraph()->getPathToFromDijkstra(user.getOrigin(), user.getDestination()).second << endl;
 
     // this divides into two cases: route with a predefined destination and route with a non-predefined destination
 }
 
 RouteMaker::~RouteMaker() {
-    delete graph;
-    delete graphViewer;
+    delete mapContainer;
 }

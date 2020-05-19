@@ -105,3 +105,71 @@ string UserInput::getPreference() {
     }
 
 }
+
+
+Vertex<VertexInfoXML, WayInfoXML> * UserInput::getVertex(MapContainer * mapContainer, bool mandatory) {
+    Menu menu;
+    menu.addOption("cancel");
+    menu.addOption("add location with GPS coordinates");
+    menu.addOption("add location with location name");
+    if (!mandatory) menu.addOption("I do not need to specify");
+
+    menu.drawMenuOptions("");
+    cout << endl;
+    unsigned opt = menu.getResponse("Choose an option from the menu:");
+
+
+    switch(opt) {
+        case 0:
+            throw CancelInput();
+        case 1:
+            return UserInput::getVertexWithGPSCoords(mapContainer);
+        case 2:
+            return UserInput::getVertexWithLocationName(mapContainer);
+        case 3:
+        default:
+            break;
+    }
+    return nullptr;
+}
+
+
+Vertex<VertexInfoXML, WayInfoXML> * UserInput::getVertexWithGPSCoords(MapContainer * mapContainer) {
+    Coords coords;
+
+    cout << "This option finds the vertex with the coordinates \nthat are the closest to the ones you specify" << endl << endl;
+
+    coords.first = UserInput::getDouble("Latitude:");
+    coords.second = UserInput::getDouble("Longitude:");
+
+    return mapContainer->getVertexWithCoords(coords);
+}
+
+
+Vertex<VertexInfoXML, WayInfoXML> * UserInput::getVertexWithLocationName(MapContainer * mapContainer) {
+    string name;
+    vector<VertexNameEditDist> v;
+
+    while (true) {
+        cout << "This option finds the vertex that corresponds to the location" << endl << "that has the name closest the the one you specified."
+             << endl << endl << "Insert 'stop' at any time to cancel operation." << endl << endl;
+
+
+        name = UserInput::getLine("Location name:");
+
+        v = mapContainer->getPlacePossibilitiesWithName(name);
+
+        for (auto & it : v) {
+            cout << "Found place with name " << it.second.second << endl;
+        }
+
+        cout << endl;
+        stringstream s; s << "Is '" << v.at(0).second.second << "' the place you're looking for?";
+
+        if (UserInput::getConfirmation(s.str())) break;
+        v.erase(v.begin(), v.end());
+    }
+
+    return v.at(0).second.first;
+}
+

@@ -3,25 +3,20 @@
 
 #include <string>
 #include <vector>
-#include "../containers/GraphClasses.h"
+#include <dirent.h>
+
+#include "../containers/MapContainer.h"
 #include "../graph/algorithms/dijkstra.h"
-#include "../graph/algorithms/bfs.h"
-#include "../input/Converter.h"
 #include "../ui/Menu.h"
 #include "../ui/Drawer.h"
-#include <dirent.h>
 #include "../containers/User.h"
-#include "../ui/GraphViewerCustom.h"
 #include "../input/UserInput.h"
 
 using namespace std;
 
 class RouteMaker {
 private:
-    Graph<VertexInfoXML, WayInfoXML> * graph = nullptr;
-    GraphViewerCustom * graphViewer = nullptr;
-    vector<WayInfoXML*> roads, placesWays;
-    vector<VertexInfoXML> placesNodes;
+    MapContainer * mapContainer = nullptr;
     User user;
 public:
     ~RouteMaker();
