@@ -5,7 +5,7 @@ OSMapContainer::OSMapContainer(string &map) : MapContainer<VertexInfoXML>()  {
     graph = Converter::getGraphFromOSMFile(map, roads, placesWays, placesNodes);
     graph->setOriginalVertexSet();
     graphViewer = new GraphViewerCustom<VertexInfoXML>(graph);
-    if (graph->minCoords.first == 0 && graph->minCoords.second == 0 && graph->maxCoords.first == 0 && graph->maxCoords.second == 0)
+    if (graph->getMinCoords().first == 0 && graph->getMinCoords().second == 0 && graph->getMaxCoords().first == 0 && graph->getMaxCoords().second == 0)
         setGraphMaxMinCoords();
 }
 

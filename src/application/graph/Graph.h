@@ -40,7 +40,7 @@ public:
     friend class Graph<T>;
 	friend class MutablePriorityQueue<Vertex<T>>;
     friend class GraphViewerCustom<T>;
-    friend class OSMapContainer;
+    friend class MapContainer<T>;
 };
 
 template <class T>
@@ -77,6 +77,11 @@ public:
     Vertex<T> *findVertex(long id) const;
     const vector<Vertex<T>*> &getVertexSet() const;
     void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
+
+    const pair<double,double> &getMinCoords() const;
+
+    const pair<double,double> &getMaxCoords() const;
+
     void setVertexSet(vector<Vertex<T>*> v);
     void setOriginalVertexSet();
 	int getNumVertex() const;
@@ -99,6 +104,18 @@ public:
 	friend class OSMapContainer;
 	friend class SimpleMapContainer;
 };
+
+
+
+template<class T>
+const pair<double,double> &Graph<T>::getMinCoords() const {
+    return minCoords;
+}
+
+template<class T>
+const pair<double,double> &Graph<T>::getMaxCoords() const {
+    return maxCoords;
+}
 
 template<class T>
 Vertex<T>::Vertex(T in): info(in) {}

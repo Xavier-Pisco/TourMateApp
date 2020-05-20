@@ -1,9 +1,6 @@
 #include "RouteMaker.h"
 
 
-SimpleRouteMaker::~SimpleRouteMaker() {
-    delete mapContainer;
-}
 
 void SimpleRouteMaker::openMap(string &map) {
 
@@ -17,3 +14,7 @@ void SimpleRouteMaker::makeRoute() {
 
 }
 
+
+SimpleRouteMaker::~SimpleRouteMaker() {
+    delete mapContainer;
+}
