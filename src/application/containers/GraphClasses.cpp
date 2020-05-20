@@ -79,7 +79,7 @@ long VertexInfoXML::getID() const {
 
 /* WayInfoXML */
 
-WayInfoXML::WayInfoXML(rapidxml::xml_node<> * node, map<string, Vertex<VertexInfoXML, WayInfoXML> *> &nodes) : XMLNode(node) {
+WayInfoXML::WayInfoXML(rapidxml::xml_node<> * node, map<string, Vertex<VertexInfoXML> *> &nodes) : XMLNode(node) {
     // looping through child nodes of way
     for (rapidxml::xml_node<> * n = node->first_node(); n; n = n->next_sibling()) {
         // if it refers to a node id
@@ -91,7 +91,7 @@ WayInfoXML::WayInfoXML(rapidxml::xml_node<> * node, map<string, Vertex<VertexInf
 
     apprCoords = {0, 0};
 
-    for (Vertex<VertexInfoXML, WayInfoXML> * v : vertexes) {
+    for (Vertex<VertexInfoXML> * v : vertexes) {
         apprCoords.first += v->getInfo().getLat();
         apprCoords.second += v->getInfo().getLon();
     }
@@ -104,7 +104,7 @@ const vector<string> &WayInfoXML::getNodeIDs() const {
     return nodeIDs;
 }
 
-const vector<Vertex<VertexInfoXML, WayInfoXML>*> &WayInfoXML::getVertexes() const {
+const vector<Vertex<VertexInfoXML>*> &WayInfoXML::getVertexes() const {
     return vertexes;
 }
 

@@ -11,11 +11,11 @@ void User::setAvailability(float time) {
     this->time=time;
 }
 
-void User::setOrigin(Vertex<VertexInfoXML, WayInfoXML> *origin) {
+void User::setOrigin(Vertex<VertexInfoXML> *origin) {
     this->origin=origin;
 }
 
-void User::setDestination(Vertex<VertexInfoXML, WayInfoXML> *destination) {
+void User::setDestination(Vertex<VertexInfoXML> *destination) {
     this->destination=destination;
 }
 
@@ -23,11 +23,11 @@ float User::getTime() const {
     return time;
 }
 
-Vertex<VertexInfoXML, WayInfoXML> *User::getOrigin() const {
+Vertex<VertexInfoXML> *User::getOrigin() const {
     return origin;
 }
 
-Vertex<VertexInfoXML, WayInfoXML> *User::getDestination() const {
+Vertex<VertexInfoXML> *User::getDestination() const {
     return destination;
 }
 

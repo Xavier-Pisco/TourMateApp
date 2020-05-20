@@ -9,12 +9,12 @@
 #include "../logic/StringMatcher.h"
 
 typedef pair<double, double> Coords;
-typedef pair<int, pair<Vertex<VertexInfoXML, WayInfoXML> *, string>> VertexNameEditDist;
+typedef pair<int, pair<Vertex<VertexInfoXML> *, string>> VertexNameEditDist;
 
 
 class MapContainer {
 private:
-    Graph<VertexInfoXML, WayInfoXML> * graph = nullptr;
+    Graph<VertexInfoXML> * graph = nullptr;
     GraphViewerCustom * graphViewer = nullptr;
     vector<WayInfoXML*> roads, placesWays;
     vector<VertexInfoXML> placesNodes;
@@ -26,19 +26,19 @@ public:
      * @brief sets the vertexSet to vertexes that are reachable from vx
      * @param vx - the vertex
      */
-    void setReachableVertexSet(Vertex<VertexInfoXML, WayInfoXML> * vx);
+    void setReachableVertexSet(Vertex<VertexInfoXML> * vx);
 
     void setGraphMaxMinCoords() const;
 
-    Vertex<VertexInfoXML, WayInfoXML> *getVertexWithCoords(const Coords &c) const;
+    Vertex<VertexInfoXML> *getVertexWithCoords(const Coords &c) const;
 
-    void findTagName(Vertex<VertexInfoXML, WayInfoXML> * v, const map<string, string> &tags, priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> &vertexWithEditDist, string &name) const;
+    void findTagName(Vertex<VertexInfoXML> * v, const map<string, string> &tags, priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> &vertexWithEditDist, string &name) const;
 
     void findTagName(const Coords &coords, const map<string, string> &tags, priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> &vertexWithEditDist, string &name) const;
 
     vector<VertexNameEditDist> getPlacePossibilitiesWithName(string &name) const;
 
-    Graph<VertexInfoXML, WayInfoXML> *getGraph() const;
+    Graph<VertexInfoXML> *getGraph() const;
 
     const vector<VertexInfoXML> &getPlacesNodes() const;
 

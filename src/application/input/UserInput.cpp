@@ -107,7 +107,7 @@ string UserInput::getPreference() {
 }
 
 
-Vertex<VertexInfoXML, WayInfoXML> * UserInput::getVertex(MapContainer * mapContainer, bool mandatory) {
+Vertex<VertexInfoXML> * UserInput::getVertex(MapContainer * mapContainer, bool mandatory) {
     Menu menu;
     menu.addOption("cancel");
     menu.addOption("add location with GPS coordinates");
@@ -134,7 +134,7 @@ Vertex<VertexInfoXML, WayInfoXML> * UserInput::getVertex(MapContainer * mapConta
 }
 
 
-Vertex<VertexInfoXML, WayInfoXML> * UserInput::getVertexWithGPSCoords(MapContainer * mapContainer) {
+Vertex<VertexInfoXML> * UserInput::getVertexWithGPSCoords(MapContainer * mapContainer) {
     Coords coords;
 
     cout << "This option finds the vertex with the coordinates \nthat are the closest to the ones you specify" << endl << endl;
@@ -146,7 +146,7 @@ Vertex<VertexInfoXML, WayInfoXML> * UserInput::getVertexWithGPSCoords(MapContain
 }
 
 
-Vertex<VertexInfoXML, WayInfoXML> * UserInput::getVertexWithLocationName(MapContainer * mapContainer) {
+Vertex<VertexInfoXML> * UserInput::getVertexWithLocationName(MapContainer * mapContainer) {
     string name;
     vector<VertexNameEditDist> v;
 

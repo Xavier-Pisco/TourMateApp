@@ -9,15 +9,15 @@
  * Returns a vector with the contents of the vertices by dfs order.
  * Follows the algorithm described in theoretical classes.
  */
-template <class T, class P>
-vector<Vertex<T, P>*> Graph<T, P>::bfs(Vertex<T, P>* s) const {
-    vector<Vertex<T, P>*> res;
-    for (typename vector<Vertex<T, P> *>::const_iterator it = originalVertexSet.begin(); it != originalVertexSet.end(); it++) {
+template <class T>
+vector<Vertex<T>*> Graph<T>::bfs(Vertex<T>* s) const {
+    vector<Vertex<T>*> res;
+    for (typename vector<Vertex<T> *>::const_iterator it = originalVertexSet.begin(); it != originalVertexSet.end(); it++) {
         (*it)->visited = false;
     }
-    queue<Vertex<T, P> *> vertexQueue;
+    queue<Vertex<T> *> vertexQueue;
 
-    if (s == NULL) return vector<Vertex<T, P>*>();
+    if (s == NULL) return vector<Vertex<T>*>();
 
     vertexQueue.push(s);
     s->visited = true;
@@ -26,10 +26,10 @@ vector<Vertex<T, P>*> Graph<T, P>::bfs(Vertex<T, P>* s) const {
         s = vertexQueue.front();
         vertexQueue.pop();
         res.push_back(s);
-        for (Edge<T, P> a : s->adj) {
-            if (!a.dest->visited) {
-                vertexQueue.push(a.dest);
-                a.dest->visited = true;
+        for (Edge<T> * a : s->adj) {
+            if (!a->dest->visited) {
+                vertexQueue.push(a->dest);
+                a->dest->visited = true;
             }
         }
     }

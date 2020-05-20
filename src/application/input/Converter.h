@@ -1,12 +1,12 @@
 #ifndef SRC_CONVERTER_H
 #define SRC_CONVERTER_H
 
-#include "../containers/GraphClasses.h"
 #include <dirent.h>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include "../graph/GraphEdgeInfo.h"
 
 /**
  * The objective of this class is to convert a map
@@ -27,7 +27,7 @@ private:
      * @param doc - the XMLDoc
      * @return pointer to the graph
      */
-    static Graph<VertexInfoXML, WayInfoXML> * parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes);
+    static Graph<VertexInfoXML> * parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes);
 
     /**
      * @brief Creates a RapidXML doc from data in c string format
@@ -73,30 +73,30 @@ private:
      * @param fileName
      * @param graph
      */
-    static void readNodeFileTxt(const string& fileName, Graph<VertexInfoTXT, int> * graph);
+    static void readNodeFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph);
 
     /**
      * Reads edges from a file
      * @param fileName
      * @param graph
      */
-    static void readEdgesFileTxt(const string& fileName, Graph<VertexInfoTXT, int> * graph);
+    static void readEdgesFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph);
 
     /**
      * Reads all tags from a folder
      * @param folderName
      * @param graph
      */
-    static void readTagsFromFolder(const string& folderName, Graph<VertexInfoTXT, int> * graph);
+    static void readTagsFromFolder(const string& folderName, Graph<VertexInfoTXT> * graph);
 
-    static void readTagsFromFile(const string& fileName, Graph<VertexInfoTXT, int> * graph);
+    static void readTagsFromFile(const string& fileName, Graph<VertexInfoTXT> * graph);
 public:
     /**
      * Converts an OpenStreetMap file to graph format
      * @param fileName - name of the file to get graph from
      * @return pointer to the graph
      */
-    static Graph<VertexInfoXML, WayInfoXML> * getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes);
+    static Graph<VertexInfoXML> * getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes);
 
     /**
      * Converts info from a city to a graph
@@ -105,7 +105,7 @@ public:
      * @param poiFileName
      * @return
      */
-    static Graph<VertexInfoTXT, int> * getGraphFromTXTFile(const string& city);
+    static Graph<VertexInfoTXT> * getGraphFromTXTFile(const string& city);
 };
 
 

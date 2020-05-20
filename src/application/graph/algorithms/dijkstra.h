@@ -6,9 +6,9 @@
 #include <cfloat>
 #include "../../exceptions.h"
 
-template<class T, class P>
-void Graph<T, P>::dijkstra(Vertex<T, P> * s) {
-    for (typename vector<Vertex<T, P> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
+template<class T>
+void Graph<T>::dijkstra(Vertex<T> * s) {
+    for (typename vector<Vertex<T> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
         (*it)->dist = DBL_MAX;
         (*it)->path = NULL;
     }
@@ -17,44 +17,42 @@ void Graph<T, P>::dijkstra(Vertex<T, P> * s) {
 
     s->dist = 0;
 
-    MutablePriorityQueue<Vertex<T, P>> vertexQueue;
+    MutablePriorityQueue<Vertex<T>> vertexQueue;
 
-    vertexQueue.insert((Vertex<T, P> *) s);
+    vertexQueue.insert((Vertex<T> *) s);
 
     while(!vertexQueue.empty()) {
         s = vertexQueue.extractMin();
 
-        for (Edge<T, P> a : s->adj) {
-            if (a.dest->getDist() > s->getDist() + a.weight) {
-                double oldDist = a.dest->getDist();
-                a.dest->dist = s->getDist() + a.weight;
-                a.dest->path = s;
+        for (Edge<T> * a : s->adj) {
+            if (a->dest->getDist() > s->getDist() + a->weight) {
+                double oldDist = a->dest->getDist();
+                a->dest->dist = s->getDist() + a->weight;
+                a->dest->path = s;
                 if (oldDist == DBL_MAX) {
-                    vertexQueue.insert((Vertex<T, P> *) a.dest);
+                    vertexQueue.insert((Vertex<T> *) a->dest);
                 } else {
-                    vertexQueue.decreaseKey(a.dest);
+                    vertexQueue.decreaseKey(a->dest);
                 }
             }
         }
     }
 }
 
-template<class T, class P>
-pair<vector<P>, double> Graph<T, P>::getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d) {
+template<class T>
+pair<vector<pair<Vertex<T>*, Edge<T> *>>, double> Graph<T>::getPathToFromDijkstra(Vertex<T> * s, Vertex<T> * d) const {
+    typedef pair<Vertex<T>*, Edge<T>*> vertexEdgePair;
     // Note, this requires dijkstra algorithm to have been executed starting on vertex *s
-    vector<P> path;
-    Vertex<T, P> * prevVertex, * currVertex = d;
+    vector<pair<Vertex<T>*, Edge<T> *>> path;
+    Vertex<T> * prevVertex, * currVertex = d;
 
     if (currVertex->dist == DBL_MAX) throw ImpossibleToReach(); // Impossible to reach
 
     while ((prevVertex = currVertex->path) != nullptr) {
         bool found = false;
-        for (Edge<T, P> &edge : prevVertex->adj) {
-            if (edge.dest == currVertex) {
-                P road = edge.info;
-                if (path.begin() == path.end() || !(*path.begin() == road)) {
-                    path.insert(path.begin(), road);
-                }
+        for (Edge<T> * edge : prevVertex->adj) {
+            if (edge->dest == currVertex) {
+                path.insert(path.begin(), pair<Vertex<T>*, Edge<T>*>(currVertex, edge));
                 found = true;
             }
         }
@@ -62,7 +60,7 @@ pair<vector<P>, double> Graph<T, P>::getPathToFromDijkstra(Vertex<T, P> * s, Ver
         currVertex = prevVertex;
     }
 
-    return pair<vector<P>, double>(path, d->dist);
+    return pair<vector<pair<Vertex<T>*, Edge<T> *>>, double>(path, d->dist);
 }
 
 

@@ -6,10 +6,9 @@ MapContainer::MapContainer(string &map)  {
     graphViewer = new GraphViewerCustom(graph);
     if (graph->minCoords.first == 0 && graph->minCoords.second == 0 && graph->maxCoords.first == 0 && graph->maxCoords.second == 0)
         setGraphMaxMinCoords();
-
 }
 
-Graph<VertexInfoXML, WayInfoXML> *MapContainer::getGraph() const {
+Graph<VertexInfoXML> *MapContainer::getGraph() const {
     return graph;
 }
 
@@ -29,8 +28,11 @@ const vector<WayInfoXML*> & MapContainer::getRoads() const{
     return roads;
 }
 
-void MapContainer::setReachableVertexSet(Vertex<VertexInfoXML, WayInfoXML> *vx) {
-    graph->setVertexSet(graph->bfs(vx));
+void MapContainer::setReachableVertexSet(Vertex<VertexInfoXML> *vx) {
+    vector<Vertex<VertexInfoXML>*> v;
+    v = graph->bfs(vx);
+    graph->setVertexSet(v);
+    cout << "New vset size: " << v.size() << endl;
 }
 
 
@@ -53,11 +55,11 @@ void MapContainer::setGraphMaxMinCoords() const {
 }
 
 
-Vertex<VertexInfoXML, WayInfoXML> *MapContainer::getVertexWithCoords(const Coords &c) const {
-    pair<Vertex<VertexInfoXML, WayInfoXML> *, double> vertexWithDist;
+Vertex<VertexInfoXML> *MapContainer::getVertexWithCoords(const Coords &c) const {
+    pair<Vertex<VertexInfoXML> *, double> vertexWithDist;
     vertexWithDist.second = DBL_MAX;
 
-    for (Vertex<VertexInfoXML, WayInfoXML> * v : graph->getVertexSet()) {
+    for (Vertex<VertexInfoXML> * v : graph->getVertexSet()) {
         double dist = sqrt( pow(v->getInfo().getLat() - c.first, 2) + pow(v->getInfo().getLon() - c.second, 2) );
         if (dist < vertexWithDist.second) {
             vertexWithDist.first = v;
@@ -67,7 +69,7 @@ Vertex<VertexInfoXML, WayInfoXML> *MapContainer::getVertexWithCoords(const Coord
     return vertexWithDist.first;
 }
 
-void MapContainer::findTagName(Vertex<VertexInfoXML, WayInfoXML> * v, const map<string, string> &tags, priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> &vertexWithEditDist, string &name) const {
+void MapContainer::findTagName(Vertex<VertexInfoXML> * v, const map<string, string> &tags, priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> &vertexWithEditDist, string &name) const {
     map<string, string>::const_iterator it;
 
     if ((it = tags.find("name")) != tags.end()) {
@@ -109,7 +111,7 @@ vector<VertexNameEditDist> MapContainer::getPlacePossibilitiesWithName(string &n
     priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> vertexWithEditDist;
     vector<VertexNameEditDist> v;
 
-    for (Vertex<VertexInfoXML, WayInfoXML> *vx : graph->getVertexSet()) { // checks for the vertex name
+    for (Vertex<VertexInfoXML> *vx : graph->getVertexSet()) { // checks for the vertex name
         map<string, string> tags = vx->getInfo().getXMLTags();
         findTagName(vx, tags, vertexWithEditDist, name);
     }

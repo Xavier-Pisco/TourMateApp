@@ -1,6 +1,6 @@
 #include "Converter.h"
 
-Graph<VertexInfoXML, WayInfoXML> * Converter::getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes) {
+Graph<VertexInfoXML> * Converter::getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes) {
     string fileContent;
     if (readFileData(fileName, fileContent) != 0) {
         cout << "Error reading input file!" << endl;
@@ -9,13 +9,13 @@ Graph<VertexInfoXML, WayInfoXML> * Converter::getGraphFromOSMFile(const string& 
     rapidxml::xml_document<> * doc;
     doc = createXMLDoc((char*) fileContent.c_str());
 
-    Graph<VertexInfoXML, WayInfoXML> * myGraph = parseXMLDocToGraph(*doc, roads, placesWays, placesNodes);
+    Graph<VertexInfoXML> * myGraph = parseXMLDocToGraph(*doc, roads, placesWays, placesNodes);
 
     return myGraph;
 }
 
 
-Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes) {
+Graph<VertexInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &doc, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes) {
     /*
      * ALGORITHM
      *
@@ -47,9 +47,9 @@ Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_d
      *
      * */
 
-    auto * res = new Graph<VertexInfoXML, WayInfoXML>;
+    auto * res = new Graph<VertexInfoXML>;
 
-    map<string, Vertex<VertexInfoXML, WayInfoXML> *> nodes;
+    map<string, Vertex<VertexInfoXML> *> nodes;
 
     pair<double, double> minCoords, maxCoords;
     bool maxMinDone = false;
@@ -66,7 +66,7 @@ Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_d
             //cout << minCoords.first << " " << minCoords.second << " " << maxCoords.first << " " << maxCoords.second << endl;
         }
         if (strcmp(node->name(), "node") == 0) {
-            nodes[node->first_attribute()->value()] = new Vertex<VertexInfoXML, WayInfoXML>(VertexInfoXML(node));
+            nodes[node->first_attribute()->value()] = new Vertex<VertexInfoXML>(VertexInfoXML(node));
         }
     }
 
@@ -143,22 +143,28 @@ Graph<VertexInfoXML, WayInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_d
 
         // simplest case
         double length;
-        map<string, Vertex<VertexInfoXML, WayInfoXML>*>::iterator n1, n2;
+        map<string, Vertex<VertexInfoXML>*>::iterator n1, n2;
         if (nodeIDs.size() == 2) {
             if ((n1 = nodes.find(nodeIDs.at(0))) != nodes.end() && (n2 = nodes.find(nodeIDs.at(1))) != nodes.end()) {
                 length = getKmDistfromLatLong(n1->second->getInfo().getLat(), n1->second->getInfo().getLon(), n2->second->getInfo().getLat(), n2->second->getInfo().getLon());
-                res->addEdge(n1->second, n2->second, *edge, length);
+
+                auto e = new EdgeInfoXML<VertexInfoXML>(n2->second, length, edge);
+                res->addEdge(n1->second, e);
                 if (!oneway) {
-                    res->addEdge(n2->second, n1->second, *edge, length);
+                    e = new EdgeInfoXML<VertexInfoXML>(n1->second, length, edge);
+                    res->addEdge(n2->second, e);
                 }
             }
         } else {
             for (unsigned j = 0; j < nodeIDs.size()-1; j++) {
                 if ((n1 = nodes.find(nodeIDs.at(j))) != nodes.end() && (n2 = nodes.find(nodeIDs.at(j+1))) != nodes.end()) {
                     length = getKmDistfromLatLong(n1->second->getInfo().getLat(), n1->second->getInfo().getLon(), n2->second->getInfo().getLat(), n2->second->getInfo().getLon());
-                    res->addEdge(n1->second, n2->second, *edge, length);
+
+                    auto e = new EdgeInfoXML<VertexInfoXML>(n2->second, length, edge);
+                    res->addEdge(n1->second, e);
                     if (!oneway) {
-                        res->addEdge(n2->second, n1->second, *edge, length);
+                        e = new EdgeInfoXML<VertexInfoXML>(n1->second, length, edge);
+                        res->addEdge(n2->second, e);
                     }
                 }
             }

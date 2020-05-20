@@ -9,139 +9,150 @@
 
 using namespace std;
 
-template <class T, class P> class Edge;
-template <class T, class P> class Graph;
-template <class T, class P> class Vertex;
+template <class T> class Edge;
+template <class T> class Graph;
+template <class T> class Vertex;
 
 
-template <class T, class P>
+template <class T>
 class Vertex {
 	T info;                // contents
-	vector<Edge<T, P> > adj;  // list of outgoing edges
+	vector<Edge<T> *> adj;  // list of outgoing edges
 	bool visited;          // auxiliary field used by dfs and bfs
 	int indegree;          // auxiliary field used by topsort
 	bool processing;       // auxiliary field used by isDAG
 	int graphViewerID; // auxiliary for GraphViewer
 	double dist;
-	Vertex<T, P> * path;
+	Vertex<T> * path;
     int queueIndex;
 
-	void addEdge(Vertex<T, P> *dest, P inf, double w);
-	bool removeEdgeTo(Vertex<T, P> *d);
+	void addEdge(Edge<T> * edge);
+	bool removeEdgeTo(Vertex<T> *d);
 public:
 	Vertex(T in);
+	~Vertex();
 	T &getInfo();
 	void setPoi(string poi);
 	double getDist() { return dist; }
-    vector<Edge<T, P>> getAdj() { return adj; }
-    bool operator<(Vertex<T, P> & vertex) const; // // required by MutablePriorityQueue
-    friend class Graph<T, P>;
-	friend class MutablePriorityQueue<Vertex<T, P>>;
+    vector<Edge<T>> getAdj() { return adj; }
+    bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
+    friend class Graph<T>;
+	friend class MutablePriorityQueue<Vertex<T>>;
     friend class GraphViewerCustom;
     friend class MapContainer;
 };
 
-template <class T, class P>
+template <class T>
 class Edge {
-	Vertex<T, P> * dest;      // destination vertex
-	P info;
+protected:
+	Vertex<T> * dest;      // destination vertex
 	double weight;
+	bool infoXML = false;
 public:
-	Edge(Vertex<T, P> *d, P info, double w);
-	P getInfo() { return info; }
-	friend class Graph<T, P>;
-	friend class Vertex<T, P>;
+	Edge(Vertex<T> *d, double w);
+	bool hasInfoXML() const;
+	friend class Graph<T>;
+	friend class Vertex<T>;
     friend class GraphViewerCustom;
 };
 
-template <class T, class P>
+template<class T>
+bool Edge<T>::hasInfoXML() const {
+    return hasInfoXML;
+}
+
+template <class T>
 class Graph {
-	vector<Vertex<T, P> *> vertexSet;    // vertex set
-	vector<Vertex<T, P> *> originalVertexSet;
+	vector<Vertex<T> *> vertexSet;    // vertex set
+	vector<Vertex<T> *> originalVertexSet;
     pair<double, double> minCoords = {0, 0}, maxCoords = {0, 0};
 
-	void dfsVisit(Vertex<T, P> *v,  vector<Vertex<T, P>*> & res) const;
-	bool dfsIsDAG(Vertex<T, P> *v) const;
+	void dfsVisit(Vertex<T> *v,  vector<Vertex<T>*> & res) const;
+	bool dfsIsDAG(Vertex<T> *v) const;
 
 public:
     ~Graph();
-    Vertex<T, P> *findVertex(const T &in) const;
-    const vector<Vertex<T, P>*> &getVertexSet() const;
+    Vertex<T> *findVertex(const T &in) const;
+    const vector<Vertex<T>*> &getVertexSet() const;
     void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
-    void setVertexSet(vector<Vertex<T, P>*> v);
+    void setVertexSet(vector<Vertex<T>*> v);
     void setOriginalVertexSet();
 	int getNumVertex() const;
 	bool addVertex(const T &in);
-    bool addVertex(Vertex<T, P> * in);
+    bool addVertex(Vertex<T> * in);
 	bool addVertex(const T &in, const Position &p);
 	bool removeVertex(const T &in);
-	bool addEdge(const T &sourc, const T &dest, P info, double w);
-    bool addEdge(Vertex<T, P> *sourcVertex, Vertex<T, P> *destVertex, P info, double w);
-    bool addEdge(const T &sourc, const T &dest, P info); // this is a temporary solution
+	bool addEdge(const T &sourc, const T &dest, double w);
+    bool addEdge(Vertex<T> *sourcVertex, Edge<T> * edge);
 	bool removeEdge(const T &sourc, const T &dest);
-    vector<Vertex<T, P>*> dfs() const;
-    vector<Vertex<T, P>*> bfs(Vertex<T, P> * source) const;
+    vector<Vertex<T>*> dfs() const;
+    vector<Vertex<T>*> bfs(Vertex<T> * source) const;
 	vector<T> topsort() const;
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
-	void dijkstra(Vertex<T, P> * origin);
-	pair<vector<P>, double> getPathToFromDijkstra(Vertex<T, P> * s, Vertex<T, P> * d);
+	void dijkstra(Vertex<T> * origin);
+    pair<vector<pair<Vertex<T>*, Edge<T>*>>, double> getPathToFromDijkstra(Vertex<T> * s, Vertex<T> * d) const;
 	friend class GraphViewerCustom;
 	friend class MapContainer;
 };
 
-template <class T, class P>
-Vertex<T, P>::Vertex(T in): info(in) {}
+template<class T>
+Vertex<T>::Vertex(T in): info(in) {}
 
-template <class T, class P>
-Edge<T, P>::Edge(Vertex<T, P> *d, P info, double w): dest(d), info(info), weight(w) {}
+template<class T>
+Vertex<T>::~Vertex() {
+    for (Edge<T> * e : adj) delete e;
+}
+
+template<class T>
+Edge<T>::Edge(Vertex<T> *d, double w): dest(d), weight(w) {}
 
 
-template <class T, class P>
-int Graph<T, P>::getNumVertex() const {
+template<class T>
+int Graph<T>::getNumVertex() const {
 	return vertexSet.size();
 }
 
-template <class T, class P>
-const vector<Vertex<T, P>*> &Graph<T, P>::getVertexSet() const {
+template<class T>
+const vector<Vertex<T>*> &Graph<T>::getVertexSet() const {
     return vertexSet;
 }
 
-template <class T, class P>
-Graph<T, P>::~Graph() {
-    for (Vertex<T, P> * v : vertexSet) delete v;
+template<class T>
+Graph<T>::~Graph() {
+    for (Vertex<T> * v : vertexSet) delete v;
 }
 
-template<class T, class P>
-void Graph<T, P>::setMaxMinCoords(pair<double, double> mn, pair<double, double> mx) {
+template<class T>
+void Graph<T>::setMaxMinCoords(pair<double, double> mn, pair<double, double> mx) {
     this->minCoords = mn;
     this->maxCoords = mx;
 }
 
-template<class T, class P>
-void Graph<T, P>::setVertexSet(vector<Vertex<T, P>*> v) {
+template<class T>
+void Graph<T>::setVertexSet(vector<Vertex<T>*> v) {
     if (originalVertexSet.empty()) setOriginalVertexSet();
     vertexSet = v;
 }
 
-template<class T, class P>
-void Graph<T, P>::setOriginalVertexSet() {
+template<class T>
+void Graph<T>::setOriginalVertexSet() {
     originalVertexSet.erase(originalVertexSet.begin(), originalVertexSet.end());
     for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
         originalVertexSet.push_back(*it);
     }
 }
 
-template <class T, class P>
-bool Vertex<T, P>::operator<(Vertex<T, P> & vertex) const {
+template<class T>
+bool Vertex<T>::operator<(Vertex<T> & vertex) const {
     return this->dist < vertex.dist;
 }
 
 /**
  * Auxiliary function to find a vertex with a given content.
  */
-template <class T, class P>
-Vertex<T, P> * Graph<T, P>::findVertex(const T &in) const {
+template<class T>
+Vertex<T> * Graph<T>::findVertex(const T &in) const {
 	for (auto v : vertexSet) {
         if (v->info == in) {
             return v;
@@ -154,25 +165,25 @@ Vertex<T, P> * Graph<T, P>::findVertex(const T &in) const {
  *  Adds a vertex with a given content/info (in) to a graph (this).
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
-template <class T, class P>
-bool Graph<T, P>::addVertex(const T &in) {
+template<class T>
+bool Graph<T>::addVertex(const T &in) {
     if (findVertex(in) != NULL) return false;
-    auto vertex = new Vertex<T, P>(in);
+    auto vertex = new Vertex<T>(in);
     vertexSet.push_back(vertex);
     return true;
 }
 
-template <class T, class P>
-bool Graph<T, P>::addVertex(Vertex<T, P> * vertex) {
+template<class T>
+bool Graph<T>::addVertex(Vertex<T> * vertex) {
     vertexSet.push_back(vertex);
     return true;
 }
 
 
-template <class T, class P>
-bool Graph<T, P>::addVertex(const T &in, const Position &p) {
+template<class T>
+bool Graph<T>::addVertex(const T &in, const Position &p) {
     if (findVertex(in) != NULL) return false;
-    auto vertex = new Vertex<T, P>(in);
+    auto vertex = new Vertex<T>(in);
     vertex->position = p;
     vertexSet.push_back(vertex);
     return true;
@@ -183,28 +194,19 @@ bool Graph<T, P>::addVertex(const T &in, const Position &p) {
  * destination (dest) vertices and the edge weight (w).
  * Returns true if successful, and false if the source or destination vertex does not exist.
  */
-template <class T, class P>
-bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P info, double w) {
-	Vertex<T, P> * sourcVertex = findVertex(sourc);
-	Vertex<T, P> * destVertex = findVertex(dest);
+template<class T>
+bool Graph<T>::addEdge(const T &sourc, const T &dest, double w) {
+	Vertex<T> * sourcVertex = findVertex(sourc);
+	Vertex<T> * destVertex = findVertex(dest);
 	if (sourcVertex == NULL || destVertex == NULL) return false;
-	sourcVertex->addEdge(destVertex, info, w);
+	sourcVertex->addEdge(Edge<T>(sourcVertex, w));
 	return true;
 }
 
-template <class T, class P>
-bool Graph<T, P>::addEdge(Vertex<T, P> *sourcVertex, Vertex<T, P> *destVertex, P info, double w) {
-    if (sourcVertex == NULL || destVertex == NULL) return false;
-    sourcVertex->addEdge(destVertex, info, w);
-    return true;
-}
-
-template <class T, class P>
-bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P info) {
-    Vertex<T, P> * sourcVertex = findVertex(sourc);
-    Vertex<T, P> * destVertex = findVertex(dest);
-    if (sourcVertex == NULL || destVertex == NULL) return false;
-    sourcVertex->addEdge(destVertex, info, (double) info);
+template<class T>
+bool Graph<T>::addEdge(Vertex<T> *sourcVertex, Edge<T> * edge) {
+    if (sourcVertex == NULL) return false;
+    sourcVertex->addEdge(edge);
     return true;
 }
 
@@ -212,14 +214,14 @@ bool Graph<T, P>::addEdge(const T &sourc, const T &dest, P info) {
  * Auxiliary function to add an outgoing edge to a vertex (this),
  * with a given destination vertex (d) and edge weight (w).
  */
-template <class T, class P>
-void Vertex<T, P>::addEdge(Vertex<T, P> *d, P inf, double w) {
-    for (Edge<T, P> &edge : adj) {
-        if (edge.dest->info.getID() == d->info.getID()) {
+template<class T>
+void Vertex<T>::addEdge(Edge<T> * edge) {
+    for (Edge<T> * e : adj) {
+        if (e->dest->info.getID() == edge->dest->info.getID()) {
             return;
         }
     }
-    adj.push_back(Edge<T, P>(d, inf, w));
+    adj.push_back(edge);
 }
 
 /**
@@ -227,10 +229,10 @@ void Vertex<T, P>::addEdge(Vertex<T, P> *d, P inf, double w) {
  * The edge is identified by the source (sourc) and destination (dest) contents.
  * Returns true if successful, and false if such edge does not exist.
  */
-template <class T, class P>
-bool Graph<T, P>::removeEdge(const T &sourc, const T &dest) {
-	Vertex<T, P> * sourcVertex = findVertex(sourc);
-    Vertex<T, P> * destVertex = findVertex(dest);
+template<class T>
+bool Graph<T>::removeEdge(const T &sourc, const T &dest) {
+	Vertex<T> * sourcVertex = findVertex(sourc);
+    Vertex<T> * destVertex = findVertex(dest);
     if (sourcVertex == NULL || destVertex == NULL) return false;
     return sourcVertex->removeEdgeTo(destVertex);
 }
@@ -240,8 +242,8 @@ bool Graph<T, P>::removeEdge(const T &sourc, const T &dest) {
  * from a vertex (this).
  * Returns true if successful, and false if such edge does not exist.
  */
-template <class T, class P>
-bool Vertex<T, P>::removeEdgeTo(Vertex<T, P> *d) {
+template<class T>
+bool Vertex<T>::removeEdgeTo(Vertex<T> *d) {
     for (auto it = adj.begin(); it != adj.end(); it++) {
         if (it->dest->info == d->info) {
             adj.erase(it);
@@ -251,13 +253,13 @@ bool Vertex<T, P>::removeEdgeTo(Vertex<T, P> *d) {
 	return false;
 }
 
-template<class T, class P>
-void Vertex<T, P>::setPoi(string poi) {
+template<class T>
+void Vertex<T>::setPoi(string poi) {
     this->info.setPoi(poi);
 }
 
-template<class T, class P>
-T &Vertex<T, P>::getInfo() {
+template<class T>
+T &Vertex<T>::getInfo() {
     return info;
 }
 
@@ -266,9 +268,9 @@ T &Vertex<T, P>::getInfo() {
  *  all outgoing and incoming edges.
  *  Returns true if successful, and false if such vertex does not exist.
  */
-template <class T, class P>
-bool Graph<T, P>::removeVertex(const T &in) {
-    Vertex<T, P> * destVertex = findVertex(in);
+template<class T>
+bool Graph<T>::removeVertex(const T &in) {
+    Vertex<T> * destVertex = findVertex(in);
     bool removed = false;
     for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
         if ((*it)->info == in) {

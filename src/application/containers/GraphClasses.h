@@ -2,7 +2,12 @@
 #define SRC_GRAPHCLASSES_H
 
 #include "../../lib/RapidXML/rapidxml.hpp"
+#include "../graph/Graph.h"
 #include "POI.h"
+#include "Position.h"
+#include <iostream>
+#include <vector>
+
 
 class VertexInfo {
 public:
@@ -156,10 +161,10 @@ public:
 class WayInfoXML : public XMLNode {
 private:
     vector<string> nodeIDs; //!< vector with the ids of the nodes this road goes through
-    vector<Vertex<VertexInfoXML, WayInfoXML> *> vertexes;
+    vector<Vertex<VertexInfoXML> *> vertexes;
     pair<double, double> apprCoords;
 public:
-    WayInfoXML(rapidxml::xml_node<> * node, map<string, Vertex<VertexInfoXML, WayInfoXML> *> &nodes);
+    WayInfoXML(rapidxml::xml_node<> * node, map<string, Vertex<VertexInfoXML> *> &nodes);
 
     /**
      * @brief GET method for nodeIDs
@@ -171,7 +176,7 @@ public:
      * @brief GET method for vertexes
      * @return the vertexes
      */
-    const vector<Vertex<VertexInfoXML, WayInfoXML>*> &getVertexes() const;
+    const vector<Vertex<VertexInfoXML>*> &getVertexes() const;
 
     /**
      * @brief GET method for the approximate coords

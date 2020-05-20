@@ -13,21 +13,21 @@ using namespace std;
 class User {
 private:
     float time;
-    Vertex<VertexInfoXML,WayInfoXML> * origin;
-    Vertex<VertexInfoXML,WayInfoXML> *destination;
+    Vertex<VertexInfoXML> * origin;
+    Vertex<VertexInfoXML> *destination;
     list<string> *preferenceList;
     list<POI> *poiList;
 public:
     User();
-    void setOrigin(Vertex<VertexInfoXML,WayInfoXML> * origin);
-    void setDestination(Vertex<VertexInfoXML,WayInfoXML> * destination);
+    void setOrigin(Vertex<VertexInfoXML> * origin);
+    void setDestination(Vertex<VertexInfoXML> * destination);
     void setAvailability(float time);
 
     float getTime() const;
 
-    Vertex<VertexInfoXML, WayInfoXML> *getOrigin() const;
+    Vertex<VertexInfoXML> *getOrigin() const;
 
-    Vertex<VertexInfoXML, WayInfoXML> *getDestination() const;
+    Vertex<VertexInfoXML> *getDestination() const;
 
     list<string> *getPreferenceList() const;
 

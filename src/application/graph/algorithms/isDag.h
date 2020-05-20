@@ -10,13 +10,13 @@
  * that is being processed in the the stack of recursive calls (see theoretical classes).
  * Returns true if the graph is acyclic, and false otherwise.
  */
-template <class T, class P>
-bool Graph<T, P>::isDAG() const {
-    for (typename vector<Vertex<T, P> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
+template <class T>
+bool Graph<T>::isDAG() const {
+    for (typename vector<Vertex<T> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
         (*it)->processing = false;
         (*it)->visited = false;
     }
-    for (typename vector<Vertex<T, P> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
+    for (typename vector<Vertex<T> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
         if (!(*it)->visited) {
             (*it)->processing = true;
             if (!dfsIsDAG(*it)) return false;
@@ -30,15 +30,15 @@ bool Graph<T, P>::isDAG() const {
  * Auxiliary function that visits a vertex (v) and its adjacent not yet visited, recursively.
  * Returns false (not acyclic) if an edge to a vertex in the stack is found.
  */
-template <class T, class P>
-bool Graph<T, P>::dfsIsDAG(Vertex<T, P> *v) const {
+template <class T>
+bool Graph<T>::dfsIsDAG(Vertex<T> *v) const {
     v->visited = true;
-    for (Edge<T, P> a : v->adj) {
-        if (a.dest->processing) return false;
-        if (!a.dest->visited) {
-            a.dest->processing = true;
-            if (!dfsIsDAG(a.dest)) return false;
-            a.dest->processing = false;
+    for (Edge<T> * a : v->adj) {
+        if (a->dest->processing) return false;
+        if (!a->dest->visited) {
+            a->dest->processing = true;
+            if (!dfsIsDAG(a->dest)) return false;
+            a->dest->processing = false;
         }
     }
     return true;

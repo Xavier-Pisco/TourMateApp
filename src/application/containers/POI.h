@@ -1,9 +1,10 @@
 #ifndef SRC_POI_H
 #define SRC_POI_H
 
-#include "../graph/Graph.h"
 #include <cstring>
 #include <map>
+
+using namespace std;
 
 /**
  * @brief Stores information about the Point of Interest

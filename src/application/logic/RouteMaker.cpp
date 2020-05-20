@@ -67,7 +67,7 @@ void RouteMaker::getRouteInfo() {
     Drawer::drawTitle("Route info");
     cout << "Insert 'stop' at any time to cancel." << endl;
 
-    Vertex<VertexInfoXML, WayInfoXML> *vx;
+    Vertex<VertexInfoXML> *vx;
 
     cout << endl;
     Drawer::drawTitle("Origin location", 0, 40, true, "left"); cout << endl;
@@ -79,9 +79,9 @@ void RouteMaker::getRouteInfo() {
 
     cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
 
-    vx = UserInput::getVertex(mapContainer, false);
-    if (vx != nullptr) cout << "Vertex id = " << vx->getInfo().getID() << endl;
-    user.setDestination(vx);
+    auto v2 = UserInput::getVertex(mapContainer, false);
+    if (v2 != nullptr) cout << "Vertex id = " << v2->getInfo().getID() << endl;
+    user.setDestination(v2);
 
     cout << endl;
     float time = UserInput::getFloat("Available time in minutes: ");

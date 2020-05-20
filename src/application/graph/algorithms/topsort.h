@@ -10,31 +10,31 @@
  * Follows the algorithm described in theoretical classes.
  */
 
-template <class T, class P>
-vector<T> Graph<T, P>::topsort() const {
+template <class T>
+vector<T> Graph<T>::topsort() const {
     vector<T> res;
 
     for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
         (*it)->indegree = 0;
     }
     for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
-        for (Edge<T, P> a : (*it)->adj) a.dest->indegree++;
+        for (Edge<T> a : (*it)->adj) a.dest->indegree++;
     }
-    queue<Vertex<T, P> *> C; // vertices with indegree == 0 (candidates)
+    queue<Vertex<T> *> C; // vertices with indegree == 0 (candidates)
     for (auto it = vertexSet.begin(); it != vertexSet.end(); it++) {
         if ((*it)->indegree == 0) {
             C.push(*it);
         }
     }
 
-    Vertex<T, P> *v;
+    Vertex<T> *v;
     while (!C.empty()) {
         v = C.front();
         C.pop();
         res.push_back(v->info);
-        for (Edge<T, P> e : v->adj) {
-            e.dest->indegree--;
-            if (e.dest->indegree == 0) C.push(e.dest);
+        for (Edge<T> * e : v->adj) {
+            e->dest->indegree--;
+            if (e->dest->indegree == 0) C.push(e->dest);
         }
     }
     if (res.size() != vertexSet.size()) return vector<T>(); // graph is not a DAG

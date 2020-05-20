@@ -11,15 +11,15 @@
  * contents of that vertex (inf) and the number of new children (return value).
  */
 
-template <class T, class P>
-int Graph<T, P>::maxNewChildren(const T & source, T &inf) const {
+template <class T>
+int Graph<T>::maxNewChildren(const T & source, T &inf) const {
     int res = 0;
-    for (typename vector<Vertex<T, P> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
+    for (typename vector<Vertex<T> *>::const_iterator it = vertexSet.begin(); it != vertexSet.end(); it++) {
         (*it)->visited = false;
     }
-    queue<Vertex<T, P> *> vertexQueue;
+    queue<Vertex<T> *> vertexQueue;
 
-    Vertex<T, P> * s = findVertex(source);
+    Vertex<T> * s = findVertex(source);
     if (s == NULL) return 0;
 
     vertexQueue.push(s);
@@ -30,10 +30,10 @@ int Graph<T, P>::maxNewChildren(const T & source, T &inf) const {
         count = 0;
         s = vertexQueue.front();
         vertexQueue.pop();
-        for (Edge<T, P> a : s->adj) {
-            if (!a.dest->visited) {
-                vertexQueue.push(a.dest);
-                a.dest->visited = true;
+        for (Edge<T> * a : s->adj) {
+            if (!a->dest->visited) {
+                vertexQueue.push(a->dest);
+                a->dest->visited = true;
                 count++;
             }
         }
