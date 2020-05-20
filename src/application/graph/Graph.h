@@ -12,6 +12,8 @@ using namespace std;
 template <class T> class Edge;
 template <class T> class Graph;
 template <class T> class Vertex;
+template <class T> class MapContainer;
+template <class T> class GraphViewerCustom;
 
 template <class T>
 class Vertex {
@@ -37,8 +39,8 @@ public:
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
     friend class Graph<T>;
 	friend class MutablePriorityQueue<Vertex<T>>;
-    friend class GraphViewerCustom;
-    friend class MapContainer;
+    friend class GraphViewerCustom<T>;
+    friend class MapContainer<T>;
 };
 
 template <class T>
@@ -52,7 +54,7 @@ public:
 	bool hasInfoXML() const;
 	friend class Graph<T>;
 	friend class Vertex<T>;
-    friend class GraphViewerCustom;
+    friend class GraphViewerCustom<T>;
 };
 
 template<class T>
@@ -75,6 +77,11 @@ public:
     Vertex<T> *findVertex(long id) const;
     const vector<Vertex<T>*> &getVertexSet() const;
     void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
+
+    const pair<double,double> &getMinCoords() const;
+
+    const pair<double,double> &getMaxCoords() const;
+
     void setVertexSet(vector<Vertex<T>*> v);
     void setOriginalVertexSet();
 	int getNumVertex() const;
@@ -92,9 +99,23 @@ public:
 	bool isDAG() const;
 	void dijkstra(Vertex<T> * origin);
     pair<vector<pair<Vertex<T>*, Edge<T>*>>, double> getPathToFromDijkstra(Vertex<T> * s, Vertex<T> * d) const;
-	friend class GraphViewerCustom;
-	friend class MapContainer;
+	friend class GraphViewerCustom<T>;
+	friend class MapContainer<T>;
+	friend class OSMapContainer;
+	friend class SimpleMapContainer;
 };
+
+
+
+template<class T>
+const pair<double,double> &Graph<T>::getMinCoords() const {
+    return minCoords;
+}
+
+template<class T>
+const pair<double,double> &Graph<T>::getMaxCoords() const {
+    return maxCoords;
+}
 
 template<class T>
 Vertex<T>::Vertex(T in): info(in) {}

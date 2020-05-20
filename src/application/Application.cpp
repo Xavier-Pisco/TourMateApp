@@ -16,8 +16,8 @@ int Application::mainMenu() {
 
     menu.addOption("exit application");
     menu.addOption("start a route with a OSM map");
-    menu.addOption("start a route with a grid graph");
     menu.addOption("start a route with a simple txt map");
+    menu.addOption("start a route with a grid graph");
     menu.addOption("view available maps");
 
 
@@ -27,15 +27,20 @@ int Application::mainMenu() {
     cout << endl << endl;
     unsigned opt = menu.getResponse("Choose an option from the menu:");
 
-    RouteMaker routeMaker;
+    OSMRouteMaker osmRouteMaker;
+    SimpleRouteMaker simpleRouteMaker;
+    string path;
 
     switch(opt) {
         case 0:
             return -1;
         case 1:
-            routeMaker.start();
+            path = "../maps/osm/";
+            osmRouteMaker.start(path);
             break;
         case 2:
+            path = "../maps/simple/";
+            simpleRouteMaker.start(path);
             break;
         case 3:
             break;

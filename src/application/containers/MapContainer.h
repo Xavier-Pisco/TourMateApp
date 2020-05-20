@@ -9,28 +9,42 @@
 #include "../logic/StringMatcher.h"
 
 typedef pair<double, double> Coords;
-typedef pair<int, pair<Vertex<VertexInfoXML> *, string>> VertexNameEditDist;
 
 
+template<class T>
 class MapContainer {
-private:
-    Graph<VertexInfoXML> * graph = nullptr;
-    GraphViewerCustom * graphViewer = nullptr;
-    vector<WayInfoXML*> roads, placesWays;
-    vector<VertexInfoXML> placesNodes;
+protected:
+    Graph<T> * graph = nullptr;
+    GraphViewerCustom<T> * graphViewer = nullptr;
 
 public:
-    explicit MapContainer(string &map);
 
     /**
      * @brief sets the vertexSet to vertexes that are reachable from vx
      * @param vx - the vertex
      */
-    void setReachableVertexSet(Vertex<VertexInfoXML> * vx);
+    void setReachableVertexSet(Vertex<T> * vx);
 
     void setGraphMaxMinCoords() const;
 
-    Vertex<VertexInfoXML> *getVertexWithCoords(const Coords &c) const;
+    Vertex<T> *getVertexWithCoords(const Coords &c) const;
+
+    Graph<T> *getGraph() const;
+
+    GraphViewerCustom<T> *getGraphViewer() const;
+
+    ~MapContainer();
+};
+
+typedef pair<int, pair<Vertex<VertexInfoXML> *, string>> VertexNameEditDist;
+
+class OSMapContainer : public MapContainer<VertexInfoXML> {
+private:
+    vector<WayInfoXML*> roads, placesWays;
+    vector<VertexInfoXML> placesNodes;
+
+public:
+    explicit OSMapContainer(string &map);
 
     void findTagName(Vertex<VertexInfoXML> * v, const map<string, string> &tags, priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> &vertexWithEditDist, string &name) const;
 
@@ -38,18 +52,87 @@ public:
 
     vector<VertexNameEditDist> getPlacePossibilitiesWithName(string &name) const;
 
-    Graph<VertexInfoXML> *getGraph() const;
+    const vector<WayInfoXML*> &getPlacesWays() const;
 
     const vector<VertexInfoXML> &getPlacesNodes() const;
 
-    const vector<WayInfoXML*> &getPlacesWays() const;
-
-    GraphViewerCustom *getGraphViewer() const;
-
     const vector<WayInfoXML*> & getRoads() const;
-
-    ~MapContainer();
 };
+
+
+class SimpleMapContainer : public MapContainer<VertexInfoTXT> {
+private:
+    map<long, Vertex<VertexInfoTXT>*> nodes;
+public:
+    explicit SimpleMapContainer(string & map);
+
+    const map<long, Vertex<VertexInfoTXT>*> &getNodes() const;
+};
+
+
+/*  MapContainer  */
+
+
+template<class T>
+Graph<T> *MapContainer<T>::getGraph() const {
+    return graph;
+}
+
+template<class T>
+GraphViewerCustom<T> *MapContainer<T>::getGraphViewer() const {
+    return graphViewer;
+}
+
+template<class T>
+void MapContainer<T>::setReachableVertexSet(Vertex<T> *vx) {
+    vector<Vertex<T>*> v;
+    v = graph->bfs(vx);
+    graph->setVertexSet(v);
+    cout << "New vset size: " << v.size() << endl;
+}
+
+template<class T>
+void MapContainer<T>::setGraphMaxMinCoords() const {
+    graph->maxCoords.first = graph->vertexSet.at(0)->info.getLat();
+    graph->maxCoords.second = graph->vertexSet.at(0)->info.getLon();
+    graph->minCoords.first = graph->vertexSet.at(0)->info.getLat();
+    graph->minCoords.second = graph->vertexSet.at(0)->info.getLon();
+
+    for (auto v : graph->vertexSet) {
+        double lat = v->info.getLat();
+        double lon = v->info.getLon();
+
+        if (lat > graph->maxCoords.first) graph->maxCoords.first = lat;
+        if (lon > graph->maxCoords.second) graph->maxCoords.second = lon;
+        if (lat < graph->minCoords.first) graph->minCoords.first = lat;
+        if (lon < graph->minCoords.second) graph->minCoords.second = lon;
+    }
+
+}
+
+template<class T>
+Vertex<T> *MapContainer<T>::getVertexWithCoords(const Coords &c) const {
+    pair<Vertex<VertexInfoXML> *, double> vertexWithDist;
+    vertexWithDist.second = DBL_MAX;
+
+    for (Vertex<VertexInfoXML> * v : graph->getVertexSet()) {
+        double dist = sqrt( pow(v->getInfo().getLat() - c.first, 2) + pow(v->getInfo().getLon() - c.second, 2) );
+        if (dist < vertexWithDist.second) {
+            vertexWithDist.first = v;
+            vertexWithDist.second = dist;
+        }
+    }
+    return vertexWithDist.first;
+}
+
+
+
+template<class T>
+MapContainer<T>::~MapContainer() {
+    delete graph;
+    delete graphViewer;
+}
+
 
 
 #endif //SRC_MAPCONTAINER_H
