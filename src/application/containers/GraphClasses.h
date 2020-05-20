@@ -11,6 +11,9 @@
 
 class VertexInfo {
 public:
+    virtual string getCategory() const {
+        return "";
+    }
     virtual double getLat() const = 0;
     virtual double getLon() const = 0;
     virtual long getID() const = 0;
@@ -123,29 +126,29 @@ class VertexInfoTXT : public VertexInfo {
 private:
     Position p;
     const long id;
-    const POI * poi = nullptr;
+    string category;
 public:
     VertexInfoTXT(const long id, Position p) : id(id), p(p) {}
 
     friend ostream& operator <<(ostream &os, const VertexInfoTXT &r){
-        os << r.id << " - (" << r.p.getX() << ", " << r.p.getY() << ") - " << r.poi->getType() << endl;
+        os << r.id << " - (" << r.p.getLat() << ", " << r.p.getLon() << ") - " << r.category << endl;
         return os;
     }
 
-    void setPoi(const POI * poi){
-        this->poi = poi;
+    void setCategory(string &c){
+        this->category = c;
     }
 
-    const POI * getPoi() {
-        return poi;
+    string getCategory() const override {
+        return category;
     }
 
     double getLat() const override {
-        return p.getX();
+        return p.getLat();
     }
 
     double getLon() const override {
-        return p.getY();
+        return p.getLon();
     }
 
     long getID() const override {

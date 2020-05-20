@@ -13,7 +13,6 @@ template <class T> class Edge;
 template <class T> class Graph;
 template <class T> class Vertex;
 
-
 template <class T>
 class Vertex {
 	T info;                // contents
@@ -73,6 +72,7 @@ class Graph {
 public:
     ~Graph();
     Vertex<T> *findVertex(const T &in) const;
+    Vertex<T> *findVertex(long id) const;
     const vector<Vertex<T>*> &getVertexSet() const;
     void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
     void setVertexSet(vector<Vertex<T>*> v);
@@ -159,6 +159,19 @@ Vertex<T> * Graph<T>::findVertex(const T &in) const {
         }
     }
 	return NULL;
+}
+
+/**
+ * Auxiliary function to find a vertex with a given id.
+ */
+template<class T>
+Vertex<T> * Graph<T>::findVertex(long id) const {
+    for (auto v : vertexSet) {
+        if (v->info->getID() == id) {
+            return v;
+        }
+    }
+    return NULL;
 }
 
 /**

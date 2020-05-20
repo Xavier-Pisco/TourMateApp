@@ -219,13 +219,8 @@ double Converter::getKmDistfromLatLong(double lat1, double lon1, double lat2, do
 }
 
 
-// TODO This needs to be done with a
-//  graph that only has the T template argument. Otherwise, it won't work well, because the P template
-//  argument is for the road information (name, etc) and that information isn't available here.
-//  The edge weight is saved not in the P template argument, because multiple edges may share the P template argument,
-//  but in a separate field of the Edge class, named 'weight'.
-/*Graph<VertexInfoTXT, int> *Converter::getGraphFromTXTFile(const string & city) {
-    auto graph = new Graph<VertexInfoTXT, int>;
+Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & city) {
+    auto graph = new Graph<VertexInfoTXT>;
 
     string lowerCaseCity = city;
     transform(lowerCaseCity.begin(), lowerCaseCity.end(), lowerCaseCity.begin(), ::tolower);
@@ -234,56 +229,63 @@ double Converter::getKmDistfromLatLong(double lat1, double lon1, double lat2, do
     string edgesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/edges_" + lowerCaseCity + ".txt";
     string poiFolderName = "../../cal-mapas-fornecidos/TagExamples/" + city + "/";
 
-    readNodeFileTxt(nodesFileName, graph);
+    map<long, Vertex<VertexInfoTXT>*> nodes = readNodeFileTxt(nodesFileName, graph);
 
-    readEdgesFileTxt(edgesFileName, graph);
+    readEdgesFileTxt(edgesFileName, graph, nodes);
 
-    readTagsFromFolder(poiFolderName, graph);
+    readTagsFromFolder(poiFolderName, graph, nodes);
 
     return graph;
 }
 
-vector<double> Converter::parseNodeLineToInts(string &line) {
-    vector<double> v;
+NodeIdLatLon Converter::parseNodeLine(string &line) {
+    NodeIdLatLon v;
     line.erase(0, 1);
-    v.push_back(stoi(line.substr(0, line.find(','))));
+    v.first = stol(line.substr(0, line.find(',')));
     line.erase(0, line.find(',') + 1);
-    v.push_back(stod(line.substr(0, line.find(','))));
+    v.second.first = stod(line.substr(0, line.find(','))); // lat
     line.erase(0, line.find(',') + 1);
-    v.push_back(stod(line.substr(0, line.find(')'))));
+    v.second.second = stod(line.substr(0, line.find(')'))); // lon
     return v;
 }
 
-vector<double> Converter::parseEdgeLineToInts(string &line) {
-    vector<double> v;
+EdgeVertexIds Converter::parseEdgeLine(string &line) {
+    EdgeVertexIds v;
     line.erase(0, 1);
-    v.push_back(stoi(line.substr(0, line.find(','))));
+    v.first = stol(line.substr(0, line.find(',')));
     line.erase(0, line.find(',') + 1);
-    v.push_back(stoi(line.substr(0, line.find(','))));
+    v.second = stol(line.substr(0, line.find(',')));
     return v;
 }
 
-void Converter::readNodeFileTxt(const string &fileName, Graph<VertexInfoTXT, int> *graph) {
+map<long, Vertex<VertexInfoTXT>*> Converter::readNodeFileTxt(const string &fileName, Graph<VertexInfoTXT> *graph) {
     string line;
     ifstream nodesFile(fileName);
+
+    map<long, Vertex<VertexInfoTXT>*> nodes;
 
     if (nodesFile.is_open()){
         getline(nodesFile, line);
         unsigned nodes_number = stoi(line);
         while (getline(nodesFile, line)) {
-            vector<double> v = parseNodeLineToInts(line);
-            unsigned id = v[0];
-            Position p = Position(v[1], v[2]);
-            graph->addVertex(VertexInfoTXT(id, p));
+            NodeIdLatLon v = parseNodeLine(line);
+            long id = v.first;
+            Position p = Position(v.second.first, v.second.second);
+
+            auto vx = new Vertex<VertexInfoTXT>(VertexInfoTXT(id, p));
+
+            nodes[vx->getInfo().getID()] = vx;
+            graph->addVertex(vx);
         }
     } else {
         abort();
     }
 
     nodesFile.close();
+    return nodes;
 }
 
-void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT, int> *graph) {
+void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
     string line;
     ifstream edgesFile(fileName);
 
@@ -291,8 +293,10 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT, in
         getline(edgesFile, line);
         unsigned edges_number = stoi(line);
         while(getline(edgesFile, line)){
-            vector<double> v = parseEdgeLineToInts(line);
-            //graph->addEdge(v[0], v[1], 1);
+            EdgeVertexIds v = parseEdgeLine(line);
+            Vertex<VertexInfoTXT> *v1 = nodes.at(v.first);
+            Vertex<VertexInfoTXT> *v2 = nodes.at(v.second);
+            graph->addEdge(v1, new Edge<VertexInfoTXT>(v1, getKmDistfromLatLong(v1->getInfo().getLat(), v1->getInfo().getLon(), v2->getInfo().getLat(), v2->getInfo().getLon())));
         }
     } else {
         abort();
@@ -301,7 +305,7 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT, in
     edgesFile.close();
 }
 
-void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT, int> *graph) {
+void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
     DIR *dir;
     struct dirent *entry;
 
@@ -311,7 +315,7 @@ void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT
         while((entry = readdir(dir))){
             if (entry->d_name[0] != '.') {
                 string fileName = folderName + entry->d_name;
-                readTagsFromFile(fileName, graph);
+                readTagsFromFile(fileName, graph, nodes);
             }
         }
         closedir(dir);
@@ -320,7 +324,7 @@ void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT
     }
 }
 
-void Converter::readTagsFromFile(const string &fileName, Graph<VertexInfoTXT, int> *graph) {
+void Converter::readTagsFromFile(const string &fileName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
     string line;
 
     ifstream poiFile(fileName);
@@ -329,14 +333,15 @@ void Converter::readTagsFromFile(const string &fileName, Graph<VertexInfoTXT, in
         getline(poiFile, line);
         unsigned tagsTypes = stoi(line);
         for (unsigned i = 0; i < tagsTypes; i++){
+
             getline(poiFile, line);
             string tag = line.substr(line.find('=') + 1, line.npos);
             getline(poiFile, line);
+
             unsigned  numberOfPOI = stoi(line);
             for (int j = 0; j < numberOfPOI; j++){
                 getline(poiFile, line);
-                graph->findVertex(stoi(line))->setPoi(tag);
-
+                nodes.at(stol(line))->getInfo().setCategory(tag);
             }
         }
     } else {
@@ -344,6 +349,6 @@ void Converter::readTagsFromFile(const string &fileName, Graph<VertexInfoTXT, in
     }
 
     poiFile.close();
-}*/
+}
 
 

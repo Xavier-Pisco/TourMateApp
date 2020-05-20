@@ -15,7 +15,9 @@ int Application::mainMenu() {
     Menu menu;
 
     menu.addOption("exit application");
-    menu.addOption("start a route");
+    menu.addOption("start a route with a OSM map");
+    menu.addOption("start a route with a grid graph");
+    menu.addOption("start a route with a simple txt map");
     menu.addOption("view available maps");
 
 
@@ -34,6 +36,10 @@ int Application::mainMenu() {
             routeMaker.start();
             break;
         case 2:
+            break;
+        case 3:
+            break;
+        case 4:
         default:
             break;
     }

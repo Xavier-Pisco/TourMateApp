@@ -8,6 +8,9 @@
 #include <cmath>
 #include "../graph/GraphEdgeInfo.h"
 
+typedef pair<long, pair<double, double>> NodeIdLatLon;
+typedef pair<long, long> EdgeVertexIds;
+
 /**
  * The objective of this class is to convert a map
  * file into a graph that can be used by the Application
@@ -55,41 +58,41 @@ private:
 
 
     /**
-     * Parses a line of nodes to a vector
+     * Parses a line of nodes
      * @param line node info
-     * @return
+     * @return {vertexId, {lat, lon}}
      */
-    static vector<double> parseNodeLineToInts(string & line);
+    static NodeIdLatLon parseNodeLine(string & line);
 
     /**
-     * Parses a line of edges to a vector
+     * Parses a line of edges
      * @param line edge info
-     * @return
+     * @return {vertex1Id, vertex2Id}
      */
-    static vector<double> parseEdgeLineToInts(string & line);
+    static EdgeVertexIds parseEdgeLine(string & line);
 
     /**
      * Reads nodes from a file
      * @param fileName
      * @param graph
      */
-    static void readNodeFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph);
+    static map<long, Vertex<VertexInfoTXT>*> readNodeFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph);
 
     /**
      * Reads edges from a file
      * @param fileName
      * @param graph
      */
-    static void readEdgesFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph);
+    static void readEdgesFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
 
     /**
      * Reads all tags from a folder
      * @param folderName
      * @param graph
      */
-    static void readTagsFromFolder(const string& folderName, Graph<VertexInfoTXT> * graph);
+    static void readTagsFromFolder(const string& folderName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
 
-    static void readTagsFromFile(const string& fileName, Graph<VertexInfoTXT> * graph);
+    static void readTagsFromFile(const string& fileName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
 public:
     /**
      * Converts an OpenStreetMap file to graph format

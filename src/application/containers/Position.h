@@ -4,19 +4,19 @@
 
 class Position {
 private:
-    double x, y;
+    double lat, lon;
 public:
-    Position(double x,double y) {
-        this->x = x;
-        this->y = y;
+    Position(double lat, double lon) {
+        this->lat = lat;
+        this->lon = lon;
     }
 
-    double getX() const {
-        return x;
+    double getLat() const {
+        return lat;
     }
 
-    double getY() const {
-        return y;
+    double getLon() const {
+        return lon;
     }
 };
 
