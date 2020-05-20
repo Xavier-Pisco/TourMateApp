@@ -1,10 +1,12 @@
 #include "GraphViewerCustom.h"
 
-GraphViewerCustom::GraphViewerCustom(Graph<VertexInfoXML> * graph) {
+template<class T>
+GraphViewerCustom<T>::GraphViewerCustom(Graph<T> * graph) {
     this->graph = graph;
 }
 
-void GraphViewerCustom::viewGraph() {
+template<class T>
+void GraphViewerCustom<T>::viewGraph() {
     if (graphViewer != nullptr) {
         graphViewer->closeWindow();
         delete graphViewer;
@@ -31,8 +33,8 @@ void GraphViewerCustom::viewGraph() {
     graphViewer->rearrange();
 }
 
-
-void GraphViewerCustom::closeView() {
+template<class T>
+void GraphViewerCustom<T>::closeView() {
     if (graphViewer != nullptr) {
         graphViewer->closeWindow();
         delete graphViewer;
@@ -40,7 +42,8 @@ void GraphViewerCustom::closeView() {
     }
 }
 
-GraphViewerCustom::~GraphViewerCustom() {
+template<class T>
+GraphViewerCustom<T>::~GraphViewerCustom() {
     if (graphViewer != nullptr) {
         graphViewer->closeWindow();
         delete graphViewer;

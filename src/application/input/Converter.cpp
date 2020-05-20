@@ -219,7 +219,7 @@ double Converter::getKmDistfromLatLong(double lat1, double lon1, double lat2, do
 }
 
 
-Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & city) {
+Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & city, map<long, Vertex<VertexInfoTXT>*> &nodes) {
     auto graph = new Graph<VertexInfoTXT>;
 
     string lowerCaseCity = city;
@@ -229,7 +229,7 @@ Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & city) {
     string edgesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/edges_" + lowerCaseCity + ".txt";
     string poiFolderName = "../../cal-mapas-fornecidos/TagExamples/" + city + "/";
 
-    map<long, Vertex<VertexInfoTXT>*> nodes = readNodeFileTxt(nodesFileName, graph);
+    nodes = readNodeFileTxt(nodesFileName, graph);
 
     readEdgesFileTxt(edgesFileName, graph, nodes);
 

@@ -1,14 +1,13 @@
 #include "RouteMaker.h"
 
-void RouteMaker::start() {
+template<class T>
+void RouteMaker<T>::start(string &path) {
     Menu menu;
     menu.addOption("return");
 
 
     Drawer::drawTitle("Choose a map");
     cout << endl;
-
-    string path = "../maps/";
 
     vector<string> maps = getAvailableMaps(path);
     menu.addExtraInput(maps);
@@ -36,12 +35,13 @@ void RouteMaker::start() {
     }
 }
 
-vector<string> RouteMaker::getAvailableMaps(string & path) const {
+template<class T>
+vector<string> RouteMaker<T>::getAvailableMaps(string & path) const {
     vector<string> res;
 
     DIR *dir;
     struct dirent *ent;
-    if ((dir = opendir("../maps")) != nullptr) {
+    if ((dir = opendir(path.c_str())) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
             string name(ent->d_name);
             if (name != "." && name != "..") {
@@ -54,55 +54,4 @@ vector<string> RouteMaker::getAvailableMaps(string & path) const {
     return res;
 }
 
-void RouteMaker::openMap(string &map) {
-    mapContainer = new MapContainer(map);
 
-    mapContainer->getGraphViewer()->viewGraph();
-
-    UserInput::getLine("Press ENTER to close graph. Note: If you close on the 'x' of the window it will shutdown the program");
-    mapContainer->getGraphViewer()->closeView();
-}
-
-void RouteMaker::getRouteInfo() {
-    Drawer::drawTitle("Route info");
-    cout << "Insert 'stop' at any time to cancel." << endl;
-
-    Vertex<VertexInfoXML> *vx;
-
-    cout << endl;
-    Drawer::drawTitle("Origin location", 0, 40, true, "left"); cout << endl;
-
-    vx = UserInput::getVertex(mapContainer);
-    cout << "Vertex id = " << vx->getInfo().getID() << endl;
-    user.setOrigin(vx);
-    mapContainer->setReachableVertexSet(vx);
-
-    cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
-
-    auto v2 = UserInput::getVertex(mapContainer, false);
-    if (v2 != nullptr) cout << "Vertex id = " << v2->getInfo().getID() << endl;
-    user.setDestination(v2);
-
-    cout << endl;
-    float time = UserInput::getFloat("Available time in minutes: ");
-    user.setAvailability(time);
-
-    cout << endl; Drawer::drawTitle("Preferences", 0, 40, true, "left"); cout << endl;
-    string opt;
-    while((opt=UserInput::getPreference())!="done"){
-        user.addPreference(opt);
-    }
-
-    makeRoute();
-}
-
-void RouteMaker::makeRoute() {
-    mapContainer->getGraph()->dijkstra(user.getOrigin());
-    if (user.getDestination() != nullptr) cout << "the distance in km is " << mapContainer->getGraph()->getPathToFromDijkstra(user.getOrigin(), user.getDestination()).second << endl;
-
-    // this divides into two cases: route with a predefined destination and route with a non-predefined destination
-}
-
-RouteMaker::~RouteMaker() {
-    delete mapContainer;
-}

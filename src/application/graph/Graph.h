@@ -12,6 +12,8 @@ using namespace std;
 template <class T> class Edge;
 template <class T> class Graph;
 template <class T> class Vertex;
+template <class T> class MapContainer;
+template <class T> class GraphViewerCustom;
 
 template <class T>
 class Vertex {
@@ -37,8 +39,8 @@ public:
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
     friend class Graph<T>;
 	friend class MutablePriorityQueue<Vertex<T>>;
-    friend class GraphViewerCustom;
-    friend class MapContainer;
+    friend class GraphViewerCustom<T>;
+    friend class OSMapContainer;
 };
 
 template <class T>
@@ -52,7 +54,7 @@ public:
 	bool hasInfoXML() const;
 	friend class Graph<T>;
 	friend class Vertex<T>;
-    friend class GraphViewerCustom;
+    friend class GraphViewerCustom<T>;
 };
 
 template<class T>
@@ -92,8 +94,10 @@ public:
 	bool isDAG() const;
 	void dijkstra(Vertex<T> * origin);
     pair<vector<pair<Vertex<T>*, Edge<T>*>>, double> getPathToFromDijkstra(Vertex<T> * s, Vertex<T> * d) const;
-	friend class GraphViewerCustom;
-	friend class MapContainer;
+	friend class GraphViewerCustom<T>;
+	friend class MapContainer<T>;
+	friend class OSMapContainer;
+	friend class SimpleMapContainer;
 };
 
 template<class T>

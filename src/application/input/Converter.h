@@ -108,7 +108,7 @@ public:
      * @param poiFileName
      * @return
      */
-    static Graph<VertexInfoTXT> * getGraphFromTXTFile(const string& city);
+    static Graph<VertexInfoTXT> * getGraphFromTXTFile(const string& city, map<long, Vertex<VertexInfoTXT>*> &nodes);
 };
 
 

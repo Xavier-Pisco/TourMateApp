@@ -64,21 +64,21 @@ public:
      * @param mandatory - whether or not the client must choose a vertex
      * @return the vertex
      */
-    static Vertex<VertexInfoXML> * getVertex(MapContainer * graphContainer, bool mandatory = true);
+    static Vertex<VertexInfoXML> * getVertex(MapContainer<VertexInfoXML> * graphContainer, bool mandatory = true);
 
     /**
      * @brief GET's a vertex from lat lon input
      * @param mapContainer - the map container
      * @return the vertex
      */
-    static Vertex<VertexInfoXML> * getVertexWithGPSCoords(MapContainer * mapContainer);
+    static Vertex<VertexInfoXML> * getVertexWithGPSCoords(MapContainer<VertexInfoXML> * mapContainer);
 
     /**
      * @brief GET's a vertex from a street name
      * @param graph - the graph
      * @return the vertex
      */
-    static Vertex<VertexInfoXML> * getVertexWithLocationName(MapContainer * graphContainer);
+    static Vertex<VertexInfoXML> * getVertexWithLocationName(MapContainer<VertexInfoXML> * graphContainer);
 
     static string getPreference();
 };

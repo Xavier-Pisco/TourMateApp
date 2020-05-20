@@ -5,13 +5,14 @@
 #include "../Application.h"
 #include "../containers/GraphClasses.h"
 
+template<class T>
 class GraphViewerCustom {
 private:
-    Graph<VertexInfoXML> * graph;
+    Graph<T> * graph;
     GraphViewer * graphViewer = nullptr;
 
 public:
-    explicit GraphViewerCustom(Graph<VertexInfoXML> * graph);
+    explicit GraphViewerCustom(Graph<T> * graph);
     void viewGraph();
     void closeView();
     ~GraphViewerCustom();
