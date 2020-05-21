@@ -273,7 +273,7 @@ EdgeVertexIds Converter::parseEdgeLine(string &line) {
     line.erase(0, 1);
     v.first = stol(line.substr(0, line.find(',')));
     line.erase(0, line.find(',') + 1);
-    v.second = stol(line.substr(0, line.find(',')));
+    v.second = stol(line.substr(0, line.find(')')));
     return v;
 }
 
@@ -315,7 +315,10 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT> *g
             EdgeVertexIds v = parseEdgeLine(line);
             Vertex<VertexInfoTXT> *v1 = nodes.at(v.first);
             Vertex<VertexInfoTXT> *v2 = nodes.at(v.second);
-            graph->addEdge(v1, new Edge<VertexInfoTXT>(v1, getKmDistfromLatLong(v1->getInfo().getLat(), v1->getInfo().getLon(), v2->getInfo().getLat(), v2->getInfo().getLon())));
+            double dist = getKmDistfromLatLong(v1->getInfo().getLat(), v1->getInfo().getLon(), v2->getInfo().getLat(), v2->getInfo().getLon());
+            graph->addEdge(v1, new Edge<VertexInfoTXT>(v2, dist));
+            graph->addEdge(v2, new Edge<VertexInfoTXT>(v1, dist));
+
         }
     } else {
         abort();
