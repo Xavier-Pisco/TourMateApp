@@ -408,6 +408,7 @@ void Converter::readTagsFileTXT(const string &fileName, Graph<VertexInfoTXT> *gr
 
     if (!tagsFile.is_open()) {
         generateTagsFileTXT(fileName, nodes);
+        cout << "Generated tags!" << endl;
         return;
     }
 

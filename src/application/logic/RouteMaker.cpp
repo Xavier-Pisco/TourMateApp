@@ -70,8 +70,11 @@ RouteMaker *RouteMaker::openMap(string &mapDescription) {
             mapDescription += mapName;
             return new OSMRouteMaker(mapName);
         case 2:
+            mapDescription = "simple TXT map ";
             path = "../maps/simple/";
-            return new SimpleRouteMaker(getMapName(path));
+            mapName = getMapName(path);
+            mapDescription += mapName;
+            return new SimpleRouteMaker(mapName);
         case 3:
             path = "../maps/gridGraph/";
             return new SimpleRouteMaker(getMapName(path));
