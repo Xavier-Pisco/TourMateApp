@@ -219,21 +219,40 @@ double Converter::getKmDistfromLatLong(double lat1, double lon1, double lat2, do
 }
 
 
-Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & city, map<long, Vertex<VertexInfoTXT>*> &nodes) {
+Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & m, map<long, Vertex<VertexInfoTXT>*> &nodes) {
     auto graph = new Graph<VertexInfoTXT>;
 
-    string lowerCaseCity = city;
-    transform(lowerCaseCity.begin(), lowerCaseCity.end(), lowerCaseCity.begin(), ::tolower);
+    Menu menu;
+    menu.addOption("cancel");
+    menu.addOption("Strongly Connected Map");
+    menu.addOption("Full Map");
 
-    string nodesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/nodes_lat_lon_" + lowerCaseCity + ".txt";
-    string edgesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/edges_" + lowerCaseCity + ".txt";
-    string poiFolderName = "../../cal-mapas-fornecidos/TagExamples/" + city + "/";
+    bool strong = false;
+
+    cout << endl;
+    menu.draw();
+    cout << endl;
+    unsigned opt = menu.getResponse("Choose an option from the menu:");
+    switch(opt) {
+        case 0:
+            throw CancelInput();
+        case 1:
+            strong = true;
+            break;
+        default:
+            break;
+    };
+
+    string nodesFileName = m + "/" + (strong ? "strong" : "full") + "_nodes_latlng.txt";
+    string edgesFileName = m + "/" + (strong ? "strong" : "full") + "_edges.txt";
+
+    //string poiFolderName = "../../cal-mapas-fornecidos/TagExamples/" + city + "/";
 
     nodes = readNodeFileTxt(nodesFileName, graph);
 
     readEdgesFileTxt(edgesFileName, graph, nodes);
 
-    readTagsFromFolder(poiFolderName, graph, nodes);
+    //readTagsFromFolder(poiFolderName, graph, nodes);
 
     return graph;
 }

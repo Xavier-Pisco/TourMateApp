@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 #include "../graph/GraphEdgeInfo.h"
+#include "../ui/Menu.h"
+#include "../exceptions.h"
 
 typedef pair<long, pair<double, double>> NodeIdLatLon;
 typedef pair<long, long> EdgeVertexIds;

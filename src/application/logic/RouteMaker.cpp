@@ -3,6 +3,7 @@
 
 string RouteMaker::getMapName(string &path) {
     Menu menu;
+    string res;
     menu.addOption("return");
 
 
@@ -15,7 +16,6 @@ string RouteMaker::getMapName(string &path) {
     if (maps.empty()) cout << "No maps were found" << endl;
 
     menu.draw();
-    string res;
     cout << endl << endl;
     int opt = menu.getResponse("Insert an option:", res);
     if (opt == -1) {
