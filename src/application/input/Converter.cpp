@@ -1,5 +1,7 @@
 #include "Converter.h"
 
+#include <random>
+
 Graph<VertexInfoXML> * Converter::getGraphFromOSMFile(const string& fileName, vector<WayInfoXML*> &roads, vector<WayInfoXML*> &placesWays, vector<VertexInfoXML> &placesNodes) {
     string fileContent;
     if (readFileData(fileName, fileContent) != 0) {
@@ -245,14 +247,15 @@ Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & m, map<long,
 
     string nodesFileName = m + "/" + (strong ? "strong" : "full") + "_nodes_latlng.txt";
     string edgesFileName = m + "/" + (strong ? "strong" : "full") + "_edges.txt";
+    string tagsFileName = m + "/" + (strong ? "strong" : "full") + "_tags.txt";
 
     //string poiFolderName = "../../cal-mapas-fornecidos/TagExamples/" + city + "/";
 
-    nodes = readNodeFileTxt(nodesFileName, graph);
+    nodes = readNodesFileTxt(nodesFileName, graph);
 
     readEdgesFileTxt(edgesFileName, graph, nodes);
 
-    //readTagsFromFolder(poiFolderName, graph, nodes);
+    readTagsFileTXT(tagsFileName, graph, nodes);
 
     return graph;
 }
@@ -277,7 +280,7 @@ EdgeVertexIds Converter::parseEdgeLine(string &line) {
     return v;
 }
 
-map<long, Vertex<VertexInfoTXT>*> Converter::readNodeFileTxt(const string &fileName, Graph<VertexInfoTXT> *graph) {
+map<long, Vertex<VertexInfoTXT>*> Converter::readNodesFileTxt(const string &fileName, Graph<VertexInfoTXT> *graph) {
     string line;
     ifstream nodesFile(fileName);
 
@@ -327,7 +330,7 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT> *g
     edgesFile.close();
 }
 
-void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
+/*void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
     DIR *dir;
     struct dirent *entry;
 
@@ -344,25 +347,82 @@ void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT
     } else {
         abort();
     }
+}*/
+
+void Converter::generateTagsFileTXT(const string &fileName, map<long, Vertex<VertexInfoTXT> *> &nodes) {
+    ofstream tagsFile(fileName);
+
+    int nodeCount = nodes.size();
+    int poiCount = nodeCount/90;
+
+    vector<bool> selector;
+    for (int i = 0; i < nodeCount; i++) {
+        if (i < poiCount) selector.push_back(true);
+        selector.push_back(false);
+    }
+
+    shuffle(selector.begin(), selector.end(), std::mt19937(std::random_device()()));
+
+
+    vector<pair<string, vector<Vertex<VertexInfoTXT> *>>> possibleTags;
+
+    possibleTags.emplace_back("information", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("hotel", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("attraction", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("viewpoint", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("guest_house", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("picnic_site", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("artwork", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("camp_site", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("museum", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("theme_park", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("aquarium", vector<Vertex<VertexInfoTXT>*>());
+    possibleTags.emplace_back("zoo", vector<Vertex<VertexInfoTXT>*>());
+
+    srand(time(NULL));
+    int i = 0;
+    for (auto &a : nodes) {
+        if (selector.at(i)) {
+            int n = rand()%possibleTags.size();
+            a.second->getInfo().setCategory(possibleTags.at(n).first);
+            possibleTags.at(n).second.push_back(a.second);
+        }
+        i++;
+    }
+
+    tagsFile << possibleTags.size() << endl;
+    for (auto &a : possibleTags) {
+        tagsFile << "tourism = " << a.first << endl;
+        tagsFile << a.second.size() << endl;
+        for (auto &v : a.second) {
+            tagsFile << v->getInfo().getID() << endl;
+        }
+    }
+    tagsFile.close();
 }
 
-void Converter::readTagsFromFile(const string &fileName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
+void Converter::readTagsFileTXT(const string &fileName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
     string line;
 
-    ifstream poiFile(fileName);
+    ifstream tagsFile(fileName);
 
-    if (poiFile.is_open()){
-        getline(poiFile, line);
+    if (!tagsFile.is_open()) {
+        generateTagsFileTXT(fileName, nodes);
+        return;
+    }
+
+    if (tagsFile.is_open()){
+        getline(tagsFile, line);
         unsigned tagsTypes = stoi(line);
         for (unsigned i = 0; i < tagsTypes; i++){
 
-            getline(poiFile, line);
+            getline(tagsFile, line);
             string tag = line.substr(line.find('=') + 1, line.npos);
-            getline(poiFile, line);
+            getline(tagsFile, line);
 
             unsigned  numberOfPOI = stoi(line);
             for (int j = 0; j < numberOfPOI; j++){
-                getline(poiFile, line);
+                getline(tagsFile, line);
                 nodes.at(stol(line))->getInfo().setCategory(tag);
             }
         }
@@ -370,7 +430,7 @@ void Converter::readTagsFromFile(const string &fileName, Graph<VertexInfoTXT> *g
         abort();
     }
 
-    poiFile.close();
+    tagsFile.close();
 }
 
 

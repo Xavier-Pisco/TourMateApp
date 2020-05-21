@@ -78,7 +78,7 @@ private:
      * @param fileName
      * @param graph
      */
-    static map<long, Vertex<VertexInfoTXT>*> readNodeFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph);
+    static map<long, Vertex<VertexInfoTXT>*> readNodesFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph);
 
     /**
      * Reads edges from a file
@@ -92,9 +92,12 @@ private:
      * @param folderName
      * @param graph
      */
-    static void readTagsFromFolder(const string& folderName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
+    //static void readTagsFromFolder(const string& folderName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
 
-    static void readTagsFromFile(const string& fileName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
+    static void readTagsFileTXT(const string& fileName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
+
+    static void generateTagsFileTXT(const string& fileName, map<long, Vertex<VertexInfoTXT>*> &nodes);
+
 public:
     /**
      * Converts an OpenStreetMap file to graph format
