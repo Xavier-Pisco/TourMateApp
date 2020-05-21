@@ -14,91 +14,36 @@
 
 using namespace std;
 
-template<class T>
 class RouteMaker {
 protected:
-    MapContainer<T> * mapContainer = nullptr;
     User user;
 public:
-    void start(string &path);
-    virtual void openMap(string &map) = 0;
+    static string getMapName(string &path);
     virtual void getRouteInfo() = 0;
     virtual void makeRoute() = 0;
-    vector<string> getAvailableMaps(string & path) const;
+    static vector<string> getAvailableMaps(string & path);
+    static RouteMaker * openMap(string &mapDescription);
 };
 
-class SimpleRouteMaker : public RouteMaker<VertexInfoTXT> {
+class SimpleRouteMaker : public RouteMaker {
+private:
+    MapContainer<VertexInfoTXT> * mapContainer = nullptr;
 public:
-    void openMap(string &map) override;
+    SimpleRouteMaker(string map);
     void getRouteInfo() override;
     void makeRoute() override;
     ~SimpleRouteMaker();
 };
 
-class OSMRouteMaker : public RouteMaker<VertexInfoXML> {
+class OSMRouteMaker : public RouteMaker {
+private:
+    MapContainer<VertexInfoXML> * mapContainer = nullptr;
 public:
-    void openMap(string &map) override;
+    OSMRouteMaker(string map);
     void getRouteInfo() override;
     void makeRoute() override;
     ~OSMRouteMaker();
 };
-
-/*  RouteMaker  */
-
-
-template<class T>
-void RouteMaker<T>::start(string &path) {
-    Menu menu;
-    menu.addOption("return");
-
-
-    Drawer::drawTitle("Choose a map");
-    cout << endl;
-
-    vector<string> maps = getAvailableMaps(path);
-    menu.addExtraInput(maps);
-
-    if (maps.empty()) cout << "No maps were found" << endl;
-
-    menu.draw();
-    string res;
-    cout << endl << endl;
-    int opt = menu.getResponse("Insert an option:", res);
-    if (opt == -1) {
-        path = path + res;
-        openMap(path);
-        while(true) {
-            try {
-                getRouteInfo();
-            } catch(CancelInput &c) {break;}
-        }
-        return;
-    }
-    switch(opt) {
-        case 0:
-        default:
-            break;
-    }
-}
-
-template<class T>
-vector<string> RouteMaker<T>::getAvailableMaps(string & path) const {
-    vector<string> res;
-
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir(path.c_str())) != nullptr) {
-        while ((ent = readdir(dir)) != nullptr) {
-            string name(ent->d_name);
-            if (name != "." && name != "..") {
-                res.push_back(name);
-            }
-        }
-        closedir (dir);
-    }
-
-    return res;
-}
 
 
 

@@ -1,6 +1,6 @@
 #include "RouteMaker.h"
 
-void OSMRouteMaker::openMap(string &map) {
+OSMRouteMaker::OSMRouteMaker(string map) {
     mapContainer = new OSMapContainer(map);
 
     mapContainer->getGraphViewer()->viewGraph();

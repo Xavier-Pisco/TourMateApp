@@ -6,6 +6,7 @@
 using namespace std;
 
 class Application {
+private:
 public:
 
     /**
@@ -32,7 +33,7 @@ public:
      * @param maxCoords - max lat && lon
      * @return the converted value
      */
-    static int latToY(const string &lon, int height, pair<double, double> &minCoords, pair<double, double> &maxCoords);
+    static int latToY(double lon, int height, pair<double, double> &minCoords, pair<double, double> &maxCoords);
 
     /**
      * @brief Converts lon to X
@@ -42,7 +43,7 @@ public:
      * @param maxCoords - max lat && lon
      * @return the converted value
      */
-    static int lonToX(const string &lon, int width, pair<double, double> &minCoords, pair<double, double> &maxCoords);
+    static int lonToX(double lon, int width, pair<double, double> &minCoords, pair<double, double> &maxCoords);
 };
 
 

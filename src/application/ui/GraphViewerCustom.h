@@ -33,16 +33,16 @@ void GraphViewerCustom<T>::viewGraph() {
     graphViewer->createWindow(600, 600);
 
     int i = 1;
-    for (Vertex<VertexInfoXML> * v : graph->vertexSet) {
+    for (Vertex<T> * v : graph->vertexSet) {
         v->graphViewerID = i;
-        graphViewer->addNode(v->graphViewerID, Application::lonToX(v->info.getXMLAttributes().at("lon"), 600, graph->minCoords, graph->maxCoords), Application::latToY(
-                v->info.getXMLAttributes().at("lat"), 600, graph->minCoords, graph->maxCoords));
+        graphViewer->addNode(v->graphViewerID, Application::lonToX(v->info.getLon(), 600, graph->minCoords, graph->maxCoords), Application::latToY(
+                v->info.getLat(), 600, graph->minCoords, graph->maxCoords));
         i++;
     }
 
     i = 1;
-    for (Vertex<VertexInfoXML> * v : graph->vertexSet) {
-        for (Edge<VertexInfoXML> * e : v->adj) {
+    for (Vertex<T> * v : graph->vertexSet) {
+        for (Edge<T> * e : v->adj) {
             graphViewer->addEdge(i, v->graphViewerID, e->dest->graphViewerID, EdgeType::DIRECTED);
             i++;
         }

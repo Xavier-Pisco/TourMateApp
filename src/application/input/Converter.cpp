@@ -225,7 +225,7 @@ Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & city, map<lo
     string lowerCaseCity = city;
     transform(lowerCaseCity.begin(), lowerCaseCity.end(), lowerCaseCity.begin(), ::tolower);
 
-    string nodesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/nodes_x_y_" + lowerCaseCity + ".txt";
+    string nodesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/nodes_lat_lon_" + lowerCaseCity + ".txt";
     string edgesFileName = "../../cal-mapas-fornecidos/PortugalMaps/" + city + "/edges_" + lowerCaseCity + ".txt";
     string poiFolderName = "../../cal-mapas-fornecidos/TagExamples/" + city + "/";
 
