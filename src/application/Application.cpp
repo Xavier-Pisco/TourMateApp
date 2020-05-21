@@ -36,6 +36,7 @@ int Application::mainMenu() {
         try {
             switch (opt) {
                 case 0:
+                    delete routeMaker;
                     return -1;
                 case 1:
                     delete routeMaker;
@@ -51,7 +52,6 @@ int Application::mainMenu() {
             }
         } catch (CancelInput &c) { cout << "You cancelled the operation." << endl; }
     }
-    delete routeMaker;
 }
 
 

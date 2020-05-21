@@ -21,9 +21,8 @@ string RouteMaker::getMapName(string &path) {
     if (opt == -1) {
         path = path + res;
         return path;
-    } else {
-        throw CancelInput();
     }
+    throw CancelInput();
 }
 
 

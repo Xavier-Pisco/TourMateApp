@@ -1,13 +1,15 @@
 #include "application/Application.h"
 
+#include <signal.h>
+
 using namespace std;
 
 int main() {
+    signal(SIGINT, SIG_IGN);  // this is being used to ignore the SIGINT signal sent by GraphViewer
+
     Application app;
     app.start();
 
-    /*auto graph = Converter::getGraphFromTXTFile("../../cal-mapas-fornecidos/PortugalMaps/Porto/nodes_x_y_porto.txt", "../../cal-mapas-fornecidos/PortugalMaps/Porto/edges_porto.txt", "../../cal-mapas-fornecidos/TagExamples/Porto/t03_tags_porto.txt");
-    cout << graph->findVertex(495570435)->getInfo();*/
-
+    getchar(); // this is so the program exits successfully (due to GraphViewer)
     return 0;
 }
