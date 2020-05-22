@@ -54,16 +54,26 @@ void GraphViewerCustom<T>::viewGraph() {
 
 template<class T>
 void GraphViewerCustom<T>::viewRoute(Route<T> * route) {
+    //graphViewer->closeWindow();
+    //graphViewer->createWindow(600, 600);
     vector<Vertex<T>*> vertexes = route->getVertexes();
-    for (auto it = vertexes.begin(); it != vertexes.end(); it++) {
-        if (it == vertexes.begin()) {
-            graphViewer->setVertexColor((*it)->graphViewerID, CYAN);
-        } else if ((*it)->graphViewerID == vertexes.at(vertexes.size()-1)->graphViewerID) {
-            graphViewer->setVertexColor((*it)->graphViewerID, ORANGE);
-        } else if ((*it)->getInfo().getCategory() != "") { // it's a POI
-            graphViewer->setVertexColor((*it)->graphViewerID, RED);
+    for (int i = 0; i < vertexes.size(); i++) {
+        Vertex<T> * v = vertexes.at(i);
+        if (i == 0) {  // it's the origin
+
+            graphViewer->setVertexColor(v->graphViewerID, CYAN);
+
+        } else if (i == vertexes.size()-1) { // it's the destiny
+
+            graphViewer->setVertexColor(v->graphViewerID, ORANGE);
+
+        } else if (v->getInfo().getCategory() != "") { // it's a POI
+
+            graphViewer->setVertexColor(v->graphViewerID, RED);
+
         } else { // it's just part of the path
-            graphViewer->setVertexColor((*it)->graphViewerID, GREEN);
+
+            graphViewer->setVertexColor(v->graphViewerID, GREEN);
         }
     }
     graphViewer->rearrange();

@@ -48,7 +48,7 @@ pair<vector<pair<Vertex<T>*, Edge<T> *>>, double> Graph<T>::getPathToFromDijkstr
 
     if (currVertex->dist == DBL_MAX) throw ImpossibleToReach(); // Impossible to reach
 
-    while ((prevVertex = currVertex->path) != nullptr) {
+    while ((prevVertex = currVertex->path) != NULL) {
         bool found = false;
         for (Edge<T> * edge : prevVertex->adj) {
             if (edge->dest == currVertex) {
@@ -61,7 +61,7 @@ pair<vector<pair<Vertex<T>*, Edge<T> *>>, double> Graph<T>::getPathToFromDijkstr
         currVertex = prevVertex;
     }
 
-    path.push_back(pair<Vertex<T>*, Edge<T>*>(s, nullptr)); // inserts the start vertex, which isn't inserted in the loop
+    path.push_back(pair<Vertex<T>*, Edge<T>*>(s, NULL)); // inserts the start vertex, which isn't inserted in the loop
 
     reverse(path.begin(), path.end());
 

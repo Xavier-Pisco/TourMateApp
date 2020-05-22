@@ -45,7 +45,7 @@ void SimpleRouteMaker::makeRoute(Vertex<VertexInfoTXT> * v1, Vertex<VertexInfoTX
     mapContainer->getGraph()->dijkstra(v1);
     pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = mapContainer->getGraph()->getPathToFromDijkstra(v1, v2);
     r->setRoutePoints(p.first);
-    cout << "Distance = " << p.second << endl;
+    cout << "Distance = " << p.second << "km" << endl;
 
     mapContainer->getGraphViewer()->viewRoute(r);
 }
