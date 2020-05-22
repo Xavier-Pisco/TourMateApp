@@ -15,14 +15,14 @@ void OSMRouteMaker::getRouteInfo() {
     cout << endl;
     Drawer::drawTitle("Origin location", 0, 40, true, "left"); cout << endl;
 
-    vx = UserInput::getVertex(mapContainer);
+    vx = UserInput::getVertex(mapContainer, true);
     cout << "Vertex id = " << vx->getInfo().getID() << endl;
     user.setOrigin(vx);
     mapContainer->setReachableVertexSet(vx);
 
     cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
 
-    auto v2 = UserInput::getVertex(mapContainer, false);
+    auto v2 = UserInput::getVertex(mapContainer, true, false);
     if (v2 != nullptr) cout << "Vertex id = " << v2->getInfo().getID() << endl;
     user.setDestination(v2);
 

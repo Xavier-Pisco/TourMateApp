@@ -1,0 +1,67 @@
+12
+tourism = information
+2
+4627
+6629
+tourism = hotel
+3
+2974
+3087
+10069
+tourism = attraction
+3
+322
+7349
+8371
+tourism = viewpoint
+2
+2802
+4606
+tourism = guest_house
+8
+2962
+3131
+3773
+4226
+4869
+6069
+8318
+8638
+tourism = picnic_site
+5
+1130
+2236
+4004
+4776
+8182
+tourism = artwork
+3
+1452
+4946
+8872
+tourism = camp_site
+3
+3027
+4168
+5090
+tourism = museum
+5
+625
+1057
+6191
+8003
+8953
+tourism = theme_park
+4
+3780
+7015
+7872
+8029
+tourism = aquarium
+1
+8838
+tourism = zoo
+3
+5
+4487
+9531

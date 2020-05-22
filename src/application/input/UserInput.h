@@ -59,19 +59,29 @@ public:
     static string strToLower(string s);
 
     /**
-     * @brief GET's a vertex from client input
+     * @brief GETs a vertex from client input
      * @param graph - the graph
      * @param mandatory - whether or not the client must choose a vertex
      * @return the vertex
      */
-    static Vertex<VertexInfoXML> * getVertex(MapContainer<VertexInfoXML> * graphContainer, bool mandatory = true);
+    template<class T>
+    static Vertex<T> * getVertex(MapContainer<T> * graphContainer, bool locationName, bool mandatory = true);
+
+    /**
+     * @brief Gets a vertex from id input
+     * @param mapContainer
+     * @return the vertex
+     */
+    template<class T>
+    static Vertex<T> * getVertexWithID(MapContainer<T> * mapContainer);
 
     /**
      * @brief GET's a vertex from lat lon input
      * @param mapContainer - the map container
      * @return the vertex
      */
-    static Vertex<VertexInfoXML> * getVertexWithGPSCoords(MapContainer<VertexInfoXML> * mapContainer);
+    template<class T>
+    static Vertex<T> * getVertexWithGPSCoords(MapContainer<T> * mapContainer);
 
     /**
      * @brief GET's a vertex from a street name
@@ -82,5 +92,65 @@ public:
 
     static string getPreference();
 };
+
+
+template<class T>
+Vertex<T> * UserInput::getVertex(MapContainer<T> * mapContainer, bool locationName, bool mandatory) {
+    Menu menu;
+    enum action {CANCEL, VID, LATLNG, NONE, NAME};
+    menu.addOption("cancel", CANCEL);
+    menu.addOption("add location with vertex id", VID);
+    menu.addOption("add location with GPS coordinates", LATLNG);
+    if (locationName) menu.addOption("add location with location name", NAME);
+    if (!mandatory) menu.addOption("I do not need to specify", NONE);
+
+    menu.drawMenuOptions("");
+    cout << endl;
+    unsigned opt = menu.getResponse("Choose an option from the menu:");
+
+
+    switch(opt) {
+        case CANCEL:
+            throw CancelInput();
+        case VID:
+            return UserInput::getVertexWithID(mapContainer);
+        case LATLNG:
+            return UserInput::getVertexWithGPSCoords(mapContainer);
+        case NAME:
+            return (Vertex<T>*) UserInput::getVertexWithLocationName((OSMapContainer*)mapContainer); // this is only used in OSM maps
+        case NONE:
+        default:
+            break;
+    }
+    return nullptr;
+}
+
+template<class T>
+Vertex<T> * UserInput::getVertexWithID(MapContainer<T> * mapContainer) {
+    cout << "This option finds the vertex with the ID you specify. \nInsert 'stop' to cancel at any time." << endl << endl;
+
+    string getterPhrase = "Insert the id of the vertex:";
+    while (true) {
+        long id = UserInput::getInt(getterPhrase);
+
+        Vertex<T> * v = mapContainer->getVertexWithID(id);
+        if (v != nullptr) return v;
+        else cout << "Insert a valid ID." << endl << endl;
+    }
+
+
+}
+
+template<class T>
+Vertex<T> * UserInput::getVertexWithGPSCoords(MapContainer<T> * mapContainer) {
+    Coords coords;
+
+    cout << "This option finds the vertex with the coordinates \nthat are the closest to the ones you specify" << endl << endl;
+
+    coords.first = UserInput::getDouble("Latitude:");
+    coords.second = UserInput::getDouble("Longitude:");
+
+    return mapContainer->getVertexWithCoords(coords);
+}
 
 #endif //SRC_USERINPUT_H

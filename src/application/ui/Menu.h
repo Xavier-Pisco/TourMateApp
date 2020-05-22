@@ -9,10 +9,11 @@ using namespace std;
 
 class Menu {
 private:
-    vector<string> menuOptions;
+    vector<pair<string, int>> menuOptions;
     vector<string> extraInput;
 public:
     unsigned addOption(string opt);
+    unsigned addOption(string opt, int n);
     void draw(string separator = "\n") const;
     int getResponse(string getterPhrase, string &res) const;
     unsigned getResponse(string getterPhrase) const;

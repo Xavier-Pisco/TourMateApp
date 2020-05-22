@@ -2,7 +2,12 @@
 #include "../input/UserInput.h"
 
 unsigned Menu::addOption(string opt) {
-    menuOptions.push_back(opt);
+    menuOptions.emplace_back(opt, -1);
+    return menuOptions.size()-1;
+}
+
+unsigned Menu::addOption(string opt, int n) {
+    menuOptions.emplace_back(opt, n);
     return menuOptions.size()-1;
 }
 
@@ -15,7 +20,7 @@ void Menu::draw(string separator) const {
 void Menu::drawMenuOptions(string separator) const {
     for (int i = 0; i < menuOptions.size(); i++) {
         if (i != 0) cout << separator;
-        cout << '[' << i << "] " << menuOptions.at(i) << endl;
+        cout << '[' << i << "] " << menuOptions.at(i).first << endl;
     }
 }
 
@@ -48,7 +53,10 @@ int Menu::getResponse(string getterPhrase, string &res) const {
 }
 
 unsigned Menu::getResponse(string getterPhrase) const {
-    return UserInput::getInt(getterPhrase, 0, (int) menuOptions.size() - 1, false);
+    int n = UserInput::getInt(getterPhrase, 0, (int) menuOptions.size() - 1, false);
+    pair<string, int> opt = menuOptions.at(n);
+    if (opt.second == -1) return n;
+    else return opt.second;
 }
 
 

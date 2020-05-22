@@ -5,7 +5,7 @@
 #include <vector>
 #include <dirent.h>
 
-#include "../containers/MapContainer.h"
+#include "../containers/Route.h"
 #include "../graph/algorithms/dijkstra.h"
 #include "../ui/Menu.h"
 #include "../ui/Drawer.h"
@@ -27,17 +27,18 @@ public:
 
 class SimpleRouteMaker : public RouteMaker {
 private:
-    MapContainer<VertexInfoTXT> * mapContainer = nullptr;
+    SimpleMapContainer * mapContainer = nullptr;
 public:
     SimpleRouteMaker(string map);
     void getRouteInfo() override;
-    void makeRoute() override;
+    void makeRoute() {};
+    void makeRoute(Vertex<VertexInfoTXT> * v1, Vertex<VertexInfoTXT> *v2);
     ~SimpleRouteMaker();
 };
 
 class OSMRouteMaker : public RouteMaker {
 private:
-    MapContainer<VertexInfoXML> * mapContainer = nullptr;
+    OSMapContainer * mapContainer = nullptr;
 public:
     OSMRouteMaker(string map);
     void getRouteInfo() override;

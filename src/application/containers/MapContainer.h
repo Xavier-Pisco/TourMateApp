@@ -2,7 +2,6 @@
 #define SRC_MAPCONTAINER_H
 
 #include <cfloat>
-
 #include "../ui/GraphViewerCustom.h"
 #include "../input/Converter.h"
 #include "../graph/algorithms/bfs.h"
@@ -24,6 +23,8 @@ public:
      * @param vx - the vertex
      */
     void setReachableVertexSet(Vertex<T> * vx);
+
+    Vertex<T> * getVertexWithID(long id) const;
 
     void setGraphMaxMinCoords() const;
 
@@ -79,6 +80,14 @@ Graph<T> *MapContainer<T>::getGraph() const {
 }
 
 template<class T>
+Vertex<T> * MapContainer<T>::getVertexWithID(long id) const {
+    for (auto v : graph->getVertexSet()) {
+        if (v->getInfo().getID() == id) return v;
+    }
+    return nullptr;
+}
+
+template<class T>
 GraphViewerCustom<T> *MapContainer<T>::getGraphViewer() const {
     return graphViewer;
 }
@@ -112,10 +121,10 @@ void MapContainer<T>::setGraphMaxMinCoords() const {
 
 template<class T>
 Vertex<T> *MapContainer<T>::getVertexWithCoords(const Coords &c) const {
-    pair<Vertex<VertexInfoXML> *, double> vertexWithDist;
+    pair<Vertex<T> *, double> vertexWithDist;
     vertexWithDist.second = DBL_MAX;
 
-    for (Vertex<VertexInfoXML> * v : graph->getVertexSet()) {
+    for (Vertex<T> * v : graph->getVertexSet()) {
         double dist = sqrt( pow(v->getInfo().getLat() - c.first, 2) + pow(v->getInfo().getLon() - c.second, 2) );
         if (dist < vertexWithDist.second) {
             vertexWithDist.first = v;

@@ -1,5 +1,6 @@
 #include "User.h"
 
+
 User::User() {
     this->origin=NULL;
     this->destination=NULL;

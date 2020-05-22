@@ -43,7 +43,7 @@ template<class T>
 pair<vector<pair<Vertex<T>*, Edge<T> *>>, double> Graph<T>::getPathToFromDijkstra(Vertex<T> * s, Vertex<T> * d) const {
     typedef pair<Vertex<T>*, Edge<T>*> vertexEdgePair;
     // Note, this requires dijkstra algorithm to have been executed starting on vertex *s
-    vector<pair<Vertex<T>*, Edge<T> *>> path;
+    vector<vertexEdgePair> path;
     Vertex<T> * prevVertex, * currVertex = d;
 
     if (currVertex->dist == DBL_MAX) throw ImpossibleToReach(); // Impossible to reach
@@ -52,13 +52,18 @@ pair<vector<pair<Vertex<T>*, Edge<T> *>>, double> Graph<T>::getPathToFromDijkstr
         bool found = false;
         for (Edge<T> * edge : prevVertex->adj) {
             if (edge->dest == currVertex) {
-                path.insert(path.begin(), pair<Vertex<T>*, Edge<T>*>(currVertex, edge));
+                path.push_back(pair<Vertex<T>*, Edge<T>*>(currVertex, edge));
                 found = true;
+                break;
             }
         }
         if (!found) throw exception();
         currVertex = prevVertex;
     }
+
+    path.push_back(pair<Vertex<T>*, Edge<T>*>(s, nullptr)); // inserts the start vertex, which isn't inserted in the loop
+
+    reverse(path.begin(), path.end());
 
     return pair<vector<pair<Vertex<T>*, Edge<T> *>>, double>(path, d->dist);
 }

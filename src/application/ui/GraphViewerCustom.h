@@ -3,7 +3,7 @@
 
 #include "../../lib/GraphViewer/graphviewer.h"
 #include "../Application.h"
-#include "../containers/GraphClasses.h"
+#include "../containers/Route.h"
 
 template<class T>
 class GraphViewerCustom {
@@ -13,6 +13,7 @@ private:
 
 public:
     explicit GraphViewerCustom(Graph<T> * graph);
+    void viewRoute(Route<T> * route);
     void viewGraph();
     void closeView();
     ~GraphViewerCustom();
@@ -49,6 +50,27 @@ void GraphViewerCustom<T>::viewGraph() {
     }
 
     graphViewer->rearrange();
+}
+
+template<class T>
+void GraphViewerCustom<T>::viewRoute(Route<T> * route) {
+    vector<Vertex<T>*> vertexes = route->getVertexes();
+    for (auto it = vertexes.begin(); it != vertexes.end(); it++) {
+        if (it == vertexes.begin()) {
+            graphViewer->setVertexColor((*it)->graphViewerID, CYAN);
+        } else if ((*it)->graphViewerID == vertexes.at(vertexes.size()-1)->graphViewerID) {
+            graphViewer->setVertexColor((*it)->graphViewerID, ORANGE);
+        } else if ((*it)->getInfo().getCategory() != "") { // it's a POI
+            graphViewer->setVertexColor((*it)->graphViewerID, RED);
+        } else { // it's just part of the path
+            graphViewer->setVertexColor((*it)->graphViewerID, GREEN);
+        }
+    }
+    graphViewer->rearrange();
+
+    cout << "Press ENTER to close this route and start another." << endl;
+    string s;
+    getline(cin, s);
 }
 
 template<class T>

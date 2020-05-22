@@ -105,10 +105,10 @@ public:
 	 *
 	 * This function will always prioritize pois by the order they appear in the pois vector
 	 *
-	 * @param origin origin of the route
-	 * @param destination destination of the route
-	 * @param pois User's poiList
-	 * @param km maximum distance the route can have
+	 * @param origin - origin of the route
+	 * @param destination - destination of the route
+	 * @param pois - User's poiList
+	 * @param km - maximum distance the route can have
 	 * @return vector with all the poi the user can pass by, starts at origin and (if possible on km) ends at destination
 	 */
 	vector<Vertex<T>*> backtrackingDijkstra(Vertex<T> * origin, Vertex<T>* destination, vector<POI> pois, int km);
