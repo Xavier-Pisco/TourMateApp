@@ -64,4 +64,40 @@ pair<vector<pair<Vertex<T>*, Edge<T> *>>, double> Graph<T>::getPathToFromDijkstr
 }
 
 
+template<class T>
+vector<Vertex<T>*> Graph<T>::backtrackingDijkstra(Vertex<T> * origin, Vertex<T>* destination, vector<POI> pois, int km){
+
+    vector<Vertex<T>*> passingVertex;
+
+    dijkstra(origin);
+
+    passingVertex.push_back(origin);
+
+    if (destination->dist > km) {
+        destination->dist = DBL_MAX;
+        return passingVertex;
+    }
+
+    int dist = destination->dist;
+
+    for (POI poi: pois){
+        for (Vertex<T> *v: vertexSet){
+            if (v->info.getCategory() == poi.getType()){
+                int temp_dist = v->dist;
+                dijkstra(v);
+                temp_dist += destination->dist;
+                if (v->dist > km){
+                    continue;
+                }
+                passingVertex.push_back(v);
+                dist = temp_dist;
+            }
+        }
+    }
+    passingVertex.push_back(destination);
+    return passingVertex;
+}
+
+
+
 #endif //SRC_DIJKSTRA_H

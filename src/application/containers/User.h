@@ -15,8 +15,8 @@ private:
     float time;
     Vertex<VertexInfoXML> * origin;
     Vertex<VertexInfoXML> *destination;
-    list<string> *preferenceList;
-    list<POI> *poiList;
+    vector<string> preferenceList;
+    vector<POI> poiList;
 public:
     User();
     void setOrigin(Vertex<VertexInfoXML> * origin);
@@ -29,9 +29,9 @@ public:
 
     Vertex<VertexInfoXML> *getDestination() const;
 
-    list<string> *getPreferenceList() const;
+    vector<string> getPreferenceList() const;
 
-    list<POI> *getPoiList() const;
+    vector<POI> getPoiList() const;
 
     void addPreference(string str);
 };
