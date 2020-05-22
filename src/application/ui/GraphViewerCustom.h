@@ -75,8 +75,10 @@ void GraphViewerCustom<T>::viewRoute(Route<T> * route) {
         }
     }
     graphViewer->rearrange();
+    cout << "Showing the resulting route in the graph viewer." << endl << endl << "In RED, you can see the interest points" <<
+        endl << "In BLUE, you can the the origin point" << endl << "In ORANGE, you can see your destination" << endl << "In GREEN you can see the path" << endl;
 
-    cout << "Press ENTER to close this route and start another." << endl;
+    cout << endl << "Press ENTER to close this route and start another." << endl;
     string s;
     getline(cin, s);
 

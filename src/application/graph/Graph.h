@@ -61,7 +61,7 @@ public:
 
 template<class T>
 bool Edge<T>::hasInfoXML() const {
-    return hasInfoXML;
+    return infoXML;
 }
 
 template <class T>

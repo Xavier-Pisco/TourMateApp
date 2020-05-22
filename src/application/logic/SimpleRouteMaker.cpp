@@ -41,14 +41,17 @@ void SimpleRouteMaker::getRouteInfo() {
 }
 
 void SimpleRouteMaker::makeRoute(Vertex<VertexInfoTXT> * v1, Vertex<VertexInfoTXT> *v2) {
-    auto r = new Route<VertexInfoTXT>();
+
     map<long, Vertex<VertexInfoTXT>*> nodes = mapContainer->getNodes();
 
     mapContainer->getGraph()->dijkstra(v1);
     pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = mapContainer->getGraph()->getPathToFromDijkstra(v1, v2);
-    r->setRoutePoints(p.first);
-    cout << "Distance = " << p.second << "km" << endl;
 
+    auto r = new Route<VertexInfoTXT>(p.first);
+
+    cout << endl << "Distance = " << p.second << "km" << endl << endl;
+
+    cout << r->getStringRepresentation();
 
     bool conf = UserInput::getConfirmation("Do you want to see the route in the graph viewer? \nIf you say yes, and you've closed the graph viewer window, the program will freeze.");
     if (conf) mapContainer->getGraphViewer()->viewRoute(r);
