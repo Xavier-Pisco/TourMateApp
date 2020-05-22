@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../containers/Position.h"
 #include "MutablePriorityQueue.h"
+#include "../containers/POI.h"
 
 using namespace std;
 
@@ -98,6 +99,19 @@ public:
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
 	void dijkstra(Vertex<T> * origin);
+
+	/**
+	 * @brief Function that uses backtracking and dijkstra in order to see what points of interest the user can pass between its origin and destination
+	 *
+	 * This function will always prioritize pois by the order they appear in the pois vector
+	 *
+	 * @param origin origin of the route
+	 * @param destination destination of the route
+	 * @param pois User's poiList
+	 * @param km maximum distance the route can have
+	 * @return vector with all the poi the user can pass by, starts at origin and (if possible on km) ends at destination
+	 */
+	vector<Vertex<T>*> backtrackingDijkstra(Vertex<T> * origin, Vertex<T>* destination, vector<POI> pois, int km);
     pair<vector<pair<Vertex<T>*, Edge<T>*>>, double> getPathToFromDijkstra(Vertex<T> * s, Vertex<T> * d) const;
 	friend class GraphViewerCustom<T>;
 	friend class MapContainer<T>;
