@@ -64,6 +64,12 @@ bool UserInput::getConfirmation(string getterPhrase) {
     }
 }
 
+void UserInput::waiter(string getterPhrase) {
+    cout << endl << getterPhrase << endl << "Press ENTER to continue." << endl;
+    string s;
+    getline(cin, s);
+}
+
 string UserInput::strToLower(string s) {
     string res;
     for (char c : s) res += tolower(c);

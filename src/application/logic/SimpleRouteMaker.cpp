@@ -4,9 +4,11 @@
 
 SimpleRouteMaker::SimpleRouteMaker(string map) {
     mapContainer = new SimpleMapContainer(map);
+    graphAnalyzer = new GraphAnalyzer<VertexInfoTXT>(mapContainer->getGraph());
 
     mapContainer->getGraphViewer()->viewGraph();
 }
+
 
 void SimpleRouteMaker::getRouteInfo() {
     Drawer::drawTitle("Route info");
@@ -50,6 +52,10 @@ void SimpleRouteMaker::makeRoute(Vertex<VertexInfoTXT> * v1, Vertex<VertexInfoTX
 
     bool conf = UserInput::getConfirmation("Do you want to see the route in the graph viewer? \nIf you say yes, and you've closed the graph viewer window, the program will freeze.");
     if (conf) mapContainer->getGraphViewer()->viewRoute(r);
+}
+
+void SimpleRouteMaker::openGraphAnalyzer() {
+    graphAnalyzer->menu();
 }
 
 

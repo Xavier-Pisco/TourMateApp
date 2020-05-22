@@ -52,6 +52,12 @@ public:
     static bool getConfirmation(string getterPhrase);
 
     /**
+     * @brief waits for user input
+     * @param getterPhrase
+     */
+    static void waiter(string getterPhrase);
+
+    /**
      * @brief converts a string to lower case
      * @param s - the sting to convert
      * @return the converted string

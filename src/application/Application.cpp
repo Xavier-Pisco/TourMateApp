@@ -2,6 +2,7 @@
 #include <cmath>
 #include "Application.h"
 #include "logic/RouteMaker.h"
+#include "logic/GraphAnalyzer.h"
 
 
 void Application::start() {
@@ -43,9 +44,12 @@ int Application::mainMenu() {
                     routeMaker = RouteMaker::openMap(mapDescription);
                     break;
                 case 2:
-                    routeMaker->getRouteInfo();
+                    if (routeMaker != nullptr) routeMaker->getRouteInfo();
+                    else UserInput::waiter("You haven't opened a map yet.");
                     break;
                 case 3:
+                    if (routeMaker != nullptr) routeMaker->openGraphAnalyzer();
+                    else UserInput::waiter("You haven't opened a map yet.");
                     break;
                 default:
                     break;

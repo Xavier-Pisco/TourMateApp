@@ -11,6 +11,7 @@
 #include "../ui/Drawer.h"
 #include "../containers/User.h"
 #include "../input/UserInput.h"
+#include "GraphAnalyzer.h"
 
 using namespace std;
 
@@ -21,29 +22,34 @@ public:
     static string getMapName(string &path);
     virtual void getRouteInfo() = 0;
     virtual void makeRoute() = 0;
+    virtual void openGraphAnalyzer() = 0;
     static vector<string> getAvailableMaps(string & path);
     static RouteMaker * openMap(string &mapDescription);
+    virtual ~RouteMaker() = default;
 };
 
 class SimpleRouteMaker : public RouteMaker {
 private:
-    SimpleMapContainer * mapContainer = nullptr;
+    SimpleMapContainer * mapContainer;
+    GraphAnalyzer<VertexInfoTXT> * graphAnalyzer;
 public:
-    SimpleRouteMaker(string map);
+    explicit SimpleRouteMaker(string map);
     void getRouteInfo() override;
+    void openGraphAnalyzer() override;
     void makeRoute() {};
     void makeRoute(Vertex<VertexInfoTXT> * v1, Vertex<VertexInfoTXT> *v2);
-    ~SimpleRouteMaker();
+    ~SimpleRouteMaker() override;
 };
 
 class OSMRouteMaker : public RouteMaker {
 private:
     OSMapContainer * mapContainer = nullptr;
 public:
-    OSMRouteMaker(string map);
+    explicit OSMRouteMaker(string map);
     void getRouteInfo() override;
+    void openGraphAnalyzer() override {};
     void makeRoute() override;
-    ~OSMRouteMaker();
+    ~OSMRouteMaker() override;
 };
 
 

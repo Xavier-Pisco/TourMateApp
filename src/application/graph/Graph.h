@@ -7,6 +7,7 @@
 #include "../containers/Position.h"
 #include "MutablePriorityQueue.h"
 #include "../containers/POI.h"
+#include <stack>
 
 using namespace std;
 
@@ -69,7 +70,8 @@ class Graph {
 	vector<Vertex<T> *> originalVertexSet;
     pair<double, double> minCoords = {0, 0}, maxCoords = {0, 0};
 
-	void dfsVisit(Vertex<T> *v,  vector<Vertex<T>*> & res) const;
+	void dfsVisit(Vertex<T> *v,  stack<Vertex<T>*> & res) const;
+    void dfsVisit(Vertex<T> *v,  vector<Vertex<T>*> & res) const;
 	bool dfsIsDAG(Vertex<T> *v) const;
 
 public:
@@ -78,11 +80,8 @@ public:
     Vertex<T> *findVertex(long id) const;
     const vector<Vertex<T>*> &getVertexSet() const;
     void setMaxMinCoords(pair<double, double> mn, pair<double, double> mx);
-
     const pair<double,double> &getMinCoords() const;
-
     const pair<double,double> &getMaxCoords() const;
-
     void setVertexSet(vector<Vertex<T>*> v);
     void setOriginalVertexSet();
 	int getNumVertex() const;
@@ -90,14 +89,39 @@ public:
     bool addVertex(Vertex<T> * in);
 	bool addVertex(const T &in, const Position &p);
 	bool removeVertex(const T &in);
-	bool addEdge(const T &sourc, const T &dest, double w);
+	bool addEdge(long sourcID, long destID, double w);
     bool addEdge(Vertex<T> *sourcVertex, Edge<T> * edge);
 	bool removeEdge(const T &sourc, const T &dest);
+    stack<Vertex<T>*> dfsToStack() const;
     vector<Vertex<T>*> dfs() const;
     vector<Vertex<T>*> bfs(Vertex<T> * source) const;
 	vector<T> topsort() const;
 	int maxNewChildren(const T &source, T &inf) const;
 	bool isDAG() const;
+
+	/**
+	 * @brief returns a transposed version of the graph
+	 */
+	Graph<T> * getTranspose() const;
+
+	/**
+	 * @brief finds the strongly connected components in the graph, using Kosaraju's algorithm
+	 * @return a vector of strongly connected components
+	 */
+    vector<vector<Vertex<T>*>> stronglyConnectedComponents();
+
+    /**
+     * @brief makes dfs in the vertexes from the stack in stack order, return a vector with the results for each vertex
+     * @param g - the graph
+     * @param s - the stack
+     * @return vector with each vertex's strongly connected components
+     */
+    static vector<vector<Vertex<T>*>> dfsFromStack(Graph<T> * g, stack<Vertex<T> *> &s);
+
+    /**
+	 * @brief dijkstra algorithm starting on origin
+	 * @param origin - the start vertex
+	 */
 	void dijkstra(Vertex<T> * origin);
 
 	/**
@@ -112,7 +136,15 @@ public:
 	 * @return vector with all the poi the user can pass by, starts at origin and (if possible on km) ends at destination
 	 */
 	vector<Vertex<T>*> backtrackingDijkstra(Vertex<T> * origin, Vertex<T>* destination, vector<POI> pois, int km);
+
+	/**
+	 * @brief gets a path from s to d, when dijkstra has been executed starting on s
+	 * @param s - the origin vertex
+	 * @param d - the destination vertex
+	 * @return {{{firstVertex, nullptr}, {secondVertex, edgeThatTakesToSecondVertex}, ...}, length}  we return the edge because, in the case of OSM maps, it contains the name of the road.
+	 */
     pair<vector<pair<Vertex<T>*, Edge<T>*>>, double> getPathToFromDijkstra(Vertex<T> * s, Vertex<T> * d) const;
+
 	friend class GraphViewerCustom<T>;
 	friend class MapContainer<T>;
 	friend class OSMapContainer;
@@ -202,7 +234,7 @@ Vertex<T> * Graph<T>::findVertex(const T &in) const {
 template<class T>
 Vertex<T> * Graph<T>::findVertex(long id) const {
     for (auto v : vertexSet) {
-        if (v->info->getID() == id) {
+        if (v->info.getID() == id) {
             return v;
         }
     }
@@ -243,11 +275,11 @@ bool Graph<T>::addVertex(const T &in, const Position &p) {
  * Returns true if successful, and false if the source or destination vertex does not exist.
  */
 template<class T>
-bool Graph<T>::addEdge(const T &sourc, const T &dest, double w) {
+bool Graph<T>::addEdge(long sourc, long dest, double w) {
 	Vertex<T> * sourcVertex = findVertex(sourc);
 	Vertex<T> * destVertex = findVertex(dest);
 	if (sourcVertex == NULL || destVertex == NULL) return false;
-	sourcVertex->addEdge(Edge<T>(sourcVertex, w));
+	sourcVertex->addEdge(new Edge<T>(destVertex, w));
 	return true;
 }
 

@@ -21,6 +21,10 @@ public:
     friend bool operator==(const VertexInfo& r1, const VertexInfo& r2){
         return r1.getID() == r2.getID();
     }
+
+    friend bool operator==(VertexInfo& r1, VertexInfo& r2){
+        return r1.getID() == r2.getID();
+    }
 };
 
 
@@ -86,20 +90,6 @@ public:
      * @param node - pointer to the xml node
      */
     explicit VertexInfoXML(rapidxml::xml_node<> *node);
-
-    /**
-     * @brief == operator overload against a const object of this class
-     * @param si - the object that this will be compared to
-     * @return if its equal or not
-     */
-    bool operator==(const VertexInfoXML &si);
-
-    /**
-     * @brief == operator overload against an object of this class
-     * @param si - the object that this will be compared to
-     * @return if its equal or not
-     */
-    bool operator==(VertexInfoXML &si);
 
     /**
      * @brief increments the count of edges that pass through this node

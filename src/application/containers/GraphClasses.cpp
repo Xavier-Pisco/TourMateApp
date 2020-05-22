@@ -49,14 +49,6 @@ string XMLNode::getXMLTagValue(string attr) const {
 
 VertexInfoXML::VertexInfoXML(rapidxml::xml_node<> *node) : XMLNode(node) {}
 
-bool VertexInfoXML::operator==(const VertexInfoXML &si) {
-    return this->getID() == si.getID();
-}
-
-bool VertexInfoXML::operator==(VertexInfoXML &si) {
-    return this->getID() == si.getID();
-}
-
 void VertexInfoXML::incrementCount() {
     count++;
 }
