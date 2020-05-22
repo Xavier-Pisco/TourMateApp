@@ -76,8 +76,11 @@ RouteMaker *RouteMaker::openMap(string &mapDescription) {
             mapDescription += mapName;
             return new SimpleRouteMaker(mapName);
         case 3:
+            mapDescription = " Grid Graph";
             path = "../maps/gridGraph/";
-            return new SimpleRouteMaker(getMapName(path));
+            mapName = getMapName(path);
+            mapDescription += mapName;
+            return new SimpleRouteMaker(mapName);
         default:
             break;
     }

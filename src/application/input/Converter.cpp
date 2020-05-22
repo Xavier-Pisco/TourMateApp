@@ -230,26 +230,38 @@ Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & m, map<long,
     menu.addOption("Full Map");
 
     bool strong = false;
+    bool gridGraph = true;
 
-    cout << endl;
-    menu.draw();
-    cout << endl;
-    unsigned opt = menu.getResponse("Choose an option from the menu:");
-    switch(opt) {
-        case 0:
-            throw CancelInput();
-        case 1:
-            strong = true;
-            break;
-        default:
-            break;
-    };
+    ifstream test(m + "/strong_nodes_latlng.txt");
+    if (test.is_open()) gridGraph = false;
+    test.close();
 
-    string nodesFileName = m + "/" + (strong ? "strong" : "full") + "_nodes_latlng.txt";
-    string edgesFileName = m + "/" + (strong ? "strong" : "full") + "_edges.txt";
-    string tagsFileName = m + "/" + (strong ? "strong" : "full") + "_tags.txt";
+    string nodesFileName, edgesFileName, tagsFileName;
 
-    //string poiFolderName = "../../cal-mapas-fornecidos/TagExamples/" + city + "/";
+    if (!gridGraph) {
+        cout << endl;
+        menu.draw();
+        cout << endl;
+        unsigned opt = menu.getResponse("Choose an option from the menu:");
+        switch(opt) {
+            case 0:
+                throw CancelInput();
+            case 1:
+                strong = true;
+                break;
+            default:
+                break;
+        };
+
+        nodesFileName = m + "/" + (strong ? "strong" : "full") + "_nodes_latlng.txt";
+        edgesFileName = m + "/" + (strong ? "strong" : "full") + "_edges.txt";
+        tagsFileName = m + "/" + (strong ? "strong" : "full") + "_tags.txt";
+
+    } else {
+        nodesFileName = m + "/nodes.txt";
+        edgesFileName = m + "/edges.txt";
+        tagsFileName = m + "/tags.txt";
+    }
 
     nodes = readNodesFileTxt(nodesFileName, graph);
 
@@ -353,7 +365,7 @@ void Converter::generateTagsFileTXT(const string &fileName, map<long, Vertex<Ver
     ofstream tagsFile(fileName);
 
     int nodeCount = nodes.size();
-    int poiCount = nodeCount/90;
+    int poiCount = max(nodeCount/90, 10);
 
     vector<bool> selector;
     for (int i = 0; i < nodeCount; i++) {
