@@ -47,7 +47,9 @@ void SimpleRouteMaker::makeRoute(Vertex<VertexInfoTXT> * v1, Vertex<VertexInfoTX
     r->setRoutePoints(p.first);
     cout << "Distance = " << p.second << "km" << endl;
 
-    mapContainer->getGraphViewer()->viewRoute(r);
+
+    bool conf = UserInput::getConfirmation("Do you want to see the route in the graph viewer? \nIf you say yes, and you've closed the graph viewer window, the program will freeze.");
+    if (conf) mapContainer->getGraphViewer()->viewRoute(r);
 }
 
 

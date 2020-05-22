@@ -54,8 +54,6 @@ void GraphViewerCustom<T>::viewGraph() {
 
 template<class T>
 void GraphViewerCustom<T>::viewRoute(Route<T> * route) {
-    //graphViewer->closeWindow();
-    //graphViewer->createWindow(600, 600);
     vector<Vertex<T>*> vertexes = route->getVertexes();
     for (int i = 0; i < vertexes.size(); i++) {
         Vertex<T> * v = vertexes.at(i);
@@ -81,6 +79,12 @@ void GraphViewerCustom<T>::viewRoute(Route<T> * route) {
     cout << "Press ENTER to close this route and start another." << endl;
     string s;
     getline(cin, s);
+
+    for (int i = 0; i < vertexes.size(); i++) {
+        Vertex<T> * v = vertexes.at(i);
+        graphViewer->setVertexColor(v->graphViewerID, YELLOW);
+    }
+    graphViewer->rearrange();
 }
 
 template<class T>
