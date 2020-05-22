@@ -85,15 +85,13 @@ private:
      * @param fileName
      * @param graph
      */
-    static void readEdgesFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
+    static void readEdgesFileTxt(const string& fileName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes, bool gridGraph);
 
     /**
      * Reads all tags from a folder
      * @param folderName
      * @param graph
      */
-    //static void readTagsFromFolder(const string& folderName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
-
     static void readTagsFileTXT(const string& fileName, Graph<VertexInfoTXT> * graph, map<long, Vertex<VertexInfoTXT>*> &nodes);
 
     static void generateTagsFileTXT(const string& fileName, map<long, Vertex<VertexInfoTXT>*> &nodes);

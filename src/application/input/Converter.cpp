@@ -89,7 +89,7 @@ Graph<VertexInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &d
                 }
             } else {
                 placesWays.push_back(candidate);
-                /*this for is in case we need to keep these vertexes. Right now I don't se a reason to keep them.
+                /*this for is in case we need to keep these vertexes in the graph. Right now I don't se a reason to keep them.
                  * for (auto v : roads.at(roads.size()-1)->getVertexes()) {
                     v->getInfo().incrementCount();
                 }*/
@@ -265,7 +265,7 @@ Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & m, map<long,
 
     nodes = readNodesFileTxt(nodesFileName, graph);
 
-    readEdgesFileTxt(edgesFileName, graph, nodes);
+    readEdgesFileTxt(edgesFileName, graph, nodes, gridGraph);
 
     readTagsFileTXT(tagsFileName, graph, nodes);
 
@@ -319,7 +319,7 @@ map<long, Vertex<VertexInfoTXT>*> Converter::readNodesFileTxt(const string &file
     return nodes;
 }
 
-void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
+void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes, bool gridGraph) {
     string line;
     ifstream edgesFile(fileName);
 
@@ -328,11 +328,14 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT> *g
         unsigned edges_number = stoi(line);
         while(getline(edgesFile, line)){
             EdgeVertexIds v = parseEdgeLine(line);
+            if (v.first == v.second) continue;
             Vertex<VertexInfoTXT> *v1 = nodes.at(v.first);
             Vertex<VertexInfoTXT> *v2 = nodes.at(v.second);
             double dist = getKmDistfromLatLong(v1->getInfo().getLat(), v1->getInfo().getLon(), v2->getInfo().getLat(), v2->getInfo().getLon());
             graph->addEdge(v1, new Edge<VertexInfoTXT>(v2, dist));
-            graph->addEdge(v2, new Edge<VertexInfoTXT>(v1, dist));
+            if (gridGraph) {
+                graph->addEdge(v2, new Edge<VertexInfoTXT>(v1, dist));
+            }
 
         }
     } else {
@@ -341,25 +344,6 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT> *g
 
     edgesFile.close();
 }
-
-/*void Converter::readTagsFromFolder(const string &folderName, Graph<VertexInfoTXT> *graph, map<long, Vertex<VertexInfoTXT>*> &nodes) {
-    DIR *dir;
-    struct dirent *entry;
-
-    dir = opendir(folderName.c_str());
-
-    if(dir != NULL){
-        while((entry = readdir(dir))){
-            if (entry->d_name[0] != '.') {
-                string fileName = folderName + entry->d_name;
-                readTagsFromFile(fileName, graph, nodes);
-            }
-        }
-        closedir(dir);
-    } else {
-        abort();
-    }
-}*/
 
 void Converter::generateTagsFileTXT(const string &fileName, map<long, Vertex<VertexInfoTXT> *> &nodes) {
     ofstream tagsFile(fileName);
