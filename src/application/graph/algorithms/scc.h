@@ -24,7 +24,7 @@ vector<vector<Vertex<T>*>> Graph<T>::dfsFromStack(Graph<T> * g, stack<Vertex<T> 
         if (vx->visited) continue;
 
         vector<Vertex<T>*> v;
-        g->dfsVisit(g->findVertex(s.top()->getInfo()), v);
+        g->dfsVisit(vx, v);
         res.push_back(v);
     }
     return res;
@@ -35,12 +35,14 @@ Graph<T> * Graph<T>::getTranspose() const {
     auto * g = new Graph<T>();
 
     for (Vertex<T> * v : vertexSet) {
-        g->addVertex(v->getInfo());
+        Vertex<T> * newVx = new Vertex<T>(v->getInfo());
+        v->transposeVertex = newVx;
+        g->addVertex(newVx);
     }
 
     for (Vertex<T> * v : vertexSet) {
         for (Edge<T> * e : v->adj) {
-            if (!g->addEdge(e->dest->getInfo().getID(), v->getInfo().getID(), e->weight)) abort();
+            if (!g->addEdge(e->dest->transposeVertex, new Edge<T>(v->transposeVertex, e->weight))) abort();
         }
     }
 

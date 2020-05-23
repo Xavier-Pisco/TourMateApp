@@ -25,6 +25,7 @@ class Vertex {
 	int indegree;          // auxiliary field used by topsort
 	bool processing;       // auxiliary field used by isDAG
 	int graphViewerID; // auxiliary for GraphViewer
+	Vertex<T> * transposeVertex; // auxiliary for Strongly Connected Components (heps accelerate the process)
 	double dist;
 	Vertex<T> * path;
     int queueIndex;
@@ -85,7 +86,7 @@ public:
     void setVertexSet(vector<Vertex<T>*> v);
     void setOriginalVertexSet();
 	int getNumVertex() const;
-	bool addVertex(const T &in);
+	Vertex<T> * addVertex(const T &in);
     bool addVertex(Vertex<T> * in);
 	bool addVertex(const T &in, const Position &p);
 	bool removeVertex(const T &in);
@@ -246,11 +247,11 @@ Vertex<T> * Graph<T>::findVertex(long id) const {
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
 template<class T>
-bool Graph<T>::addVertex(const T &in) {
-    if (findVertex(in) != NULL) return false;
+Vertex<T> * Graph<T>::addVertex(const T &in) {
+    if (findVertex(in) != NULL) return nullptr;
     auto vertex = new Vertex<T>(in);
     vertexSet.push_back(vertex);
-    return true;
+    return vertex;
 }
 
 template<class T>

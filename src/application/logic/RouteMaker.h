@@ -43,11 +43,12 @@ public:
 
 class OSMRouteMaker : public RouteMaker {
 private:
-    OSMapContainer * mapContainer = nullptr;
+    OSMapContainer * mapContainer;
+    GraphAnalyzer<VertexInfoXML> * graphAnalyzer;
 public:
     explicit OSMRouteMaker(string map);
     void getRouteInfo() override;
-    void openGraphAnalyzer() override {};
+    void openGraphAnalyzer() override;
     void makeRoute() override;
     ~OSMRouteMaker() override;
 };

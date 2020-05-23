@@ -2,6 +2,7 @@
 
 OSMRouteMaker::OSMRouteMaker(string map) {
     mapContainer = new OSMapContainer(map);
+    graphAnalyzer = new GraphAnalyzer<VertexInfoXML>(mapContainer->getGraph());
 
     mapContainer->getGraphViewer()->viewGraph();
 }
@@ -44,6 +45,10 @@ void OSMRouteMaker::makeRoute() {
     if (user.getDestination() != nullptr) cout << "the distance in km is " << mapContainer->getGraph()->getPathToFromDijkstra(user.getOrigin(), user.getDestination()).second << endl;
 
     // this divides into two cases: route with a predefined destination and route with a non-predefined destination
+}
+
+void OSMRouteMaker::openGraphAnalyzer() {
+    graphAnalyzer->menu();
 }
 
 OSMRouteMaker::~OSMRouteMaker() {

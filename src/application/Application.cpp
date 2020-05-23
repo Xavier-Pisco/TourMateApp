@@ -2,13 +2,7 @@
 #include <cmath>
 #include "Application.h"
 #include "logic/RouteMaker.h"
-#include "logic/GraphAnalyzer.h"
 
-
-void Application::start() {
-    mainMenu();
-    exit();
-}
 
 int Application::mainMenu() {
     Menu menu;
@@ -67,8 +61,4 @@ int Application::latToY(double lat, int height, pair<double, double> &minCoords,
 int Application::lonToX(double lon, int width, pair<double, double> &minCoords, pair<double, double> &maxCoords) {
     double r = ((lon - minCoords.second)/(maxCoords.second - minCoords.second))*width;
     return (int) round(r);
-}
-
-void Application::exit() {
-    // do stuff
 }

@@ -8,22 +8,11 @@ using namespace std;
 class Application {
 private:
 public:
-
-    /**
-     * @brief starts the application
-     */
-    void start();
-
     /**
      * @brief the main menu
      * @return -1 to close app
      */
     int mainMenu();
-
-    /**
-     * @brief exits the application
-     */
-    void exit();
 
     /**
      * @brief Converts lat to Y
