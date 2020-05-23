@@ -32,9 +32,33 @@ void SimpleRouteMaker::getRouteInfo() {
     user.setAvailability(time);
 
     cout << endl; Drawer::drawTitle("Preferences", 0, 40, true, "left"); cout << endl;
-    string opt;
-    while((opt=UserInput::getPreference())!="done"){
-        user.addPreference(opt);
+
+    Menu menu;
+    vector<string> availableCategories = mapContainer->getAvailableCategories();
+    menu.addExtraInput(availableCategories);
+
+    menu.addOption("cancel");
+    menu.addOption("done");
+
+    bool done = false;
+    while(!done) {
+        cout << endl;
+        menu.draw("");
+
+        string res;
+        int opt = menu.getResponse("Choose an option", res);
+
+        switch(opt) {
+            case -1:
+                user.addPreference(res);
+                break;
+            case 0:
+                throw CancelInput();
+            case 1:
+                done = true;
+            default:
+                break;
+        }
     }
 
     makeRoute();

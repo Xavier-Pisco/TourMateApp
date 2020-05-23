@@ -64,10 +64,15 @@ public:
 class SimpleMapContainer : public MapContainer<VertexInfoTXT> {
 private:
     map<long, Vertex<VertexInfoTXT>*> nodes;
+    map<string, vector<Vertex<VertexInfoTXT>*>> categoryVertexes;
 public:
     explicit SimpleMapContainer(string & map);
 
     const map<long, Vertex<VertexInfoTXT>*> &getNodes() const;
+
+    vector<string> getAvailableCategories() const;
+
+    vector<Vertex<VertexInfoTXT>*> getVertexesWithCategory(string &c) const;
 };
 
 

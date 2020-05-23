@@ -95,8 +95,6 @@ public:
      * @return the vertex
      */
     static Vertex<VertexInfoXML> * getVertexWithLocationName(MapContainer<VertexInfoXML> * graphContainer);
-
-    static string getPreference();
 };
 
 

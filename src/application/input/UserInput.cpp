@@ -76,42 +76,6 @@ string UserInput::strToLower(string s) {
     return res;
 }
 
-string UserInput::getPreference() {
-    Menu menu;
-    menu.addOption("Done");
-    menu.addOption("Museums");
-    menu.addOption("Statues");
-    menu.addOption("Restaurants");
-    menu.addOption("Bakery");
-    menu.addOption("Cafe");
-    menu.addOption("Gardens");
-
-    menu.drawMenuOptions("");
-    cout << endl;
-    unsigned opt = menu.getResponse("Choose an option from the menu:");
-
-
-    switch(opt) {
-        case 0:
-            return "done";
-        case 1:
-            return "museum";
-        case 2:
-            return "statue";
-        case 3:
-            return "restaurant";
-        case 4:
-            return "bakery";
-        case 5:
-            return "cafe";
-        case 6:
-            return "garden";
-        default:
-            return "";
-    }
-
-}
-
 
 Vertex<VertexInfoXML> * UserInput::getVertexWithLocationName(MapContainer<VertexInfoXML> * mapContainer) {
     string name;

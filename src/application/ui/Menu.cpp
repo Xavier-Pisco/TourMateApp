@@ -24,7 +24,7 @@ void Menu::drawMenuOptions(string separator) const {
     }
 }
 
-int Menu::getResponse(string getterPhrase, string &res) const {
+int Menu::getResponse(string getterPhrase, string &res) {
     while(true) {
         string response = UserInput::getLine(getterPhrase, false);
         try {
@@ -45,6 +45,7 @@ int Menu::getResponse(string getterPhrase, string &res) const {
 
         if (r.second < 6) {
             res = r.first;
+            extraInput.erase(find(extraInput.begin(), extraInput.end(), res));
             return -1;
         }
 

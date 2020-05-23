@@ -15,7 +15,7 @@ public:
     unsigned addOption(string opt);
     unsigned addOption(string opt, int n);
     void draw(string separator = "\n") const;
-    int getResponse(string getterPhrase, string &res) const;
+    int getResponse(string getterPhrase, string &res);
     unsigned getResponse(string getterPhrase) const;
     void addExtraInput(vector<string>& input);
     void drawExtraInput() const;

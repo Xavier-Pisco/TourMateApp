@@ -388,7 +388,7 @@ void Converter::generateTagsFileTXT(const string &fileName, map<long, Vertex<Ver
 
     tagsFile << possibleTags.size() << endl;
     for (auto &a : possibleTags) {
-        tagsFile << "tourism = " << a.first << endl;
+        tagsFile << "tourism=" << a.first << endl;
         tagsFile << a.second.size() << endl;
         for (auto &v : a.second) {
             tagsFile << v->getInfo().getID() << endl;
