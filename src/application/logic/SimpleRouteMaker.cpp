@@ -14,38 +14,38 @@ void SimpleRouteMaker::getRouteInfo() {
     Drawer::drawTitle("Route info");
     cout << "Insert 'stop' at any time to cancel." << endl;
 
-    Vertex<VertexInfoTXT> *origin;
-    Vertex<VertexInfoTXT> *dest;
+    Vertex<VertexInfoTXT> * vx;
 
     cout << endl;
     Drawer::drawTitle("Origin location", 0, 40, true, "left"); cout << endl;
 
-    origin = UserInput::getVertex(mapContainer, false);
-    //user.setOrigin(vx);
+    vx = UserInput::getVertex(mapContainer, false);
+    user.setOrigin(vx);
 
     cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
 
-    dest = UserInput::getVertex(mapContainer, false, true); // in future it will not be mandatory
+    vx = UserInput::getVertex(mapContainer, false, true); // in future it will not be mandatory
+    user.setDestination(vx);
 
-    /*cout << endl;
-    float time = UserInput::getFloat("Available time in minutes: ");
+    cout << endl;
+    int time = UserInput::getInt("Available time in minutes: ", 0);
     user.setAvailability(time);
 
     cout << endl; Drawer::drawTitle("Preferences", 0, 40, true, "left"); cout << endl;
     string opt;
     while((opt=UserInput::getPreference())!="done"){
         user.addPreference(opt);
-    }*/
+    }
 
-    makeRoute(origin, dest);
+    makeRoute();
 }
 
-void SimpleRouteMaker::makeRoute(Vertex<VertexInfoTXT> * v1, Vertex<VertexInfoTXT> *v2) {
+void SimpleRouteMaker::makeRoute() {
 
     map<long, Vertex<VertexInfoTXT>*> nodes = mapContainer->getNodes();
 
-    mapContainer->getGraph()->dijkstra(v1);
-    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = mapContainer->getGraph()->getPathToFromDijkstra(v1, v2);
+    mapContainer->getGraph()->dijkstra(user.getOrigin());
+    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = mapContainer->getGraph()->getPathToFromDijkstra(user.getOrigin(), user.getDestination());
 
     auto r = new Route<VertexInfoTXT>(p.first);
 

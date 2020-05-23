@@ -35,7 +35,7 @@ double UserInput::getDouble(string getterPhrase, double lowerLimit, double upper
     }
 }
 
-int UserInput::getInt(string &getterPhrase, int lowerLimit, int upperLimit, bool cancelInput) {
+int UserInput::getInt(string getterPhrase, int lowerLimit, int upperLimit, bool cancelInput) {
     string s;
     while(true) {
         s = getLine(getterPhrase, cancelInput);

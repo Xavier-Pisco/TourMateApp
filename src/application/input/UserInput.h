@@ -42,7 +42,7 @@ public:
      * @param upperLimit - the upper limit of the value
      * @return number
      */
-    static int getInt(string &getterPhrase, int lowerLimit = INT32_MIN, int upperLimit = INT32_MAX, bool cancelInput = true);
+    static int getInt(string getterPhrase, int lowerLimit = INT32_MIN, int upperLimit = INT32_MAX, bool cancelInput = true);
 
     /**
      * @brief gets confirmation from the user

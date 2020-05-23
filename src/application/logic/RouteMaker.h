@@ -16,8 +16,6 @@
 using namespace std;
 
 class RouteMaker {
-protected:
-    User user;
 public:
     static string getMapName(string &path);
     virtual void getRouteInfo() = 0;
@@ -32,12 +30,12 @@ class SimpleRouteMaker : public RouteMaker {
 private:
     SimpleMapContainer * mapContainer;
     GraphAnalyzer<VertexInfoTXT> * graphAnalyzer;
+    User<VertexInfoTXT> user;
 public:
     explicit SimpleRouteMaker(string map);
     void getRouteInfo() override;
     void openGraphAnalyzer() override;
-    void makeRoute() {};
-    void makeRoute(Vertex<VertexInfoTXT> * v1, Vertex<VertexInfoTXT> *v2);
+    void makeRoute() override;
     ~SimpleRouteMaker() override;
 };
 
@@ -45,6 +43,7 @@ class OSMRouteMaker : public RouteMaker {
 private:
     OSMapContainer * mapContainer;
     GraphAnalyzer<VertexInfoXML> * graphAnalyzer;
+    User<VertexInfoXML> user;
 public:
     explicit OSMRouteMaker(string map);
     void getRouteInfo() override;
