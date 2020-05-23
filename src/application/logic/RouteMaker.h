@@ -19,7 +19,6 @@ class RouteMaker {
 public:
     static string getMapName(string &path);
     virtual void getRouteInfo() = 0;
-    virtual void makeRoute() = 0;
     virtual void openGraphAnalyzer() = 0;
     static vector<string> getAvailableMaps(string & path);
     static RouteMaker * openMap(string &mapDescription);
@@ -33,9 +32,10 @@ private:
     User<VertexInfoTXT> user;
 public:
     explicit SimpleRouteMaker(string map);
+    void displayRoute();
     void getRouteInfo() override;
     void openGraphAnalyzer() override;
-    void makeRoute() override;
+    void makeRoute();
     ~SimpleRouteMaker() override;
 };
 
@@ -48,7 +48,7 @@ public:
     explicit OSMRouteMaker(string map);
     void getRouteInfo() override;
     void openGraphAnalyzer() override;
-    void makeRoute() override;
+    void makeRoute();
     ~OSMRouteMaker() override;
 };
 

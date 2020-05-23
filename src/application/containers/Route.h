@@ -4,23 +4,30 @@
 #include "../graph/GraphEdgeInfo.h"
 #include "../ui/Drawer.h"
 
-
 template<class T>
 class Route {
 private:
     vector<pair<Vertex<T> *, Edge<T> *>> routePoints;
+    double dist;
 public:
     /**
      * @brief constructor
      * @param v - the vector with the route's vertexes and edges
+     * @param dist - the dist of the route
      */
-    Route(vector<pair<Vertex<T> *, Edge<T> *>> &v);
+    Route(vector<pair<Vertex<T> *, Edge<T> *>> &v, double dist);
 
     /**
      * @brief returns only the vertexes of the route
      * @return vector with vertexes
      */
     vector<Vertex<T>*> getVertexes() const;
+
+    /**
+     * @brief GET method for dist
+     * @return
+     */
+    double getDist() const;
 
     /**
      * @brief returns a text representation of the route
@@ -31,8 +38,9 @@ public:
 
 
 template<class T>
-Route<T>::Route(vector<pair<Vertex<T> *, Edge<T> *>> &v) {
+Route<T>::Route(vector<pair<Vertex<T> *, Edge<T> *>> &v, double dist) {
     this->routePoints = v;
+    this->dist = dist;
 }
 
 
@@ -68,6 +76,11 @@ string Route<T>::getStringRepresentation() const {
     }
     res << "destination" << endl << endl;
     return res.str();
+}
+
+template<class T>
+double Route<T>::getDist() const {
+    return dist;
 }
 
 

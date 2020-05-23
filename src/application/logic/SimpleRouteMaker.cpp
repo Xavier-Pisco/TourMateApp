@@ -47,14 +47,18 @@ void SimpleRouteMaker::makeRoute() {
     mapContainer->getGraph()->dijkstra(user.getOrigin());
     pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = mapContainer->getGraph()->getPathToFromDijkstra(user.getOrigin(), user.getDestination());
 
-    auto r = new Route<VertexInfoTXT>(p.first);
+    user.setRoute(new Route<VertexInfoTXT>(p.first, p.second));
 
-    cout << endl << "Distance = " << p.second << "km" << endl << endl;
+    displayRoute();
+}
 
-    cout << r->getStringRepresentation();
+void SimpleRouteMaker::displayRoute() {
+    cout << endl << "Distance = " << user.getRoute()->getDist() << "km" << endl << endl;
+
+    cout << user.getRoute()->getStringRepresentation();
 
     bool conf = UserInput::getConfirmation("Do you want to see the route in the graph viewer? \nIf you say yes, and you've closed the graph viewer window, the program will freeze.");
-    if (conf) mapContainer->getGraphViewer()->viewRoute(r);
+    if (conf) mapContainer->getGraphViewer()->viewRoute(user.getRoute());
 }
 
 void SimpleRouteMaker::openGraphAnalyzer() {

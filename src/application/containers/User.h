@@ -4,8 +4,7 @@
 #include <string>
 #include <iostream>
 #include <list>
-#include "GraphClasses.h"
-#include "../graph/Graph.h"
+#include "Route.h"
 
 using namespace std;
 
@@ -14,15 +13,16 @@ template<class T>
 class User {
 private:
     int time; // in minutes
-    Vertex<T> * origin;
-    Vertex<T> *destination;
+    Vertex<T> * origin, * destination;
     vector<string> preferenceList;
     vector<POI> poiList;
+    Route<T> * route;
 public:
     User();
     void setOrigin(Vertex<T> * origin);
     void setDestination(Vertex<T> * destination);
     void setAvailability(int time);
+    void setRoute(Route<T> * r);
 
     float getTime() const;
 
@@ -30,9 +30,11 @@ public:
 
     Vertex<T> *getDestination() const;
 
-    vector<string> getPreferenceList() const;
+    Route<T> *getRoute() const;
 
-    vector<POI> getPoiList() const;
+    const vector<string> &getPreferenceList() const;
+
+    const vector<POI> &getPoiList() const;
 
     void addPreference(string str);
 };
@@ -75,18 +77,28 @@ Vertex<T> *User<T>::getDestination() const {
 }
 
 template<class T>
-vector<string> User<T>::getPreferenceList() const {
+const vector<string> &User<T>::getPreferenceList() const {
     return preferenceList;
 }
 
 template<class T>
-vector<POI> User<T>::getPoiList() const {
+const vector<POI> &User<T>::getPoiList() const {
     return poiList;
 }
 
 template<class T>
 void User<T>::addPreference(string str) {
     this->preferenceList.push_back(str);
+}
+
+template<class T>
+void User<T>::setRoute(Route<T> * r) {
+    route = r;
+}
+
+template<class T>
+Route<T> * User<T>::getRoute() const {
+    return route;
 }
 
 
