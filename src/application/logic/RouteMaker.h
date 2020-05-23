@@ -36,6 +36,12 @@ public:
     void getRouteInfo() override;
     void openGraphAnalyzer() override;
     void makeRoute();
+    void GPSRoute();
+    void touristicRoute();
+    void returnToOriginRoute();
+    void fillExtraTimeRoute();
+    Vertex<VertexInfoTXT> * getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination);
+    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, unsigned currTime);    unsigned calculateTimeFromDistance(double dist /*in km*/);
     ~SimpleRouteMaker() override;
 };
 

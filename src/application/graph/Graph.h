@@ -46,6 +46,8 @@ public:
 	T &getInfo();
 	void setPoi(string poi);
 	double getDist() { return dist; }
+	bool getVisited() {return visited;}
+	void setVisited(bool v) { visited = v; }
     vector<Edge<T>> getAdj() { return adj; }
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
     friend class Graph<T>;

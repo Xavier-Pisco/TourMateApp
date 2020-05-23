@@ -11,18 +11,22 @@ using namespace std;
 
 template<class T>
 class User {
+public:
+    enum routeMode {FOOT, CAR};
 private:
-    int time; // in minutes
+    int time = -1; // in minutes, -1 if not to visit POIs
     Vertex<T> * origin, * destination;
     vector<string> preferenceList;
     vector<POI> poiList;
     Route<T> * route;
+    routeMode routeMode;
 public:
     User();
     void setOrigin(Vertex<T> * origin);
     void setDestination(Vertex<T> * destination);
     void setAvailability(int time);
     void setRoute(Route<T> * r);
+    void setRouteMode(enum routeMode r);
 
     float getTime() const;
 
@@ -31,6 +35,8 @@ public:
     Vertex<T> *getDestination() const;
 
     Route<T> *getRoute() const;
+
+    enum routeMode getRouteMode() const;
 
     const vector<string> &getPreferenceList() const;
 
@@ -59,6 +65,11 @@ void User<T>::setOrigin(Vertex<T> *origin) {
 template<class T>
 void User<T>::setDestination(Vertex<T> *destination) {
     this->destination=destination;
+}
+
+template<class T>
+void User<T>::setRouteMode(enum routeMode r) {
+    routeMode = r;
 }
 
 template<class T>
@@ -99,6 +110,11 @@ void User<T>::setRoute(Route<T> * r) {
 template<class T>
 Route<T> * User<T>::getRoute() const {
     return route;
+}
+
+template<class T>
+enum User<T>::routeMode User<T>::getRouteMode() const {
+    return routeMode;
 }
 
 

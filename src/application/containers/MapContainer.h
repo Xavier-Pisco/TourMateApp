@@ -73,6 +73,8 @@ public:
     vector<string> getAvailableCategories() const;
 
     vector<Vertex<VertexInfoTXT>*> getVertexesWithCategory(string &c) const;
+
+    vector<Vertex<VertexInfoTXT>*> getPOIVertexes() const;
 };
 
 

@@ -39,4 +39,12 @@ vector<Vertex<VertexInfoTXT>*> SimpleMapContainer::getVertexesWithCategory(strin
     return it->second;
 }
 
+vector<Vertex<VertexInfoTXT>*> SimpleMapContainer::getPOIVertexes() const {
+    vector<Vertex<VertexInfoTXT>*> res;
+    for (auto p : categoryVertexes) {
+        res.insert(res.end(), p.second.begin(), p.second.end());
+    }
+    return res;
+}
+
 

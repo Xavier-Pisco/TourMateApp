@@ -61,7 +61,8 @@ pair<vector<pair<Vertex<T>*, Edge<T> *>>, double> Graph<T>::getPathToFromDijkstr
         currVertex = prevVertex;
     }
 
-    path.push_back(pair<Vertex<T>*, Edge<T>*>(s, NULL)); // inserts the start vertex, which isn't inserted in the loop
+    //THIS METHOD ISN'T SUPPOSED TO INSERT THE START VERTEX
+    //path.push_back(pair<Vertex<T>*, Edge<T>*>(s, NULL)); // inserts the start vertex, which isn't inserted in the loop
 
     reverse(path.begin(), path.end());
 

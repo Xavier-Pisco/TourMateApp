@@ -31,11 +31,11 @@ void OSMRouteMaker::getRouteInfo() {
     float time = UserInput::getFloat("Available time in minutes: ");
     user.setAvailability(time);
 
-    cout << endl; Drawer::drawTitle("Preferences", 0, 40, true, "left"); cout << endl;
+    /*cout << endl; Drawer::drawTitle("Preferences", 0, 40, true, "left"); cout << endl;
     string opt;
     while((opt=UserInput::getPreference())!="done"){
         user.addPreference(opt);
-    }
+    }*/
 
     makeRoute();
 }
