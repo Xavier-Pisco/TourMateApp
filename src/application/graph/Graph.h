@@ -26,9 +26,17 @@ class Vertex {
 	bool processing;       // auxiliary field used by isDAG
 	int graphViewerID; // auxiliary for GraphViewer
 	Vertex<T> * transposeVertex; // auxiliary for Strongly Connected Components (heps accelerate the process)
+
+	/* fields for dijkstra algorithm */
 	double dist;
 	Vertex<T> * path;
-    int queueIndex;
+    int queueIndex;  // for the MutablePriorityQueue
+
+    /* fields for findArticulationPoint */
+    int low, num;
+    Vertex<T> * parent;
+
+
 
 	void addEdge(Edge<T> * edge);
 	bool removeEdgeTo(Vertex<T> *d);
@@ -70,10 +78,18 @@ class Graph {
 	vector<Vertex<T> *> vertexSet;    // vertex set
 	vector<Vertex<T> *> originalVertexSet;
     pair<double, double> minCoords = {0, 0}, maxCoords = {0, 0};
+    int counter; // required for findArticulationPoints
 
 	void dfsVisit(Vertex<T> *v,  stack<Vertex<T>*> & res) const;
     void dfsVisit(Vertex<T> *v,  vector<Vertex<T>*> & res) const;
 	bool dfsIsDAG(Vertex<T> *v) const;
+
+    /**
+     * @brief auxialiary function for findArticulationPoints
+     * @param vx  - the vertex
+     * @param v - the articulation point vector
+     */
+    void findArt(Vertex<T> * vx, vector<Vertex<T>*> &v);
 
 public:
     ~Graph();
@@ -118,6 +134,12 @@ public:
      * @return vector with each vertex's strongly connected components
      */
     static vector<vector<Vertex<T>*>> dfsFromStack(Graph<T> * g, stack<Vertex<T> *> &s);
+
+    /**
+     * @brief finds articulation points in the graph (if no articulation points, graph is biconnected
+     * an articulation point is a point that when removed makes the graph disconnected)
+     */
+    vector<Vertex<T>*> findArticulationPoints();
 
     /**
 	 * @brief dijkstra algorithm starting on origin
