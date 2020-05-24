@@ -17,7 +17,8 @@ public:
     template<class T>
     static long unsigned runSCC(Graph<T> * g);
 
-    static long unsigned runRouteMakerTest1(SimpleMapContainer * mapContainer);
+    static pair<long unsigned, double> runRouteMakerTest1(SimpleMapContainer * mapContainer);
+    static pair<long unsigned, double> runRouteMakerTest2(SimpleMapContainer * mapContainer);
 
     static void testDijkstra();
     static void testSCC();

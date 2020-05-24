@@ -33,8 +33,7 @@ void PerformanceTests::menu() {
 
 }
 
-long unsigned PerformanceTests::runRouteMakerTest1(SimpleMapContainer * mapContainer) {
-
+pair<long unsigned, double> PerformanceTests::runRouteMakerTest1(SimpleMapContainer * mapContainer) {
     SimpleRouteMaker * routeMaker = new SimpleRouteMaker();
     routeMaker->setMapContainer(mapContainer);
 
@@ -56,7 +55,39 @@ long unsigned PerformanceTests::runRouteMakerTest1(SimpleMapContainer * mapConta
     routeMaker->fillExtraTimeRoute();
 
     auto finish = chrono::high_resolution_clock::now();
-    return chrono::duration_cast<chrono::microseconds>(finish - start).count();
+
+    pair<long unsigned, double> res;
+    res.first = chrono::duration_cast<chrono::microseconds>(finish - start).count();
+    res.second = routeMaker->getRouteDist();
+    return res;
+}
+
+pair<long unsigned, double> PerformanceTests::runRouteMakerTest2(SimpleMapContainer * mapContainer) {
+    SimpleRouteMaker * routeMaker = new SimpleRouteMaker();
+    routeMaker->setMapContainer(mapContainer);
+
+    User<VertexInfoTXT> user;
+    user.setRouteMode(User<VertexInfoTXT>::CAR);
+    user.setAvailability(100);
+    for (auto s : mapContainer->getAvailableCategories()) {
+        user.addPreference(s);
+    }
+    vector<Vertex<VertexInfoTXT>*> vxSet = mapContainer->getGraph()->getVertexSet();
+    srand(time(nullptr));
+    user.setOrigin(vxSet.at(rand()%vxSet.size()));
+    user.setDestination(vxSet.at(rand()%vxSet.size()));
+
+    routeMaker->setUser(user);
+
+    auto start = chrono::high_resolution_clock::now();
+
+    routeMaker->fillExtraTimeRoute();
+
+    auto finish = chrono::high_resolution_clock::now();
+    pair<long unsigned, double> res;
+    res.first = chrono::duration_cast<chrono::microseconds>(finish - start).count();
+    res.second = routeMaker->getRouteDist();
+    return res;
 }
 
 void PerformanceTests::testRouteMaker() {
@@ -70,8 +101,12 @@ void PerformanceTests::testRouteMaker() {
     int edgeCount = getEdgeCount(mapContainer->getGraph());
     auto elapsed = runRouteMakerTest1(mapContainer);
 
-    cout << "Finished Penafiel: " << vxSetSize << " vertexes, " <<
-         edgeCount << " edges. Took " << elapsed << " microseconds." << endl;
+    cout << "Finished Penafiel test 1: " << vxSetSize << " vertexes, " <<
+         edgeCount << " edges. Availaible time: 200 mins, route distance: " << elapsed.second << "Took " << elapsed.first << " microseconds." << endl;
+
+    elapsed = runRouteMakerTest2(mapContainer);
+    cout << "Finished Penafiel test 2: " << vxSetSize << " vertexes, " <<
+         edgeCount << " edges. Availaible time: 100 mins, route distance: " << elapsed.second << "Took " << elapsed.first << " microseconds." << endl;
 
     //delete mapContainer;
 
@@ -82,8 +117,12 @@ void PerformanceTests::testRouteMaker() {
     edgeCount = getEdgeCount(mapContainer->getGraph());
     elapsed = runRouteMakerTest1(mapContainer);
 
-    cout << "Finished Espinho: " << vxSetSize << " vertexes, " <<
-         edgeCount << " edges. Took " << elapsed << " microseconds." << endl;
+    cout << "Finished Espinho test 1: " << vxSetSize << " vertexes, " <<
+         edgeCount << " edges. Availaible time: 200 mins, route distance: " << elapsed.second << "Took " << elapsed.first << " microseconds." << endl;
+
+    elapsed = runRouteMakerTest2(mapContainer);
+    cout << "Finished Espinho test 2: " << vxSetSize << " vertexes, " <<
+         edgeCount << " edges. Availaible time: 100 mins, route distance: " << elapsed.second << "Took " << elapsed.first << " microseconds." << endl;
 
     //delete mapContainer;
 
@@ -94,8 +133,13 @@ void PerformanceTests::testRouteMaker() {
     edgeCount = getEdgeCount(mapContainer->getGraph());
     elapsed = runRouteMakerTest1(mapContainer);
 
-    cout << "Finished Porto: " << vxSetSize << " vertexes, " <<
-         edgeCount << " edges. Took " << elapsed << " microseconds." << endl;
+    cout << "Finished Porto test 1: " << vxSetSize << " vertexes, " <<
+         edgeCount << " edges. Availaible time: 200 mins, route distance: " << elapsed.second << "Took " << elapsed.first << " microseconds." << endl;
+
+    elapsed = runRouteMakerTest2(mapContainer);
+    cout << "Finished Porto test 2: " << vxSetSize << " vertexes, " <<
+         edgeCount << " edges. Availaible time: 100 mins, route distance: " << elapsed.second << "Took " << elapsed.first << " microseconds." << endl;
+
 
     //delete mapContainer;
 }

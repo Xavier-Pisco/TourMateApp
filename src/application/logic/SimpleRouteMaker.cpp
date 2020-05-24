@@ -139,7 +139,7 @@ void SimpleRouteMaker::fillExtraTimeRoute() {
             estimatedTime += calculateTimeFromDistance(p.second);
             routeDist += p.second;
 
-            currVx = route.at(route.size()-1).first;
+            route.empty() ? currVx = destination : currVx = route.at(route.size()-1).first;
         }
     }
 
@@ -257,6 +257,10 @@ SimpleRouteMaker::~SimpleRouteMaker() {
 
 void SimpleRouteMaker::setMapContainer(SimpleMapContainer *smc) {
     mapContainer = smc;
+}
+
+double SimpleRouteMaker::getRouteDist() {
+    return user.getRoute()->getDist();
 }
 
 void SimpleRouteMaker::setUser(User<VertexInfoTXT> u) {

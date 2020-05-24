@@ -38,9 +38,9 @@ public:
 
 
 template<class T>
-Route<T>::Route(vector<pair<Vertex<T> *, Edge<T> *>> &v, double dist) {
+Route<T>::Route(vector<pair<Vertex<T> *, Edge<T> *>> &v, double d) {
     this->routePoints = v;
-    this->dist = dist;
+    this->dist = d;
 }
 
 

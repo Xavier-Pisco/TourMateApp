@@ -40,6 +40,7 @@ public:
     void setUser(User<VertexInfoTXT> user);
     void displayRoute();
     void getRouteInfo() override;
+    double getRouteDist();
     void openGraphAnalyzer() override;
     void makeRoute();
     void GPSRoute();
