@@ -46,7 +46,7 @@ public:
     void GPSRoute();
     void touristicRoute();
     void returnToOriginRoute();
-    void fillExtraTimeRoute();
+    int fillExtraTimeRoute();
     Vertex<VertexInfoTXT> * getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination);
     pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currTime);
     double calculateTimeFromDistance(double dist /*in km*/);

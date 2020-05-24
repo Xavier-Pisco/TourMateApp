@@ -7,7 +7,7 @@
 int Application::mainMenu() {
     Menu menu;
     string mapDescription;
-    RouteMaker * routeMaker = nullptr;
+    RouteMaker * routeMaker = nullptr, * r;
 
     menu.addOption("exit application");
 
@@ -36,7 +36,8 @@ int Application::mainMenu() {
                     return -1;
                 case 1:
                     delete routeMaker;
-                    routeMaker = RouteMaker::openMap(mapDescription);
+                    r = RouteMaker::openMap(mapDescription);
+                    if (r != nullptr) routeMaker = r;
                     break;
                 case 2:
                     if (routeMaker != nullptr) routeMaker->getRouteInfo();

@@ -17,8 +17,11 @@ public:
     template<class T>
     static long unsigned runSCC(Graph<T> * g);
 
-    static pair<long unsigned, double> runRouteMakerTest1(SimpleMapContainer * mapContainer);
-    static pair<long unsigned, double> runRouteMakerTest2(SimpleMapContainer * mapContainer);
+    static pair<pair<long unsigned, double>, int> runRouteMakerTest(SimpleMapContainer * mapContainer, int t);
+
+    static pair<pair<long unsigned, double>, int> testRouteMakerAVG(SimpleMapContainer * mapContainer, int t);
+
+    static void testMultiples(SimpleMapContainer * mapContainer);
 
     static void testDijkstra();
     static void testSCC();

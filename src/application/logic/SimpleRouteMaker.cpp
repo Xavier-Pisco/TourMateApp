@@ -101,24 +101,27 @@ void SimpleRouteMaker::makeRoute() {
     displayRoute();
 }
 
-void SimpleRouteMaker::fillExtraTimeRoute() {
+int SimpleRouteMaker::fillExtraTimeRoute() {
     vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>> route;
     Vertex<VertexInfoTXT> * origin = user.getOrigin(), * destination = user.getDestination();
 
     double estimatedTime = 0;
     double routeDist = 0;
+    int poiCount = 0;
 
     vector<string> userPreferences = user.getPreferenceList();
     vector<Vertex<VertexInfoTXT>*> pOIVertexes = mapContainer->getPOIVertexes(), toErase;
 
+    pOIVertexesPreference.erase(pOIVertexesPreference.begin(), pOIVertexesPreference.end());
+
     for (auto it = pOIVertexes.begin(); it != pOIVertexes.end(); it++) {
         if (find(userPreferences.begin(), userPreferences.end(), (*it)->getInfo().getCategory()) != userPreferences.end() || (*it) == destination || (*it) == origin) {
             pOIVertexesPreference.push_back(*it);
-            toErase.push_back(*it);
+            //toErase.push_back(*it);
         }
     }
 
-    for (auto it : toErase) pOIVertexes.erase(find(pOIVertexes.begin(), pOIVertexes.end(), it));
+    //for (auto it : toErase) pOIVertexes.erase(find(pOIVertexes.begin(), pOIVertexes.end(), it));
 
 
     Vertex<VertexInfoTXT> * currVx = origin;
@@ -139,12 +142,16 @@ void SimpleRouteMaker::fillExtraTimeRoute() {
             estimatedTime += calculateTimeFromDistance(p.second);
             routeDist += p.second;
 
+
+            poiCount++;
+
             route.empty() ? currVx = destination : currVx = route.at(route.size()-1).first;
         }
     }
 
     route.insert(route.begin(), pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>(origin, NULL)); // inserts the start vertex, which isn't inserted in the loop
     user.setRoute(new Route<VertexInfoTXT>(route, routeDist));
+    return poiCount;
 }
 
 
@@ -173,8 +180,7 @@ Vertex<VertexInfoTXT> * SimpleRouteMaker::getCandidate(Vertex<VertexInfoTXT> * c
 
     sort(pOIVertexesPreference.begin(), pOIVertexesPreference.end(), [](Vertex<VertexInfoTXT>* v1, Vertex<VertexInfoTXT>* v2) {
         if (v1->getLessPreferable() == !v2->getLessPreferable()) {
-            if (v1->getLessPreferable()) return false;
-            else if (v2->getLessPreferable()) return true;
+            return !v1->getLessPreferable();
         }
         return v1->getDist() < v2->getDist();
     });

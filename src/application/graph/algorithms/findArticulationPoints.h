@@ -3,9 +3,6 @@
 
 #include "../Graph.h"
 
-/*
- * THIS IS ONLY FOR UNDIRECTED GRAPHS?
- * */
 
 template<class T>
 vector<Vertex<T>*> Graph<T>::findArticulationPoints() {  // This is for connected graph
@@ -19,7 +16,9 @@ vector<Vertex<T>*> Graph<T>::findArticulationPoints() {  // This is for connecte
     }
 
     counter = 1;
-    findArt(vertexSet.at(0), res);
+    for (auto v : vertexSet) {
+        if (!v->visited) findArt(vertexSet.at(0), res);
+    }
 
     return res;
 }
