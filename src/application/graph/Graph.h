@@ -36,6 +36,9 @@ class Vertex {
     int low, num;
     Vertex<T> * parent;
 
+    /* fields for making route */
+    bool lessPreferable;
+
 
 
 	void addEdge(Edge<T> * edge);
@@ -47,7 +50,10 @@ public:
 	void setPoi(string poi);
 	double getDist() { return dist; }
 	bool getVisited() {return visited;}
+	bool getLessPreferable() {return lessPreferable;}
+	void setLessPreferable(bool s) { lessPreferable = s; }
 	void setVisited(bool v) { visited = v; }
+	void setDist(double d) {dist = d;}
     vector<Edge<T>> getAdj() { return adj; }
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
     friend class Graph<T>;

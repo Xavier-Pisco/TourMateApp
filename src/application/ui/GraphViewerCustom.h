@@ -55,26 +55,29 @@ void GraphViewerCustom<T>::viewGraph() {
 template<class T>
 void GraphViewerCustom<T>::viewRoute(Route<T> * route) {
     vector<Vertex<T>*> vertexes = route->getVertexes();
+    Vertex<T>* origin, * destination;
+    vector<Vertex<T>*> pois;
     for (int i = 0; i < vertexes.size(); i++) {
         Vertex<T> * v = vertexes.at(i);
         if (i == 0) {  // it's the origin
-
-            graphViewer->setVertexColor(v->graphViewerID, CYAN);
-
+            origin = v;
         } else if (i == vertexes.size()-1) { // it's the destiny
-
-            graphViewer->setVertexColor(v->graphViewerID, ORANGE);
-
+            destination = v;
         } else if (v->getInfo().getCategory() != "") { // it's a POI
-
-            graphViewer->setVertexColor(v->graphViewerID, RED);
-
+            pois.push_back(v);
         } else { // it's just part of the path
-
             graphViewer->setVertexColor(v->graphViewerID, GREEN);
         }
     }
+
+    for (auto v : pois) {
+        graphViewer->setVertexColor(v->graphViewerID, RED);
+    }
+    graphViewer->setVertexColor(destination->graphViewerID, ORANGE);
+    graphViewer->setVertexColor(origin->graphViewerID, CYAN);
+
     graphViewer->rearrange();
+
     cout << "Showing the resulting route in the graph viewer." << endl << endl << "In RED, you can see the interest points" <<
         endl << "In BLUE, you can the the origin point" << endl << "In ORANGE, you can see your destination" << endl << "In GREEN you can see the path" << endl;
 

@@ -30,23 +30,6 @@ Graph<VertexInfoXML> * Converter::parseXMLDocToGraph(rapidxml::xml_document<> &d
      *
      * 3 - to compute the weight of the edges (distance/avg time, etc) we need to go to each edge and evaluate the distance between its nodes
      *
-     * IF THIS IS DONE CORRECTLY, IT SHOULD WORK PERFECTLY IN THEORY
-     *
-     * */
-
-    /*
-     * A NOTE ON XML_DOCUMENT
-     *
-     * It is composed of nodes. A node can have attributes and itself be composed of more nodes.
-     *
-     * [xml_document*]->first_node() or [xml_node*]->first_node() -> returns a pointer for the first child node of the document or node
-     * [xml_node*]->next_sibling() -> returns a pointer to the next node inside the same parent (sibling)
-     * [xml_node*]->first_attribute() -> returns the first attribute of the node
-     * [xml_attribute*]->next_attribute() -> returns the next attribute of the same node
-     *
-     * All of these return 0 if the thing we're trying to access doesn't exist
-     * There is also last_node and last_attribute
-     *
      * */
 
     auto * res = new Graph<VertexInfoXML>;
@@ -331,10 +314,13 @@ void Converter::readEdgesFileTxt(const string &fileName, Graph<VertexInfoTXT> *g
             if (v.first == v.second) continue;
             Vertex<VertexInfoTXT> *v1 = nodes.at(v.first);
             Vertex<VertexInfoTXT> *v2 = nodes.at(v.second);
-            double dist = getKmDistfromLatLong(v1->getInfo().getLat(), v1->getInfo().getLon(), v2->getInfo().getLat(), v2->getInfo().getLon());
-            graph->addEdge(v1, new Edge<VertexInfoTXT>(v2, dist));
+            /***/
             if (gridGraph) {
-                graph->addEdge(v2, new Edge<VertexInfoTXT>(v1, dist));
+                graph->addEdge(v1, new Edge<VertexInfoTXT>(v2, 0.2));
+                graph->addEdge(v2, new Edge<VertexInfoTXT>(v1, 0.2));
+            } else {
+                double dist = getKmDistfromLatLong(v1->getInfo().getLat(), v1->getInfo().getLon(), v2->getInfo().getLat(), v2->getInfo().getLon());
+                graph->addEdge(v1, new Edge<VertexInfoTXT>(v2, dist));
             }
 
         }

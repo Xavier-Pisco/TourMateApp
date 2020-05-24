@@ -30,6 +30,9 @@ private:
     SimpleMapContainer * mapContainer;
     GraphAnalyzer<VertexInfoTXT> * graphAnalyzer;
     User<VertexInfoTXT> user;
+
+    /* Auxiliary fields */
+    vector<Vertex<VertexInfoTXT>*> pOIVertexesPreference;
 public:
     explicit SimpleRouteMaker(string map);
     void displayRoute();
@@ -41,7 +44,8 @@ public:
     void returnToOriginRoute();
     void fillExtraTimeRoute();
     Vertex<VertexInfoTXT> * getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination);
-    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, unsigned currTime);    unsigned calculateTimeFromDistance(double dist /*in km*/);
+    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currTime);
+    double calculateTimeFromDistance(double dist /*in km*/);
     ~SimpleRouteMaker() override;
 };
 
