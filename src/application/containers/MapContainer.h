@@ -66,7 +66,7 @@ private:
     map<long, Vertex<VertexInfoTXT>*> nodes;
     map<string, vector<Vertex<VertexInfoTXT>*>> categoryVertexes;
 public:
-    explicit SimpleMapContainer(string & map);
+    explicit SimpleMapContainer(string & map, bool performanceTests = false);
 
     const map<long, Vertex<VertexInfoTXT>*> &getNodes() const;
 

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include "Application.h"
-#include "logic/RouteMaker.h"
+#include "logic/PerformanceTests.h"
 
 
 int Application::mainMenu() {
@@ -14,6 +14,7 @@ int Application::mainMenu() {
     menu.addOption("Open Map");
     menu.addOption("Start a Route");
     menu.addOption("Graph Connectivity Checks");
+    menu.addOption("Performance Tests");
 
 
     while(true) {
@@ -45,6 +46,8 @@ int Application::mainMenu() {
                     if (routeMaker != nullptr) routeMaker->openGraphAnalyzer();
                     else UserInput::waiter("You haven't opened a map yet.");
                     break;
+                case 4:
+                    PerformanceTests::menu();
                 default:
                     break;
             }

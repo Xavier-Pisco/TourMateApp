@@ -34,7 +34,10 @@ private:
     /* Auxiliary fields */
     vector<Vertex<VertexInfoTXT>*> pOIVertexesPreference;
 public:
+    SimpleRouteMaker() = default;
     explicit SimpleRouteMaker(string map);
+    void setMapContainer(SimpleMapContainer * smc);
+    void setUser(User<VertexInfoTXT> user);
     void displayRoute();
     void getRouteInfo() override;
     void openGraphAnalyzer() override;

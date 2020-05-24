@@ -1,5 +1,6 @@
 #include "RouteMaker.h"
 
+#include <utility>
 
 
 SimpleRouteMaker::SimpleRouteMaker(string map) {
@@ -87,10 +88,6 @@ void SimpleRouteMaker::getRouteInfo() {
 }
 
 void SimpleRouteMaker::makeRoute() {
-    for (auto v : mapContainer->getGraph()->getVertexSet()) {
-        v->setVisited(false);
-    }
-
     if (user.getTime() == -1) {  // simple GPS
         GPSRoute();
     } else if (user.getDestination() == user.getOrigin()) {  // destination = origin
@@ -154,6 +151,7 @@ void SimpleRouteMaker::fillExtraTimeRoute() {
 Vertex<VertexInfoTXT> * SimpleRouteMaker::getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination) {
     for (auto c : pOIVertexesPreference) {
         c->setLessPreferable(false);
+
         pair<double, double> vectorFromCurrVxToC;
         vectorFromCurrVxToC.first = c->getInfo().getLat() - currVx->getInfo().getLat();
         vectorFromCurrVxToC.second = c->getInfo().getLon() - currVx->getInfo().getLon();
@@ -186,13 +184,10 @@ Vertex<VertexInfoTXT> * SimpleRouteMaker::getCandidate(Vertex<VertexInfoTXT> * c
 
 
 pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  SimpleRouteMaker::getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currTime) {
-    if (currVx->getDist() != 0) {
-        mapContainer->getGraph()->dijkstra(currVx);
-    }
+    if (currVx->getDist() != 0) mapContainer->getGraph()->dijkstra(currVx);
 
     // greedy
     Vertex<VertexInfoTXT> * candidate = getCandidate(currVx, destination); // find candidate
-
 
     double candidateTime = currTime + calculateTimeFromDistance(candidate->getDist()); // the time to get from the origin to the candidate
 
@@ -258,4 +253,12 @@ void SimpleRouteMaker::openGraphAnalyzer() {
 
 SimpleRouteMaker::~SimpleRouteMaker() {
     delete mapContainer;
+}
+
+void SimpleRouteMaker::setMapContainer(SimpleMapContainer *smc) {
+    mapContainer = smc;
+}
+
+void SimpleRouteMaker::setUser(User<VertexInfoTXT> u) {
+    this->user = u;
 }

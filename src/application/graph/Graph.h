@@ -54,7 +54,7 @@ public:
 	void setLessPreferable(bool s) { lessPreferable = s; }
 	void setVisited(bool v) { visited = v; }
 	void setDist(double d) {dist = d;}
-    vector<Edge<T>> getAdj() { return adj; }
+    vector<Edge<T>*> getAdj() { return adj; }
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
     friend class Graph<T>;
 	friend class MutablePriorityQueue<Vertex<T>>;
