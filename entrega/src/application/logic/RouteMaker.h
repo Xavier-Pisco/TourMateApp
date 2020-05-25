@@ -96,7 +96,7 @@ public:
     /**
      * @brief calls the functions necessary to make the route based on user input from getRouteInfo()
      */
-    void makeRoute();
+    int makeRoute();
 
     /**
      * @brief makes a simple route form origin to destination (simple dijkstra)

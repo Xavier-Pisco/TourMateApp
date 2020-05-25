@@ -52,7 +52,7 @@ pair<pair<long unsigned, double>, int> PerformanceTests::runRouteMakerTest(Simpl
 
     auto start = chrono::high_resolution_clock::now();
 
-    int poiCount = routeMaker->fillExtraTimeRoute();
+    int poiCount = routeMaker->makeRoute();
 
     auto finish = chrono::high_resolution_clock::now();
     pair<pair<long unsigned, double>, int> res;

@@ -84,10 +84,10 @@ void SimpleRouteMaker::getRouteInfo() {
         }
     }
 
-    makeRoute();
+    if (makeRoute() != -1) displayRoute();
 }
 
-void SimpleRouteMaker::makeRoute() {
+int SimpleRouteMaker::makeRoute() {
     vector<string> userPreferences = user.getPreferenceList();
     vector<Vertex<VertexInfoTXT>*> pOIVertexes = mapContainer->getPOIVertexes(), toErase;
 
@@ -118,19 +118,18 @@ void SimpleRouteMaker::makeRoute() {
     try {
         if (user.getTime() == -1) {  // simple GPS
             GPSRoute();
+            return 0;
         } else if (user.getDestination() == user.getOrigin()) {  // destination = origin
-            returnToOriginRoute();
+            return returnToOriginRoute();
         } else if (user.getDestination() != nullptr) {  // with destination
-            fillExtraTimeRoute();
+            return fillExtraTimeRoute();
         } else {  // no destination
-            touristicRoute();
+            return touristicRoute();
         }
     } catch (ImpossibleToReach &c) {
         cout << "Impossible to reach! Sorry, it isn't possible to make the route you want." << endl;
-        return;
+        return -1;
     }
-
-    displayRoute();
 }
 
 int SimpleRouteMaker::fillExtraTimeRoute() {
