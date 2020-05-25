@@ -182,6 +182,8 @@ public:
     void getRouteInfo() override;
     void openGraphAnalyzer() override;
     void makeRoute();
+    void displayRoute(Route<VertexInfoXML> * r);
+    double calculateTimeFromDistance(double dist /*in km*/);
     ~OSMRouteMaker() override;
 };
 

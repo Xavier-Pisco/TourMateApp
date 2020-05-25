@@ -15,7 +15,7 @@ public:
      * @param v - the vector with the route's vertexes and edges
      * @param dist - the dist of the route
      */
-    Route(vector<pair<Vertex<T> *, Edge<T> *>> &v, double dist);
+    Route(vector<pair<Vertex<T> *, Edge<T> *>> v, double dist);
 
     /**
      * @brief returns only the vertexes of the route
@@ -33,12 +33,12 @@ public:
      * @brief returns a text representation of the route
      * @return string
      */
-    string getStringRepresentation() const;
+    string getStringRepresentation(bool separated = false) const;
 };
 
 
 template<class T>
-Route<T>::Route(vector<pair<Vertex<T> *, Edge<T> *>> &v, double d) {
+Route<T>::Route(vector<pair<Vertex<T> *, Edge<T> *>> v, double d) {
     this->routePoints = v;
     this->dist = d;
 }
@@ -54,14 +54,21 @@ vector<Vertex<T>*> Route<T>::getVertexes() const {
 }
 
 template<class T>
-string Route<T>::getStringRepresentation() const {
+string Route<T>::getStringRepresentation(bool separated) const {
     stringstream res;
     res << endl << "origin" << endl;
     int counter = 0;
+    string lastName = "";
     for (pair<Vertex<T>*, Edge<T>*> p : routePoints) {
+        bool foundStreetName = false;
         if (p.second != nullptr && p.second->hasInfoXML()) {
             string n = ((EdgeInfoXML<VertexInfoXML> *) p.second)->getInfo()->getXMLTagValue("name");
-            if (n != "") res << n << " -> ";
+            if (n != "" and n != lastName) {
+                res << endl << n << " -> ";
+                foundStreetName = true;
+                counter = 0;
+            }
+            lastName = n;
         }
         string c = p.first->getInfo().getCategory();
         if (c!= "") res << endl << "# POI: ";
@@ -70,6 +77,7 @@ string Route<T>::getStringRepresentation() const {
             res << ": " << c << endl;
             counter = 0;
         }
+        if (separated && foundStreetName) res << endl;
         res << " -> ";
         counter ++;
         if (counter % 15 == 0) res << endl;

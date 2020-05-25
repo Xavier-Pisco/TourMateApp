@@ -38,7 +38,7 @@ void SimpleRouteMaker::getRouteInfo() {
     user.setOrigin(vx);
 
     cout << endl; Drawer::drawTitle("Destination location", 0, 40, true, "left"); cout << endl;
-    // TODO add option for "return to starting point"
+
     vx = UserInput::getVertex(mapContainer, false, false);
     user.setDestination(vx);
 
