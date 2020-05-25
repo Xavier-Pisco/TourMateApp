@@ -15,6 +15,7 @@ class MapContainer {
 protected:
     Graph<T> * graph = nullptr;
     GraphViewerCustom<T> * graphViewer = nullptr;
+    bool notConnected;
 
 public:
 
@@ -24,17 +25,50 @@ public:
      */
     void setReachableVertexSet(Vertex<T> * vx);
 
-
+    /**
+     * @brief gets the vertex with the given id
+     * @param id
+     * @return pointer to the vertex
+     */
     Vertex<T> * getVertexWithID(long id) const;
 
+    /**
+     * @brief sets the graph's maximum and minimum coords
+     */
     void setGraphMaxMinCoords() const;
 
+    /**
+     * @brief finds the vertex with the given coords
+     * @param c
+     * @return pointer to the vertex
+     */
     Vertex<T> *getVertexWithCoords(const Coords &c) const;
 
+    /**
+     * @brief GET method for the graph
+     * @return Graph pointer
+     */
     Graph<T> *getGraph() const;
 
+    /**
+     * @brief GET method for graphViewer
+     * @return graphViewer
+     */
     GraphViewerCustom<T> *getGraphViewer() const;
 
+    /**
+     * @brief SET method for not connected
+     */
+    void setNotConnected(bool c);
+
+    /**
+     * @brief GET method for not connected
+     */
+    bool getNotConnected();
+
+    /**
+     * @brief destructor
+     */
     ~MapContainer();
 };
 
@@ -48,10 +82,29 @@ private:
 public:
     explicit OSMapContainer(string &map);
 
+    /**
+     * @brief finds the vertex with the name given
+     * @param v
+     * @param tags
+     * @param vertexWithEditDist
+     * @param name
+     */
     void findTagName(Vertex<VertexInfoXML> * v, const map<string, string> &tags, priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> &vertexWithEditDist, string &name) const;
 
+    /**
+     * @brief finds the vertex with the name given
+     * @param coords
+     * @param tags
+     * @param vertexWithEditDist
+     * @param name
+     */
     void findTagName(const Coords &coords, const map<string, string> &tags, priority_queue<VertexNameEditDist, vector<VertexNameEditDist>, greater<>> &vertexWithEditDist, string &name) const;
 
+    /**
+     * @brief gets the possible vertexes with the given name
+     * @param name
+     * @return vector with the results
+     */
     vector<VertexNameEditDist> getPlacePossibilitiesWithName(string &name) const;
 
     const vector<WayInfoXML*> &getPlacesWays() const;
@@ -69,12 +122,28 @@ private:
 public:
     explicit SimpleMapContainer(string & map, bool performanceTests = false);
 
+    /**
+     * @brief GET method for nodes
+     */
     const map<long, Vertex<VertexInfoTXT>*> &getNodes() const;
 
+    /**
+     * @brief gets the available categories
+     * @return vector with the categories
+     */
     vector<string> getAvailableCategories() const;
 
+    /**
+     * @brief finds the vertexes that have the given category
+     * @param c - the category
+     * @return vector with the vertexes
+     */
     vector<Vertex<VertexInfoTXT>*> getVertexesWithCategory(string &c) const;
 
+    /**
+     * @brief finds the POI vertexes
+     * @return list of POI vertexes
+     */
     vector<Vertex<VertexInfoTXT>*> getPOIVertexes() const;
 };
 
@@ -150,6 +219,15 @@ MapContainer<T>::~MapContainer() {
     delete graphViewer;
 }
 
+template<class T>
+void MapContainer<T>::setNotConnected(bool c) {
+    notConnected = c;
+}
+
+template<class T>
+bool MapContainer<T>::getNotConnected() {
+    return notConnected;
+}
 
 
 #endif //SRC_MAPCONTAINER_H

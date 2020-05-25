@@ -22,9 +22,13 @@ private:
 public:
     User();
     void setOrigin(Vertex<T> * origin);
+    
     void setDestination(Vertex<T> * destination);
+
     void setAvailability(int time);
+
     void setRoute(Route<T> * r);
+
     void setRouteMode(enum routeMode r);
 
     float getTime() const;

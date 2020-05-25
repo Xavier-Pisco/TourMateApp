@@ -98,15 +98,36 @@ void SimpleRouteMaker::makeRoute() {
             pOIVertexesPreference.push_back(*it);
         }
     }
+    // checks if the map is strongly connected
+    mapContainer->setNotConnected(mapContainer->getGraph()->stronglyConnectedComponents().size() > 1);
 
-    if (user.getTime() == -1) {  // simple GPS
-        GPSRoute();
-    } else if (user.getDestination() == user.getOrigin()) {  // destination = origin
-        returnToOriginRoute();
-    } else if (user.getDestination() != nullptr) {  // with destination
-        fillExtraTimeRoute();
-    } else {  // no destination
-        touristicRoute();
+    // removing POIs that don't have a path to the destination
+    if (mapContainer->getNotConnected() && user.getDestination() != nullptr) { // if the graph is not strongly connected
+        for (auto v : pOIVertexesPreference) {
+            vector<Vertex<VertexInfoTXT> *> vc = mapContainer->getGraph()->bfs(v);
+
+            if (find(vc.begin(), vc.end(), user.getDestination()) == vc.end()) {
+                toErase.push_back(v);
+            }
+        }
+    }
+
+    for (auto v : toErase) pOIVertexesPreference.erase(find(pOIVertexesPreference.begin(), pOIVertexesPreference.end(), v));
+
+
+    try {
+        if (user.getTime() == -1) {  // simple GPS
+            GPSRoute();
+        } else if (user.getDestination() == user.getOrigin()) {  // destination = origin
+            returnToOriginRoute();
+        } else if (user.getDestination() != nullptr) {  // with destination
+            fillExtraTimeRoute();
+        } else {  // no destination
+            touristicRoute();
+        }
+    } catch (ImpossibleToReach &c) {
+        cout << "Impossible to reach! Sorry, it isn't possible to make the route you want." << endl;
+        return;
     }
 
     displayRoute();
@@ -123,7 +144,9 @@ int SimpleRouteMaker::fillExtraTimeRoute() {
     Vertex<VertexInfoTXT> * currVx = origin;
     mapContainer->getGraph()->dijkstra(currVx);
 
-    if (calculateTimeFromDistance(destination->getDist()) > user.getTime()) {
+    if (destination->getDist() == DBL_MAX) {
+        throw ImpossibleToReach();
+    } else if (calculateTimeFromDistance(destination->getDist()) > user.getTime()) {
         pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = mapContainer->getGraph()->getPathToFromDijkstra(origin, destination);
         routeDist = p.second;
         route.insert(route.end(), p.first.begin(), p.first.end());
@@ -190,7 +213,7 @@ Vertex<VertexInfoTXT> * SimpleRouteMaker::getCandidate(Vertex<VertexInfoTXT> * c
         return v1->getDist() < v2->getDist();
     });
 
-    return pOIVertexesPreference.empty() ? destination : pOIVertexesPreference.at(0);
+    return pOIVertexesPreference.empty() ? destination : (pOIVertexesPreference.at(0)->getDist() == DBL_MAX ? destination : pOIVertexesPreference.at(0));
 }
 
 
@@ -307,6 +330,7 @@ double SimpleRouteMaker::calculateTimeFromDistance(double dist /*in km*/) { // r
 void SimpleRouteMaker::GPSRoute() {
     mapContainer->getGraph()->dijkstra(user.getOrigin());
     pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = mapContainer->getGraph()->getPathToFromDijkstra(user.getOrigin(), user.getDestination());
+
 
     p.first.insert(p.first.begin(), pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>(user.getOrigin(), NULL)); // inserts the start vertex, which isn't inserted in the loop
 

@@ -73,7 +73,8 @@ void GraphViewerCustom<T>::viewRoute(Route<T> * route) {
     for (auto v : pois) {
         graphViewer->setVertexColor(v->graphViewerID, RED);
     }
-    graphViewer->setVertexColor(destination->graphViewerID, ORANGE);
+
+    if (destination != origin) graphViewer->setVertexColor(destination->graphViewerID, ORANGE);
     graphViewer->setVertexColor(origin->graphViewerID, CYAN);
 
     graphViewer->rearrange();

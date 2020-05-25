@@ -338,7 +338,7 @@ void Converter::generateTagsFileTXT(const string &fileName, map<long, Vertex<Ver
     ofstream tagsFile(fileName);
 
     int nodeCount = nodes.size();
-    int poiCount = max(nodeCount/90, 10);
+    int poiCount = max(nodeCount/50, 10);
 
     vector<bool> selector;
     for (int i = 0; i < nodeCount; i++) {
