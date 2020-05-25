@@ -11,9 +11,25 @@ private:
     Graph<T> * graph;
 
 public:
+    /**
+     * @brief constructor
+     * @param graph - the graph(V, E)
+     */
     explicit GraphAnalyzer(Graph<T> * graph);
+
+    /**
+     * @brief the graph analyzer menu
+     */
     void menu();
+
+    /**
+     * @brief executes Strongly Connected Components algorithm on graph and analyses the result
+     */
     void stronglyConnectedComponents();
+
+    /**
+     * @brief executes find Articulation Points algorithm on graph and analyses the result
+     */
     void articulationPoints();
 };
 

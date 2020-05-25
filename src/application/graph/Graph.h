@@ -36,11 +36,8 @@ class Vertex {
     int low, num, childNo/* Only for the root */;
     Vertex<T> * parent;
 
-
     /* fields for making route */
     bool lessPreferable;
-
-
 
 	void addEdge(Edge<T> * edge);
 	bool removeEdgeTo(Vertex<T> *d);

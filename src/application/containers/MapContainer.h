@@ -24,6 +24,7 @@ public:
      */
     void setReachableVertexSet(Vertex<T> * vx);
 
+
     Vertex<T> * getVertexWithID(long id) const;
 
     void setGraphMaxMinCoords() const;
