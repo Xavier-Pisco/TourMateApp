@@ -3,10 +3,11 @@
 
 #include "../../lib/RapidXML/rapidxml.hpp"
 #include "../graph/Graph.h"
-#include "POI.h"
 #include "Position.h"
 #include <iostream>
 #include <vector>
+#include <map>
+#include <cstring>
 
 
 class VertexInfo {
@@ -83,7 +84,6 @@ public:
 class VertexInfoXML : public XMLNode, public VertexInfo {
 private:
     unsigned count = 0; //!< count of roads that pass through this node
-    POI * poi = nullptr; //!< pointer to the POI object
 public:
     /**
      * @brief constructor for the object

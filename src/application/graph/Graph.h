@@ -6,7 +6,6 @@
 #include <iostream>
 #include "../containers/Position.h"
 #include "MutablePriorityQueue.h"
-#include "../containers/POI.h"
 #include <stack>
 
 using namespace std;
@@ -164,7 +163,7 @@ public:
 	 * @param km - maximum distance the route can have
 	 * @return vector with all the poi the user can pass by, starts at origin and (if possible on km) ends at destination
 	 */
-	vector<Vertex<T>*> backtrackingDijkstra(Vertex<T> * origin, Vertex<T>* destination, vector<POI> pois, int km);
+	//vector<Vertex<T>*> backtrackingDijkstra(Vertex<T> * origin, Vertex<T>* destination, vector<POI> pois, int km);
 
 	/**
 	 * @brief gets a path from s to d, when dijkstra has been executed starting on s

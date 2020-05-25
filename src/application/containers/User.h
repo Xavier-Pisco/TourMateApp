@@ -17,7 +17,6 @@ private:
     int time = -1; // in minutes, -1 if not to visit POIs
     Vertex<T> * origin, * destination;
     vector<string> preferenceList;
-    vector<POI> poiList;
     Route<T> * route;
     routeMode routeMode;
 public:
@@ -39,8 +38,6 @@ public:
     enum routeMode getRouteMode() const;
 
     const vector<string> &getPreferenceList() const;
-
-    const vector<POI> &getPoiList() const;
 
     void addPreference(string str);
 };
@@ -90,11 +87,6 @@ Vertex<T> *User<T>::getDestination() const {
 template<class T>
 const vector<string> &User<T>::getPreferenceList() const {
     return preferenceList;
-}
-
-template<class T>
-const vector<POI> &User<T>::getPoiList() const {
-    return poiList;
 }
 
 template<class T>

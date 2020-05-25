@@ -70,7 +70,7 @@ pair<vector<pair<Vertex<T>*, Edge<T> *>>, double> Graph<T>::getPathToFromDijkstr
 }
 
 
-template<class T>
+/*template<class T>
 vector<Vertex<T>*> Graph<T>::backtrackingDijkstra(Vertex<T> * origin, Vertex<T>* destination, vector<POI> pois, int km){
 
     vector<Vertex<T>*> passingVertex;
@@ -102,7 +102,7 @@ vector<Vertex<T>*> Graph<T>::backtrackingDijkstra(Vertex<T> * origin, Vertex<T>*
     }
     passingVertex.push_back(destination);
     return passingVertex;
-}
+}*/
 
 
 

@@ -1,6 +1,7 @@
 #include "application/Application.h"
 
 #include <csignal>
+#include <iostream>
 
 using namespace std;
 
@@ -10,6 +11,7 @@ int main() {
     Application app;
     app.mainMenu();
 
+    cout << "getchar" << endl;
     getchar(); // this is so the program exits successfully (due to GraphViewer)
     return 0;
 }
