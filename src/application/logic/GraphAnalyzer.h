@@ -26,7 +26,6 @@ template<class T>
 void GraphAnalyzer<T>::menu() {
     Menu menu;
     menu.addOption("cancel");
-    menu.addOption("Is the graph connected?");
     menu.addOption("Analyze strongly connected components");
     menu.addOption("Analyze articulation points");
 
@@ -43,11 +42,9 @@ void GraphAnalyzer<T>::menu() {
             case 0:
                 return;
             case 1:
-                break;
-            case 2:
                 stronglyConnectedComponents();
                 break;
-            case 3:
+            case 2:
                 articulationPoints();
             default:
                 break;

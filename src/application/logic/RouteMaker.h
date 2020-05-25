@@ -17,39 +17,134 @@ using namespace std;
 
 class RouteMaker {
 public:
+    /**
+     * @brief obtains the name of the map
+     * @param path the path to the map file
+     * @return the name
+     */
     static string getMapName(string &path);
+
+    /**
+     * @brief gets the route info from the user
+     */
     virtual void getRouteInfo() = 0;
+
+    /**
+     * @brief opens the graph analyzer
+     */
     virtual void openGraphAnalyzer() = 0;
+
+    /**
+     * @brief gets the available maps in a folder
+     * @param path the path to the folder
+     * @return vector with the file names
+     */
     static vector<string> getAvailableMaps(string & path);
+
+    /**
+     * @brief opens a map
+     * @param mapDescription - returns the map description through this argument
+     * @return pointer to the routemaker object created
+     */
     static RouteMaker * openMap(string &mapDescription);
+
+    /**
+     * @brief destructor
+     */
     virtual ~RouteMaker() = default;
 };
 
 class SimpleRouteMaker : public RouteMaker {
 private:
-    SimpleMapContainer * mapContainer;
-    GraphAnalyzer<VertexInfoTXT> * graphAnalyzer;
+    SimpleMapContainer * mapContainer = nullptr;
+    GraphAnalyzer<VertexInfoTXT> * graphAnalyzer = nullptr;
     User<VertexInfoTXT> user;
 
     /* Auxiliary fields */
     vector<Vertex<VertexInfoTXT>*> pOIVertexesPreference;
 public:
     SimpleRouteMaker() = default;
+    /**
+     * @brief the map to be opened
+     * @param map the path to the map
+     */
     explicit SimpleRouteMaker(string map);
+
+    /**
+     * @brief SET method for mapContainer
+     * @param smc
+     */
     void setMapContainer(SimpleMapContainer * smc);
+
+    /**
+     * @brief SET method for user
+     * @param user
+     */
     void setUser(User<VertexInfoTXT> user);
+
+    /**
+     * @brief displays the obtained route
+     */
     void displayRoute();
-    void getRouteInfo() override;
+
+    /**
+     * @brief GET method for the route distance
+     * @return the distance
+     */
     double getRouteDist();
-    void openGraphAnalyzer() override;
+
+    /**
+     * @brief calls the functions necessary to make the route based on user input from getRouteInfo()
+     */
     void makeRoute();
+
+    /**
+     * @brief makes a simple route form origin to destination (simple dijkstra)
+     */
     void GPSRoute();
+
+    /**
+     * @brief makes a purely touristic route, with no destination in mind
+     */
     void touristicRoute();
+
+    /**
+     * @brief makes a route that return to the origin
+     */
     void returnToOriginRoute();
+
+    /**
+     * @brief makes a route that gets to the destination in time but uses any extra time to visit POIs
+     * @return the number of POIs visited
+     */
     int fillExtraTimeRoute();
+
+    /**
+     * @brief auxiliar function, gets most adequate vertex for next position (greedy)
+     * @param currVx - the current vertex
+     * @param destination - the destination
+     * @return pointer to the candidate
+     */
     Vertex<VertexInfoTXT> * getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination);
+
+    /**
+     * @brief auxiliar function, gets the next path part (from the current vertex to the next)
+     * @param currVx - the current vertex
+     * @param destination - the destination
+     * @param currTime - current estimated time
+     * @return {routePortion, dist}
+     */
     pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currTime);
+
+    /**
+     * @brief takes dist in km and returns estimated time of completion, based on user parameter (on foot, car, etc)
+     * @param dist - distance in km
+     * @return time in minutes
+     */
     double calculateTimeFromDistance(double dist /*in km*/);
+
+    void getRouteInfo() override;
+    void openGraphAnalyzer() override;
     ~SimpleRouteMaker() override;
 };
 

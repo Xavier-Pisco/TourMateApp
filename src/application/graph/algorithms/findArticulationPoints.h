@@ -5,7 +5,7 @@
 
 
 template<class T>
-vector<Vertex<T>*> Graph<T>::findArticulationPoints() {  // This is for connected graph
+vector<Vertex<T>*> Graph<T>::findArticulationPoints() {
     vector<Vertex<T>*> res;
 
     if (vertexSet.empty()) return res;
@@ -13,28 +13,33 @@ vector<Vertex<T>*> Graph<T>::findArticulationPoints() {  // This is for connecte
     for (auto v : vertexSet) {
         v->visited = false;
         v->parent = nullptr;
+        v->childNo = 0;
     }
 
     counter = 1;
     for (auto v : vertexSet) {
-        if (!v->visited) findArt(vertexSet.at(0), res);
+        if (!v->visited) findArt(vertexSet.at(0), res, v, true);
+        if (v->childNo > 1) res.push_back(v);    // root is only an articulation point if it has more than 1 child
     }
 
     return res;
 }
 
 template<class T>
-void Graph<T>::findArt(Vertex<T> * vx, vector<Vertex<T>*> &v) {
+void Graph<T>::findArt(Vertex<T> * vx, vector<Vertex<T>*> &v, Vertex<T> * rootVx, bool root) {
     vx->visited = true;
-    counter++;
     vx->low = vx->num = counter;
+    counter++;
     for (Edge<T> * e : vx->adj) {
         Vertex<T> * adjVx = e->dest;
         if (!adjVx->visited) {
+            if (vx == rootVx) rootVx->childNo++;   // root is only an articulation point if it has more than 1 child
             adjVx->parent = vx;
-            findArt(adjVx, v);
+
+            findArt(adjVx, v, rootVx);
+
             vx->low = min(vx->low, adjVx->low);
-            if (adjVx->low >= vx->num) {
+            if (adjVx->low >= vx->num && !root) {    // root is only an articulation point if it has more than 1 child
                 v.push_back(vx);
             }
         } else {

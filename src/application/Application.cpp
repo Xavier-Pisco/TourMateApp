@@ -35,9 +35,11 @@ int Application::mainMenu() {
                     delete routeMaker;
                     return -1;
                 case 1:
-                    delete routeMaker;
                     r = RouteMaker::openMap(mapDescription);
-                    if (r != nullptr) routeMaker = r;
+                    if (r != nullptr) {
+                        delete routeMaker;
+                        routeMaker = r;
+                    }
                     break;
                 case 2:
                     if (routeMaker != nullptr) routeMaker->getRouteInfo();

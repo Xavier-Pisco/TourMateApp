@@ -117,11 +117,8 @@ int SimpleRouteMaker::fillExtraTimeRoute() {
     for (auto it = pOIVertexes.begin(); it != pOIVertexes.end(); it++) {
         if (find(userPreferences.begin(), userPreferences.end(), (*it)->getInfo().getCategory()) != userPreferences.end() || (*it) == destination || (*it) == origin) {
             pOIVertexesPreference.push_back(*it);
-            //toErase.push_back(*it);
         }
     }
-
-    //for (auto it : toErase) pOIVertexes.erase(find(pOIVertexes.begin(), pOIVertexes.end(), it));
 
 
     Vertex<VertexInfoTXT> * currVx = origin;

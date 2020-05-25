@@ -33,8 +33,9 @@ class Vertex {
     int queueIndex;  // for the MutablePriorityQueue
 
     /* fields for findArticulationPoint */
-    int low, num;
+    int low, num, childNo/* Only for the root */;
     Vertex<T> * parent;
+
 
     /* fields for making route */
     bool lessPreferable;
@@ -97,7 +98,7 @@ class Graph {
      * @param vx  - the vertex
      * @param v - the articulation point vector
      */
-    void findArt(Vertex<T> * vx, vector<Vertex<T>*> &v);
+    void findArt(Vertex<T> * vx, vector<Vertex<T>*> &v, Vertex<T> * rootVx, bool root = false);
 
 public:
     ~Graph();
