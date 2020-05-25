@@ -106,12 +106,12 @@ public:
     /**
      * @brief makes a purely touristic route, with no destination in mind
      */
-    void touristicRoute();
+    int touristicRoute();
 
     /**
      * @brief makes a route that return to the origin
      */
-    void returnToOriginRoute();
+    int returnToOriginRoute();
 
     /**
      * @brief makes a route that gets to the destination in time but uses any extra time to visit POIs
@@ -125,16 +125,40 @@ public:
      * @param destination - the destination
      * @return pointer to the candidate
      */
-    Vertex<VertexInfoTXT> * getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination);
+    Vertex<VertexInfoTXT> * getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currentTime, bool ignoreAngle);
 
     /**
-     * @brief auxiliar function, gets the next path part (from the current vertex to the next)
+     * @brief calculates the angle bewteen v1 and v2
+     * @param v1
+     * @param v2
+     * @return the angle
+     */
+    double calculateVectorAngle(pair<double, double> &v1, pair<double, double> &v2);
+
+    /**
+     * @brief calculates the vector from vx1 to vx2
+     * @param vx1
+     * @param vx2
+     * @return the vector coords {lat, lon}
+     */
+    pair<double, double> calculateVectorFrom2Vx(Vertex<VertexInfoTXT> * vx1, Vertex<VertexInfoTXT> * vx2);
+
+    /**
+     * @brief auxiliar function for fillExtraTimeRoute and returnToOriginRoute, gets the next path part (from the current vertex to the next)
      * @param currVx - the current vertex
      * @param destination - the destination
      * @param currTime - current estimated time
      * @return {routePortion, dist}
      */
-    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currTime);
+    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currTime, bool returnToOrigin);
+
+    /**
+     * @brief auxiliar function for touristicRoute, gets the next path part (from the current vertex to the next)
+     * @param currVx - the current vertex
+     * @param currTime - current estimated time
+     * @return {routePortion, dist}
+     */
+    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  getNextPathPartTouristic(Vertex<VertexInfoTXT> * currVx, double currTime);
 
     /**
      * @brief takes dist in km and returns estimated time of completion, based on user parameter (on foot, car, etc)

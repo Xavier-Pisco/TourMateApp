@@ -88,6 +88,17 @@ void SimpleRouteMaker::getRouteInfo() {
 }
 
 void SimpleRouteMaker::makeRoute() {
+    vector<string> userPreferences = user.getPreferenceList();
+    vector<Vertex<VertexInfoTXT>*> pOIVertexes = mapContainer->getPOIVertexes(), toErase;
+
+    pOIVertexesPreference.erase(pOIVertexesPreference.begin(), pOIVertexesPreference.end());
+
+    for (auto it = pOIVertexes.begin(); it != pOIVertexes.end(); it++) {
+        if (find(userPreferences.begin(), userPreferences.end(), (*it)->getInfo().getCategory()) != userPreferences.end() && (*it) != user.getDestination() && (*it) != user.getOrigin()) {
+            pOIVertexesPreference.push_back(*it);
+        }
+    }
+
     if (user.getTime() == -1) {  // simple GPS
         GPSRoute();
     } else if (user.getDestination() == user.getOrigin()) {  // destination = origin
@@ -109,18 +120,6 @@ int SimpleRouteMaker::fillExtraTimeRoute() {
     double routeDist = 0;
     int poiCount = 0;
 
-    vector<string> userPreferences = user.getPreferenceList();
-    vector<Vertex<VertexInfoTXT>*> pOIVertexes = mapContainer->getPOIVertexes(), toErase;
-
-    pOIVertexesPreference.erase(pOIVertexesPreference.begin(), pOIVertexesPreference.end());
-
-    for (auto it = pOIVertexes.begin(); it != pOIVertexes.end(); it++) {
-        if (find(userPreferences.begin(), userPreferences.end(), (*it)->getInfo().getCategory()) != userPreferences.end() || (*it) == destination || (*it) == origin) {
-            pOIVertexesPreference.push_back(*it);
-        }
-    }
-
-
     Vertex<VertexInfoTXT> * currVx = origin;
     mapContainer->getGraph()->dijkstra(currVx);
 
@@ -132,7 +131,7 @@ int SimpleRouteMaker::fillExtraTimeRoute() {
             << "We've found the most efficient path from the origin to the destination" << endl << endl;
     } else {
         while (currVx != destination) {
-            pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = getNextPathPart(currVx, destination, estimatedTime);
+            pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = getNextPathPart(currVx, destination, estimatedTime, false);
 
             route.insert(route.end(), p.first.begin(), p.first.end());
 
@@ -151,28 +150,37 @@ int SimpleRouteMaker::fillExtraTimeRoute() {
     return poiCount;
 }
 
+double SimpleRouteMaker::calculateVectorAngle(pair<double, double> &v1, pair<double, double> &v2) {
+    double mod1 = sqrt(pow(v1.first, 2) + pow(v1.second, 2));
+    double mod2 = sqrt(pow(v2.first, 2) + pow(v2.second, 2));
 
-Vertex<VertexInfoTXT> * SimpleRouteMaker::getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination) {
+    double scalar = (v1.first * v2.first) +
+                    (v1.second * v2.second);
+    double angleCos = scalar / (mod1 * mod2);
+
+    return acos(angleCos);
+}
+
+pair<double, double> SimpleRouteMaker::calculateVectorFrom2Vx(Vertex<VertexInfoTXT> * vx1, Vertex<VertexInfoTXT> * vx2) {
+    pair<double, double> v;
+    v.first = vx2->getInfo().getLat() - vx1->getInfo().getLat();
+    v.second = vx2->getInfo().getLon() - vx1->getInfo().getLon();
+    return v;
+}
+
+Vertex<VertexInfoTXT> * SimpleRouteMaker::getCandidate(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currentTime, bool ignoreAngle) {
+
     for (auto c : pOIVertexesPreference) {
         c->setLessPreferable(false);
+        if (!ignoreAngle || currentTime > user.getTime()/2 ) {
 
-        pair<double, double> vectorFromCurrVxToC;
-        vectorFromCurrVxToC.first = c->getInfo().getLat() - currVx->getInfo().getLat();
-        vectorFromCurrVxToC.second = c->getInfo().getLon() - currVx->getInfo().getLon();
+            pair<double, double> vectorFromCurrVxToC = calculateVectorFrom2Vx(currVx, c);
+            pair<double, double> vectorFromCurrVxToDestination = calculateVectorFrom2Vx(currVx, destination);
 
-        pair<double, double> vectorFromCurrVxToDestination;
-        vectorFromCurrVxToDestination.first = destination->getInfo().getLat() - currVx->getInfo().getLat();
-        vectorFromCurrVxToDestination.second = destination->getInfo().getLon() - currVx->getInfo().getLon();
+            double angle = calculateVectorAngle(vectorFromCurrVxToC, vectorFromCurrVxToDestination);
 
-        double mod1 = sqrt(pow(vectorFromCurrVxToC.first, 2) + pow(vectorFromCurrVxToC.second, 2));
-        double mod2 = sqrt(pow(vectorFromCurrVxToDestination.first, 2) + pow(vectorFromCurrVxToDestination.second, 2));
-
-        double scalar = (vectorFromCurrVxToC.first * vectorFromCurrVxToDestination.first) +
-                        (vectorFromCurrVxToC.second * vectorFromCurrVxToDestination.second);
-        double angleCos = scalar / (mod1 * mod2);
-
-        double angle = acos(angleCos);
-        if (angle >= M_PI / 2 || angle <= -M_PI / 2) { c->setLessPreferable(true); }
+            if (angle >= M_PI / 2 || angle <= -M_PI / 2) { c->setLessPreferable(true); }
+        }
     }
 
     sort(pOIVertexesPreference.begin(), pOIVertexesPreference.end(), [](Vertex<VertexInfoTXT>* v1, Vertex<VertexInfoTXT>* v2) {
@@ -186,11 +194,11 @@ Vertex<VertexInfoTXT> * SimpleRouteMaker::getCandidate(Vertex<VertexInfoTXT> * c
 }
 
 
-pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  SimpleRouteMaker::getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currTime) {
+pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  SimpleRouteMaker::getNextPathPart(Vertex<VertexInfoTXT> * currVx, Vertex<VertexInfoTXT> * destination, double currTime, bool returnToOrigin) {
     if (currVx->getDist() != 0) mapContainer->getGraph()->dijkstra(currVx);
 
     // greedy
-    Vertex<VertexInfoTXT> * candidate = getCandidate(currVx, destination); // find candidate
+    Vertex<VertexInfoTXT> * candidate = getCandidate(currVx, destination, currTime, returnToOrigin); // find candidate
 
     double candidateTime = currTime + calculateTimeFromDistance(candidate->getDist()); // the time to get from the origin to the candidate
 
@@ -208,12 +216,82 @@ pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  Simple
     return destinationPath;
 }
 
-void SimpleRouteMaker::returnToOriginRoute() {
+int SimpleRouteMaker::returnToOriginRoute() {
+    vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>> route;
+    Vertex<VertexInfoTXT> * origin = user.getOrigin();
 
+    double estimatedTime = 0;
+    double routeDist = 0;
+    int poiCount = 0;
+
+    Vertex<VertexInfoTXT> * currVx = origin;
+    mapContainer->getGraph()->dijkstra(currVx);
+    bool starting = true;
+
+    while (starting || currVx != origin) {
+        pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = getNextPathPart(currVx, origin, estimatedTime, true);
+
+        route.insert(route.end(), p.first.begin(), p.first.end());
+
+        estimatedTime += calculateTimeFromDistance(p.second);
+        routeDist += p.second;
+
+        poiCount++;
+
+        route.empty() ? currVx = origin : currVx = route.at(route.size()-1).first;
+        if (currVx == origin && starting) cout << "You don't have time to visit any POIs!" << endl << endl;
+        starting = false;
+    }
+
+    route.insert(route.begin(), pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>(origin, NULL)); // inserts the start vertex, which isn't inserted in the loop
+    user.setRoute(new Route<VertexInfoTXT>(route, routeDist));
+    return poiCount;
 }
 
-void SimpleRouteMaker::touristicRoute() {
+int SimpleRouteMaker::touristicRoute() {
+    vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>> route;
+    Vertex<VertexInfoTXT> * origin = user.getOrigin();
 
+    double estimatedTime = 0;
+    double routeDist = 0;
+    int poiCount = 0;
+
+    Vertex<VertexInfoTXT> * currVx = origin;
+
+    while (true) {
+        pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> p = getNextPathPartTouristic(currVx, estimatedTime);
+        if (p.first.empty()) break;
+
+        route.insert(route.end(), p.first.begin(), p.first.end());
+
+        estimatedTime += calculateTimeFromDistance(p.second);
+        routeDist += p.second;
+
+        poiCount++;
+
+        currVx = route.at(route.size()-1).first;
+    }
+
+    route.insert(route.begin(), pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>(origin, NULL)); // inserts the start vertex, which isn't inserted in the loop
+    user.setRoute(new Route<VertexInfoTXT>(route, routeDist));
+    return poiCount;
+}
+
+pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double>  SimpleRouteMaker::getNextPathPartTouristic(Vertex<VertexInfoTXT> * currVx, double currTime) {
+    mapContainer->getGraph()->dijkstra(currVx);
+    // greedy
+    Vertex<VertexInfoTXT> * candidate = getCandidate(currVx, currVx, -1, true); // find candidate
+    if (candidate == currVx) return {};
+
+    double candidateTime = currTime + calculateTimeFromDistance(candidate->getDist()); // the time to get from the origin to the candidate
+
+    pair<vector<pair<Vertex<VertexInfoTXT>*, Edge<VertexInfoTXT>*>>, double> candidatePath = mapContainer->getGraph()->getPathToFromDijkstra(currVx, candidate);
+
+    if (candidateTime < user.getTime()) { // if finds an optimal solution
+        pOIVertexesPreference.erase(find(pOIVertexesPreference.begin(), pOIVertexesPreference.end(), candidate));
+        return candidatePath;
+    }
+    return {};
 }
 
 double SimpleRouteMaker::calculateTimeFromDistance(double dist /*in km*/) { // returns in minutes
