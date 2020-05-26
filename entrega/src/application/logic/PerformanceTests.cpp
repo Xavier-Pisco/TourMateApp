@@ -7,7 +7,8 @@ void PerformanceTests::menu() {
         menu.addOption("cancel");
         menu.addOption("Test Dijkstra");
         menu.addOption("Test Strongly Connected Components");
-        menu.addOption("Test Route Maker");
+        menu.addOption("Test Route Maker (with strongly connected graph)");
+        menu.addOption("Test Route Maker (with not strongly connected graph)");
 
 
         cout << endl;
@@ -24,7 +25,10 @@ void PerformanceTests::menu() {
                 testSCC();
                 break;
             case 3:
-                testRouteMaker();
+                testRouteMaker(1);
+                break;
+            case 4:
+                testRouteMaker(0);
                 break;
             default:
                 break;
@@ -45,8 +49,18 @@ pair<pair<long unsigned, double>, int> PerformanceTests::runRouteMakerTest(Simpl
     }
     vector<Vertex<VertexInfoTXT>*> vxSet = mapContainer->getGraph()->getVertexSet();
     srand(time(nullptr));
-    user.setOrigin(vxSet.at(rand()%vxSet.size()));
-    user.setDestination(vxSet.at(rand()%vxSet.size()));
+    Vertex<VertexInfoTXT> *origin;
+    vector<Vertex<VertexInfoTXT> *> reachable;
+
+    while(true) {
+        origin = vxSet.at(rand() % vxSet.size());
+        reachable = mapContainer->getGraph()->bfs(origin);
+        if (reachable.size() >= vxSet.size()/10) break;
+    }
+
+    user.setOrigin(origin);
+
+    user.setDestination(reachable.at(rand()%reachable.size()));
 
     routeMaker->setUser(user);
 
@@ -86,12 +100,12 @@ void PerformanceTests::testMultiples(SimpleMapContainer * mapContainer) {
     }
 }
 
-void PerformanceTests::testRouteMaker() {
+void PerformanceTests::testRouteMaker(int performanceTests) {
     // these tests run on the maps with strong connectivity
     cout << "Running RouteMaker tests" << endl;
 
     string map = "../maps/simple/penafiel";
-    auto * mapContainer = new SimpleMapContainer(map, true);
+    auto * mapContainer = new SimpleMapContainer(map, performanceTests);
 
     int vxSetSize = mapContainer->getGraph()->getVertexSet().size();
     int edgeCount = getEdgeCount(mapContainer->getGraph());
@@ -101,7 +115,7 @@ void PerformanceTests::testRouteMaker() {
 
 
     map = "../maps/simple/espinho";
-    mapContainer = new SimpleMapContainer(map, true);
+    mapContainer = new SimpleMapContainer(map, performanceTests);
 
     vxSetSize = mapContainer->getGraph()->getVertexSet().size();
     edgeCount = getEdgeCount(mapContainer->getGraph());
@@ -111,7 +125,7 @@ void PerformanceTests::testRouteMaker() {
 
 
     map = "../maps/simple/porto";
-    mapContainer = new SimpleMapContainer(map, true);
+    mapContainer = new SimpleMapContainer(map, 1);
 
     vxSetSize = mapContainer->getGraph()->getVertexSet().size();
     edgeCount = getEdgeCount(mapContainer->getGraph());

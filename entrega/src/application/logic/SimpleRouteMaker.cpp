@@ -48,7 +48,7 @@ void SimpleRouteMaker::getRouteInfo() {
     } else visitPOIs = true;
     if (visitPOIs) {
         cout << endl;
-        int time = UserInput::getInt("Available time in minutes: ", 0);
+        int time = UserInput::getInt("Available time in minutes: ", 1);
         user.setAvailability(time);
 
         cout << endl;
@@ -98,8 +98,6 @@ int SimpleRouteMaker::makeRoute() {
             pOIVertexesPreference.push_back(*it);
         }
     }
-    // checks if the map is strongly connected
-    mapContainer->setNotConnected(mapContainer->getGraph()->stronglyConnectedComponents().size() > 1);
 
     // removing POIs that don't have a path to the destination
     if (mapContainer->getNotConnected() && user.getDestination() != nullptr) { // if the graph is not strongly connected

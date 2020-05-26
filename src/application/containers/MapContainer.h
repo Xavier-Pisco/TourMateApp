@@ -15,7 +15,7 @@ class MapContainer {
 protected:
     Graph<T> * graph = nullptr;
     GraphViewerCustom<T> * graphViewer = nullptr;
-    bool notConnected;
+    bool notConnected; // true if the graph is not strongly connected
 
 public:
 
@@ -55,11 +55,6 @@ public:
      * @return graphViewer
      */
     GraphViewerCustom<T> *getGraphViewer() const;
-
-    /**
-     * @brief SET method for not connected
-     */
-    void setNotConnected(bool c);
 
     /**
      * @brief GET method for not connected
@@ -120,7 +115,7 @@ private:
     map<long, Vertex<VertexInfoTXT>*> nodes;
     map<string, vector<Vertex<VertexInfoTXT>*>> categoryVertexes;
 public:
-    explicit SimpleMapContainer(string & map, bool performanceTests = false);
+    explicit SimpleMapContainer(string & map, int performanceTests = -1);
 
     /**
      * @brief GET method for nodes
@@ -217,11 +212,6 @@ template<class T>
 MapContainer<T>::~MapContainer() {
     delete graph;
     delete graphViewer;
-}
-
-template<class T>
-void MapContainer<T>::setNotConnected(bool c) {
-    notConnected = c;
 }
 
 template<class T>

@@ -68,8 +68,9 @@ public:
 
     /**
      * @brief prepares RouteMaker test
+     * @param performanceTests - 0 if full, 1 if strong
      */
-    static void testRouteMaker();
+    static void testRouteMaker(int performanceTests);
 };
 
 template<class T>

@@ -1,7 +1,11 @@
 #include "MapContainer.h"
 
-SimpleMapContainer::SimpleMapContainer(string &map, bool performanceTests) : MapContainer<VertexInfoTXT>() {
+SimpleMapContainer::SimpleMapContainer(string &map, int performanceTests) : MapContainer<VertexInfoTXT>() {
     graph = Converter::getGraphFromTXTFile(map, nodes, performanceTests);
+
+    // checks if the map is strongly connected
+    notConnected = graph->stronglyConnectedComponents().size() > 1;
+
     graph->setOriginalVertexSet();
     graphViewer = new GraphViewerCustom<VertexInfoTXT>(graph);
     if (graph->getMinCoords().first == 0 && graph->getMinCoords().second == 0 && graph->getMaxCoords().first == 0 && graph->getMaxCoords().second == 0)

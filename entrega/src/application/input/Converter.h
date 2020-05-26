@@ -106,12 +106,12 @@ public:
 
     /**
      * Converts info from a city to a graph
-     * @param nodesFileName
-     * @param edgesFileName
-     * @param poiFileName
-     * @return
+     * @param city - the name of the city
+     * @param nodes - the nodes vector
+     * @param performanceTesting - 0 if full component, 1 if strong component, -1 if not
+     * @return the graph
      */
-    static Graph<VertexInfoTXT> * getGraphFromTXTFile(const string& city, map<long, Vertex<VertexInfoTXT>*> &nodes, bool performanceTesting = false);
+    static Graph<VertexInfoTXT> * getGraphFromTXTFile(const string& city, map<long, Vertex<VertexInfoTXT>*> &nodes, int performanceTesting = -1);
 };
 
 

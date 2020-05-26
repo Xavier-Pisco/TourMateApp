@@ -204,7 +204,7 @@ double Converter::getKmDistfromLatLong(double lat1, double lon1, double lat2, do
 }
 
 
-Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & m, map<long, Vertex<VertexInfoTXT>*> &nodes, bool performanceTesting) {
+Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & m, map<long, Vertex<VertexInfoTXT>*> &nodes, int performanceTesting) {
     auto graph = new Graph<VertexInfoTXT>;
 
     Menu menu;
@@ -223,7 +223,7 @@ Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & m, map<long,
 
 
     if (!gridGraph) {
-        if (!performanceTesting) {
+        if (performanceTesting == -1) {
             cout << endl;
             menu.draw();
             cout << endl;
@@ -237,7 +237,9 @@ Graph<VertexInfoTXT> *Converter::getGraphFromTXTFile(const string & m, map<long,
                 default:
                     break;
             };
-        } else strong = true;
+        } else {
+            strong = performanceTesting == 1;
+        }
 
         nodesFileName = m + "/" + (strong ? "strong" : "full") + "_nodes_latlng.txt";
         edgesFileName = m + "/" + (strong ? "strong" : "full") + "_edges.txt";
